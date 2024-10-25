@@ -1,0 +1,121 @@
+#
+# Copyright 2024 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
+
+config MCUX_COMPONENT_middleware.multicore.mcmgr.imxrt700
+    bool
+    default y
+    select MCUX_COMPONENT_driver.mu1
+    depends on MCUX_HW_DEVICE_MIMXRT798S || MCUX_HW_DEVICE_MIMXRT758S || \
+               MCUX_HW_DEVICE_MIMXRT735S
+    help
+        "Multicore Manger Porting Layer for i.MX RT700"
+
+config MCUX_COMPONENT_middleware.multicore.mcmgr.imxrt1160
+    bool
+    default y
+    select MCUX_COMPONENT_driver.mu
+    depends on MCUX_HW_DEVICE_MIMXRT1165 || MCUX_HW_DEVICE_MIMXRT1166
+    help
+        "Multicore Manger Porting Layer for i.MX RT1160"
+
+config MCUX_COMPONENT_middleware.multicore.mcmgr.imxrt1170
+    bool
+    default y
+    select MCUX_COMPONENT_driver.mu
+    depends on MCUX_HW_DEVICE_MIMXRT1173 || MCUX_HW_DEVICE_MIMXRT1175 || \
+               MCUX_HW_DEVICE_MIMXRT1176
+    help
+        "Multicore Manger Porting Layer for i.MX RT1170"
+
+config MCUX_COMPONENT_middleware.multicore.mcmgr.imxrt1180
+    bool
+    default y
+    select MCUX_COMPONENT_driver.mu1
+    depends on MCUX_HW_DEVICE_MIMXRT1187 || MCUX_HW_DEVICE_MIMXRT1189 || \
+               MCUX_HW_DEVICE_MIMXRT1189A
+    help
+        "Multicore Manger Porting Layer for i.MX RT1180"
+
+config MCUX_COMPONENT_middleware.multicore.mcmgr.k32l3a6
+    bool
+    default y
+    select MCUX_COMPONENT_driver.mu
+    depends on MCUX_HW_DEVICE_K32L3A60
+    help
+        "Multicore Manger Porting Layer for FRDM-K32L3A6"
+
+config MCUX_COMPONENT_middleware.multicore.mcmgr.k32w1
+    bool
+    default y
+    select MCUX_COMPONENT_driver.imu
+    depends on MCUX_HW_DEVICE_K32W1480
+    help
+        "Multicore Manger Porting Layer for FRDM-K32W1"
+
+config MCUX_COMPONENT_middleware.multicore.mcmgr.kw45b41
+    bool
+    default y
+    select MCUX_COMPONENT_driver.imu
+    depends on MCUX_HW_DEVICE_KW45B41Z52 || MCUX_HW_DEVICE_KW45B41Z53 || \
+               MCUX_HW_DEVICE_KW45B41Z82 || MCUX_HW_DEVICE_KW45B41Z83 || \
+               MCUX_HW_DEVICE_KW45B41Z82 || MCUX_HW_DEVICE_KW45B41Z83
+    help
+        "Multicore Manger Porting Layer for KW45B41Z-EVK"
+
+config MCUX_COMPONENT_middleware.multicore.mcmgr.kw47b42
+    bool
+    default y
+    select MCUX_COMPONENT_driver.imu
+    depends on MCUX_HW_DEVICE_KW47B42Z83 || MCUX_HW_DEVICE_KW47B42Z96 || \
+               MCUX_HW_DEVICE_KW47B42Z97 || MCUX_HW_DEVICE_KW47B42ZB2 || \
+               MCUX_HW_DEVICE_KW47B42ZB3 || MCUX_HW_DEVICE_KW47B42ZB6 || \
+               MCUX_HW_DEVICE_KW47B42ZB7 || MCUX_HW_DEVICE_KW47Z42082 || \
+               MCUX_HW_DEVICE_KW47Z42092 || MCUX_HW_DEVICE_KW47Z420B2 || \
+               MCUX_HW_DEVICE_KW47Z420B3
+    help
+        "Multicore Manger Porting Layer for KW47B42-EVK"
+
+config MCUX_COMPONENT_middleware.multicore.mcmgr.lpc55s69
+    bool
+    default y
+    select MCUX_COMPONENT_driver.mailbox
+    depends on MCUX_HW_DEVICE_LPC55S66 || MCUX_HW_DEVICE_LPC55S69
+    help
+        "Multicore Manger Porting Layer for LPCXpresso55S69"
+
+config MCUX_COMPONENT_middleware.multicore.mcmgr.lpc54114
+    bool
+    default y
+    select MCUX_COMPONENT_driver.mailbox
+    depends on MCUX_HW_DEVICE_LPC54102 || MCUX_HW_DEVICE_LPC54114
+    help
+        "Multicore Manger Porting Layer for LPCXpresso54114"
+
+config MCUX_COMPONENT_middleware.multicore.mcmgr.mcxnx4x
+    bool
+    default y
+    select MCUX_COMPONENT_driver.mailbox
+    depends on MCUX_HW_DEVICE_MCXN546 || MCUX_HW_DEVICE_MCXN547 || \
+               MCUX_HW_DEVICE_MCXN947 || MCUX_HW_DEVICE_MCXN946
+    help
+        "Multicore Manger Porting Layer for MCX-N94X-N54X"
+
+config MCUX_COMPONENT_middleware.multicore.mcmgr.mcxw716
+    bool
+    default y
+    select MCUX_COMPONENT_driver.imu
+    depends on MCUX_HW_DEVICE_MCXW716A || MCUX_HW_DEVICE_MCXW716C
+    help
+        "Multicore Manger Porting Layer for MCX-W716"
+
+config MCUX_COMPONENT_middleware.multicore.mcmgr.mcxw727
+    bool
+    default y
+    select MCUX_COMPONENT_driver.imu
+    depends on MCUX_HW_DEVICE_MCXW727A || MCUX_HW_DEVICE_MCXW727C || \
+               MCUX_HW_DEVICE_MCXW727D
+    help
+        "Multicore Manger Porting Layer for MCX-W727"
