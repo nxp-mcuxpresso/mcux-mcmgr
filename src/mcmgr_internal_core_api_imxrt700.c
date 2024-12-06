@@ -330,10 +330,10 @@ mcmgr_status_t mcmgr_trigger_event_internal(uint32_t remoteData, bool forcedWrit
 #elif (defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core1_SERIES) || \
        defined(MIMXRT798S_cm33_core1_SERIES))
         /* CPU1 to HiFi1 communication case */
-#if !defined(__CM33_CMSIS_VERSION)
+#if !defined(__CORTEX_M)
         MU_SendMsg(MU3_MUA, MCMGR_MU_CHANNEL, remoteData);
         /* CPU1 to CPU0 communication case */
-// #elif defined(__CM33_CMSIS_VERSION)
+// #elif defined(__CORTEX_M)
 #else
         MU_SendMsg(MU1_MUB, MCMGR_MU_CHANNEL, remoteData);
 #endif
@@ -354,7 +354,7 @@ mcmgr_status_t mcmgr_trigger_event_internal(uint32_t remoteData, bool forcedWrit
 #elif (defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core1_SERIES) || \
        defined(MIMXRT798S_cm33_core1_SERIES))
         /* CPU1 to HiFi1 communication case */
-#if !defined(__CM33_CMSIS_VERSION)
+#if !defined(__CORTEX_M)
         MU_SendMsgNonBlocking(MU3_MUA, MCMGR_MU_CHANNEL, remoteData);
         /* CPU1 to CPU0 communication case */
 // #elif defined(FSL_FEATURE_MU_SIDE_B)
@@ -393,7 +393,7 @@ void mcmgr_mu_channel_handler(void)
        defined(MIMXRT798S_cm33_core1_SERIES))
     /* CPU1 to HiFi1 communication case */
 // #if defined(FSL_FEATURE_MU_SIDE_A)
-#if !defined(__CM33_CMSIS_VERSION)
+#if !defined(__CORTEX_M)
     data = MU_ReceiveMsgNonBlocking(MU3_MUA, MCMGR_MU_CHANNEL);
     /* CPU1 to CPU0 communication case */
 // #elif defined(FSL_FEATURE_MU_SIDE_B)
