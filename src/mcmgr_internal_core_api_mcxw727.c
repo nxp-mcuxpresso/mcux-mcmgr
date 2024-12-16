@@ -211,6 +211,11 @@ void mcmgr_mu_channel_handler(void)
 
     mcmgr_imu_remote_active_rel();
 }
+mcmgr_status_t mcmgr_process_deferred_rx_isr_internal(void)
+{
+    MU_RxFullFlagISR();
+    return kStatus_MCMGR_Success;
+}
 
 #if defined(MCMGR_HANDLE_EXCEPTIONS) && (MCMGR_HANDLE_EXCEPTIONS == 1)
 /* coco begin validated: reached after __coveragescanner_save() call becasue it is not possible to return from this ISR
