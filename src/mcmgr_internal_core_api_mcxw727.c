@@ -211,11 +211,6 @@ void mcmgr_mu_channel_handler(void)
 
     mcmgr_imu_remote_active_rel();
 }
-mcmgr_status_t mcmgr_process_deferred_rx_isr_internal(void)
-{
-    MU_RxFullFlagISR();
-    return kStatus_MCMGR_Success;
-}
 
 mcmgr_status_t mcmgr_process_deferred_rx_isr_internal(void)
 {
