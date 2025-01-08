@@ -127,7 +127,7 @@ typedef void (*mcmgr_event_callback_t)(uint16_t data, void *context);
  */
 enum mcmgr_version_enum
 {
-    kMCMGR_Version = 0x00040105
+    kMCMGR_Version = 0x00040106
 };
 
 #if defined(__cplusplus)
@@ -276,6 +276,15 @@ mcmgr_status_t MCMGR_TriggerEvent(mcmgr_event_type_t type, uint16_t eventData);
  */
 mcmgr_status_t MCMGR_TriggerEventForce(mcmgr_event_type_t type, uint16_t eventData);
 
+/*!
+ * @brief Process RX data in deffered rx task.
+ *
+ * This function used to be called from the application specific deffered rx task to trigger rx data processing outside the interrupt context.
+ * The purpose is to make the interrupt service routine as short as possible, performing only really necessary steps
+ * in the interrupt context and defer the processing outside the interrupt context.
+ *
+ * @return kStatus_MCMGR_Success on success or kStatus_MCMGR_NotImplemented when not supported.
+ */
 mcmgr_status_t MCMGR_ProcessDeferredRxIsr(void);
 
 

@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.1.6]
+
 ### Added
 
 - Multicore Manager moved to standalone repository.
+- Add porting layers for imxrt700, mcmxw727, kw47b42.
+- New MCMGR_ProcessDeferredRxIsr() API added.
 
 ## [v4.1.5]
 
