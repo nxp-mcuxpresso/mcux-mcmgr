@@ -139,4 +139,5 @@ This table summarizes revisions of this document.
 |4.1.2          | 04/2022 | Update mcmgr_stop_core_internal() implementations to set core state to kMCMGR_ResetCoreState      |
 |4.1.3          | 10/2022 | mcmgr_mu_internal.c code adaptation to new supported SoCs     |
 |4.1.4          | 04/2023 | Avoid calling tx isr callbacks when respective Messaging Unit Transmit Interrupt Enable flag is not set in the CR/TCR register <p> Messaging Unit RX and status registers are cleared after the initialization     |
+|4.1.6          | 01/2025 | Multicore Manager moved to standalone repository. <p> Added porting layers for imxrt700, mcmxw727, kw47b42. <p> New MCMGR_ProcessDeferredRxIsr() API added     |
 

@@ -7,6 +7,7 @@ var searchData=
   ['mcmgr_5fgetstartupdata',['MCMGR_GetStartupData',['../group__mcmgr.html#ga36fd13120448560dbbfe405eaa8d482a',1,'mcmgr.h']]],
   ['mcmgr_5fgetversion',['MCMGR_GetVersion',['../group__mcmgr.html#ga7b84c8f0aeb60f4a30cdc04eb188994f',1,'mcmgr.h']]],
   ['mcmgr_5finit',['MCMGR_Init',['../group__mcmgr.html#gab18e570ea8c466214b3725785d45aa35',1,'mcmgr.h']]],
+  ['mcmgr_5fprocessdeferredrxisr',['MCMGR_ProcessDeferredRxIsr',['../group__mcmgr.html#ga88627300a9ff918dc792fe29ef0da0c4',1,'mcmgr.h']]],
   ['mcmgr_5fregisterevent',['MCMGR_RegisterEvent',['../group__mcmgr.html#ga08a4a13691e04c934998926adb277ae2',1,'mcmgr.h']]],
   ['mcmgr_5fstartcore',['MCMGR_StartCore',['../group__mcmgr.html#gac7850a1875bec8499300b1915a79a596',1,'mcmgr.h']]],
   ['mcmgr_5fstopcore',['MCMGR_StopCore',['../group__mcmgr.html#gab11c27fda1a646433b0d8cef19de6ee4',1,'mcmgr.h']]],

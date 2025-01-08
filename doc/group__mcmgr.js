@@ -1,5 +1,6 @@
 var group__mcmgr =
 [
+    [ "MCMGR_DEFERRED_CALLBACK_ALLOWED", "group__mcmgr.html#ga678b367777e008f342967e6b091c3614", null ],
     [ "MCMGR_HANDLE_EXCEPTIONS", "group__mcmgr.html#ga5abd2254543ed537e35c9d5c5721d216", null ],
     [ "mcmgr_core_property_t", "group__mcmgr.html#ga8f1bf3fd703cc893f2f25268027049f0", null ],
     [ "mcmgr_core_status_t", "group__mcmgr.html#gace62a1a59ea2e0bba2308b85dd3d3490", null ],
@@ -28,7 +29,9 @@ var group__mcmgr =
       [ "kMCMGR_CoreTypeCortexM4", "group__mcmgr.html#ggaad6bc70b5f869884191902e305d51a0aaac1299d1dd439558115c6a5f49da6256", null ],
       [ "kMCMGR_CoreTypeCortexM33", "group__mcmgr.html#ggaad6bc70b5f869884191902e305d51a0aa9d0db113fdc4348d3e833dfc0e0a8c38", null ],
       [ "kMCMGR_CoreTypeCortexM7", "group__mcmgr.html#ggaad6bc70b5f869884191902e305d51a0aae5015a4bd158184a81f1a413cf1001ba", null ],
-      [ "kMCMGR_CoreTypeCortexM3", "group__mcmgr.html#ggaad6bc70b5f869884191902e305d51a0aae85bf49f95cd80cbb1b293b5662366fc", null ]
+      [ "kMCMGR_CoreTypeCortexM3", "group__mcmgr.html#ggaad6bc70b5f869884191902e305d51a0aae85bf49f95cd80cbb1b293b5662366fc", null ],
+      [ "kMCMGR_CoreTypeDSPHifi1", "group__mcmgr.html#ggaad6bc70b5f869884191902e305d51a0aa361e2a3ca65a507d707d0aa1ac638e3f", null ],
+      [ "kMCMGR_CoreTypeDSPHifi4", "group__mcmgr.html#ggaad6bc70b5f869884191902e305d51a0aa153f029b35dc633f245e25814c65833f", null ]
     ] ],
     [ "_mcmgr_event_type_t", "group__mcmgr.html#ga0a45660b38a87ca65052a15d721a4949", null ],
     [ "_mcmgr_start_mode", "group__mcmgr.html#ga2b471b0504b78138baba1e17a05a9b9c", [
@@ -49,6 +52,7 @@ var group__mcmgr =
     [ "MCMGR_GetStartupData", "group__mcmgr.html#ga36fd13120448560dbbfe405eaa8d482a", null ],
     [ "MCMGR_GetVersion", "group__mcmgr.html#ga7b84c8f0aeb60f4a30cdc04eb188994f", null ],
     [ "MCMGR_Init", "group__mcmgr.html#gab18e570ea8c466214b3725785d45aa35", null ],
+    [ "MCMGR_ProcessDeferredRxIsr", "group__mcmgr.html#ga88627300a9ff918dc792fe29ef0da0c4", null ],
     [ "MCMGR_RegisterEvent", "group__mcmgr.html#ga08a4a13691e04c934998926adb277ae2", null ],
     [ "MCMGR_StartCore", "group__mcmgr.html#gac7850a1875bec8499300b1915a79a596", null ],
     [ "MCMGR_StopCore", "group__mcmgr.html#gab11c27fda1a646433b0d8cef19de6ee4", null ],
