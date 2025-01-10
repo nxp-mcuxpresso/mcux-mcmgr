@@ -1,5 +1,5 @@
 #
-# Copyright 2024 NXP
+# Copyright 2024-2025 NXP
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -105,6 +105,13 @@ if(CONFIG_MCUX_COMPONENT_middleware.multicore.mcmgr.mcxnx4x)
     mcux_add_source(
             SOURCES src/mcmgr_internal_core_api_mcxnx4x.c
     )
+endif()
+
+if(CONFIG_MCUX_COMPONENT_middleware.multicore.mcmgr.mcxl20)
+    mcux_add_source(
+            SOURCES src/mcmgr_internal_core_api_mcxl20.c
+                    src/mcmgr_mu_internal.c
+            )
 endif()
 
 if(CONFIG_MCUX_COMPONENT_middleware.multicore.mcmgr.mcxw716)

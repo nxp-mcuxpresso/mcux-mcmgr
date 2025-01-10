@@ -111,6 +111,14 @@ config MCUX_COMPONENT_middleware.multicore.mcmgr.mcxnx4x
     help
         "Multicore Manger Porting Layer for MCX-N94X-N54X"
 
+config MCUX_COMPONENT_middleware.multicore.mcmgr.mcxl20
+    bool
+    default y
+    select MCUX_COMPONENT_driver.mu1
+    depends on MCUX_HW_DEVICE_MCXL255
+    help
+        "Multicore Manger Porting Layer for MCX-L20"
+
 config MCUX_COMPONENT_middleware.multicore.mcmgr.mcxw716
     bool
     default y

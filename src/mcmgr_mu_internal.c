@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 NXP
+ * Copyright 2017-2025 NXP
  * All rights reserved.
  *
  *
@@ -48,7 +48,8 @@ __attribute__((weak)) void MU_GenInt0FlagISR(void){};
      defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) ||                      \
      defined(MIMXRT758S_cm33_core1_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES) ||                      \
      defined(MIMXRT798S_cm33_core1_SERIES) ||                                                               \
-     defined(KW43B43ZC7_SERIES) || defined(KW43B43ZC7_NBU_SERIES))
+     defined(KW43B43ZC7_SERIES) || defined(KW43B43ZC7_NBU_SERIES) ||                                        \
+     defined(MCXL255_cm0plus_SERIES) || defined(MCXL255_cm33_SERIES))
 /* MU ISR table */
 static void (*const MU_interrupts[MU_ISR_COUNT])(void) = {
     MU_Tx0EmptyFlagISR, MU_Tx1EmptyFlagISR, MU_Tx2EmptyFlagISR, MU_Tx3EmptyFlagISR,
@@ -94,7 +95,8 @@ static void mu_isr(MU_Type *base)
      defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) ||                      \
      defined(MIMXRT758S_cm33_core1_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES) ||                      \
      defined(MIMXRT798S_cm33_core1_SERIES) ||                                                               \
-     defined(KW43B43ZC7_SERIES) || defined(KW43B43ZC7_NBU_SERIES))
+     defined(KW43B43ZC7_SERIES) || defined(KW43B43ZC7_NBU_SERIES) ||                                        \
+     defined(MCXL255_cm0plus_SERIES) || defined(MCXL255_cm33_SERIES))
     uint32_t tcr_tie_idx = 0;
     for (i = MU_ISR_FLAG_BASE; i < (MU_ISR_FLAG_BASE + MU_TR_COUNT); i++)
     {
@@ -167,6 +169,38 @@ int MU0_IRQHandler(void)
 int MU0_IRQHandler(void)
 {
     mu_isr(MU0_MUB);
+    return 0;
+}
+#elif (defined(MCXL255_cm33_SERIES))
+int MU_A_TX_IRQHandler(void)
+{
+    mu_isr(MUA);
+    return 0;
+}
+int MU_A_RX_IRQHandler(void)
+{
+    mu_isr(MUA);
+    return 0;
+}
+int MU_A_INT_IRQHandler(void)
+{
+    mu_isr(MUA);
+    return 0;
+}
+#elif (defined(MCXL255_cm0plus_SERIES))
+int MU_B_TX_IRQHandler(void)
+{
+    mu_isr(MUB);
+    return 0;
+}
+int MU_B_RX_IRQHandler(void)
+{
+    mu_isr(MUB);
+    return 0;
+}
+int MU_B_INT_IRQHandler(void)
+{
+    mu_isr(MUB);
     return 0;
 }
 #elif defined(FSL_FEATURE_MU_SIDE_A)
