@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `mcmgr_stop_core_internal()` function now returns `kStatus_MCMGR_NotImplemented` status code instead  
+  of `kStatus_MCMGR_Success` when device does not support stop of secondary core.  
+  Ports affected: `kw32w1`, `kw45b41`, `kw45b42`, `mcxw716`, `mcxw727`.
+
 ## [v4.1.6]
 
 ### Added

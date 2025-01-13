@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 NXP
+ * Copyright 2024-2025 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -131,7 +131,7 @@ mcmgr_status_t mcmgr_stop_core_internal(mcmgr_core_t coreNum)
         return kStatus_MCMGR_Error;
     }
     /* TODO IMU not supported */
-    return kStatus_MCMGR_Success;
+    return kStatus_MCMGR_NotImplemented;
 }
 
 mcmgr_status_t mcmgr_get_core_property_internal(mcmgr_core_t coreNum,
