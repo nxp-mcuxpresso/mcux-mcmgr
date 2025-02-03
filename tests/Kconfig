@@ -1,0 +1,16 @@
+#
+# Copyright 2024 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+rsource "../../../../Kconfig.mcuxpresso"
+
+menu "MCMgr Testing Config"
+
+config MCMGR_TEST_ENABLE
+    bool "MCMgr Enable Test"
+    default y
+    help
+        "Set this to enable testing."
+
+endmenu
