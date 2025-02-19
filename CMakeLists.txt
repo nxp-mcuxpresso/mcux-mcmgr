@@ -82,6 +82,13 @@ if(CONFIG_MCUX_COMPONENT_middleware.multicore.mcmgr.kw47b42)
     )
 endif()
 
+if(CONFIG_MCUX_COMPONENT_middleware.multicore.mcmgr.kw43b43)
+    mcux_add_source(
+            SOURCES src/mcmgr_internal_core_api_kw43b43.c
+                    src/mcmgr_mu_internal.c
+    )
+endif()
+
 if(CONFIG_MCUX_COMPONENT_middleware.multicore.mcmgr.lpc55s69)
     mcux_add_source(
             SOURCES src/mcmgr_internal_core_api_lpc55s69.c

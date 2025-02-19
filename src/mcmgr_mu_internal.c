@@ -47,7 +47,8 @@ __attribute__((weak)) void MU_GenInt0FlagISR(void){};
      defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT735S_cm33_core0_SERIES) ||                            \
      defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) ||                      \
      defined(MIMXRT758S_cm33_core1_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES) ||                      \
-     defined(MIMXRT798S_cm33_core1_SERIES))
+     defined(MIMXRT798S_cm33_core1_SERIES) ||                                                               \
+     defined(KW43B43ZC7_SERIES) || defined(KW43B43ZC7_NBU_SERIES))
 /* MU ISR table */
 static void (*const MU_interrupts[MU_ISR_COUNT])(void) = {
     MU_Tx0EmptyFlagISR, MU_Tx1EmptyFlagISR, MU_Tx2EmptyFlagISR, MU_Tx3EmptyFlagISR,
@@ -92,7 +93,8 @@ static void mu_isr(MU_Type *base)
      defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT735S_cm33_core0_SERIES) ||                            \
      defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) ||                      \
      defined(MIMXRT758S_cm33_core1_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES) ||                      \
-     defined(MIMXRT798S_cm33_core1_SERIES))
+     defined(MIMXRT798S_cm33_core1_SERIES) ||                                                               \
+     defined(KW43B43ZC7_SERIES) || defined(KW43B43ZC7_NBU_SERIES))
     uint32_t tcr_tie_idx = 0;
     for (i = MU_ISR_FLAG_BASE; i < (MU_ISR_FLAG_BASE + MU_TR_COUNT); i++)
     {
@@ -153,6 +155,18 @@ int MU1_A_IRQHandler(void)
 int MU1_B_IRQHandler(void)
 {
     mu_isr(MU1_MUB);
+    return 0;
+}
+#elif (defined(KW43B43ZC7_SERIES))
+int MU0_IRQHandler(void)
+{
+    mu_isr(MU0_MUA);
+    return 0;
+}
+#elif (defined(KW43B43ZC7_NBU_SERIES))
+int MU0_IRQHandler(void)
+{
+    mu_isr(MU0_MUB);
     return 0;
 }
 #elif defined(FSL_FEATURE_MU_SIDE_A)
