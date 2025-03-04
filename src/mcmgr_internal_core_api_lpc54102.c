@@ -138,7 +138,7 @@ mcmgr_core_t mcmgr_get_current_core_internal(void)
 #endif
 }
 
-mcmgr_status_t mcmgr_trigger_event_internal(uint32_t remoteData, bool forcedWrite)
+mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, uint32_t remoteData, bool forcedWrite)
 {
 #if defined(FSL_FEATURE_MAILBOX_SIDE_A)
     mailbox_cpu_id_t cpu_id = kMAILBOX_CM0Plus;
@@ -188,7 +188,7 @@ void MAILBOX_IRQHandler(void)
             if (MCMGR_eventTable[(mcmgr_event_type_t)eventType].callback != ((void *)0))
             {
                 MCMGR_eventTable[(mcmgr_event_type_t)eventType].callback(
-                    eventData, MCMGR_eventTable[(mcmgr_event_type_t)eventType].callbackData);
+                    coreNum, eventData, MCMGR_eventTable[(mcmgr_event_type_t)eventType].callbackData);
             }
         }
     }

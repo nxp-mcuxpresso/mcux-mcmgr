@@ -142,7 +142,7 @@ mcmgr_status_t mcmgr_get_core_property_internal(mcmgr_core_t coreNum,
     return kStatus_MCMGR_NotImplemented;
 }
 
-mcmgr_status_t mcmgr_trigger_event_internal(uint32_t remoteData, bool forcedWrite)
+mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, uint32_t remoteData, bool forcedWrite)
 {
     int32_t ret;
     mcmgr_status_t status = kStatus_MCMGR_Error;
@@ -203,7 +203,7 @@ void mcmgr_mu_channel_handler(void)
                 if (MCMGR_eventTable[(mcmgr_event_type_t)eventType].callback != ((void *)0))
                 {
                     MCMGR_eventTable[(mcmgr_event_type_t)eventType].callback(
-                        eventData, MCMGR_eventTable[(mcmgr_event_type_t)eventType].callbackData);
+                        coreNum, eventData, MCMGR_eventTable[(mcmgr_event_type_t)eventType].callbackData);
                 }
             }
         }

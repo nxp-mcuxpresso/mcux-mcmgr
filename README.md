@@ -71,17 +71,21 @@ Code for the primary side:
 #include "mcmgr.h"
 
 #define APP_RPMSG_READY_EVENT_DATA  (1)
-
-uint16_t RPMsgRemoteReadyEventData = 0;
+#define APP_NUMBER_OF_CORES (2)
+#define APP_SECONDARY_CORE kMCMGR_Core1
 
 /* Callback function registered via the MCMGR_RegisterEvent() and triggered by MCMGR_TriggerEvent() called on the secondary core side */
-void RPMsgRemoteReadyEventHandler(uint16_t eventData, void *context)
-{
-    RPMsgRemoteReadyEventData = eventData;
+void RPMsgRemoteReadyEventHandler(uint16_t eventData, void *context, mcmgr_core_t coreNum)
+{   
+    uint16_t *data = &((uint16_t *)context)[coreNum];
+
+    *data = eventData;
 }
 
 void main()
 {
+    uint16_t RPMsgRemoteReadyEventData[NUMBER_OF_CORES] = {0};
+
     /* Initialize MCMGR - low level multicore management library.
        Call this function as close to the reset entry as possible,
        (into the startup sequence) to allow CoreUp event triggering. */
@@ -91,13 +95,13 @@ void main()
     MCMGR_Init();
 
     /* Register the application event before starting the secondary core */
-    MCMGR_RegisterEvent(kMCMGR_RemoteApplicationEvent, RPMsgRemoteReadyEventHandler, NULL);
+    MCMGR_RegisterEvent(kMCMGR_RemoteApplicationEvent, RPMsgRemoteReadyEventHandler, (void *)RPMsgRemoteReadyEventData);
 
     /* Boot secondary core application from the CORE1_BOOT_ADDRESS, pass rpmsg_lite_base address as startup data, starting synchronously. */
-    MCMGR_StartCore(kMCMGR_Core1, CORE1_BOOT_ADDRESS, (uint32_t)rpmsg_lite_base, kMCMGR_Start_Synchronous);
+    MCMGR_StartCore(APP_SECONDARY_CORE, CORE1_BOOT_ADDRESS, (uint32_t)rpmsg_lite_base, kMCMGR_Start_Synchronous);
 
     /* Wait until the secondary core application signals the rpmsg remote has been initialized and is ready to communicate. */
-    while(APP_RPMSG_READY_EVENT_DATA != RPMsgRemoteReadyEventData) {};
+    while(APP_RPMSG_READY_EVENT_DATA != RPMsgRemoteReadyEventData[APP_SECONDARY_CORE]) {};
 .
 .
 .
@@ -125,7 +129,7 @@ void main()
 .
 
     /* Signal the to other core that we are ready by triggering the event and passing the APP_RPMSG_READY_EVENT_DATA */
-    MCMGR_TriggerEvent(kMCMGR_RemoteApplicationEvent, APP_RPMSG_READY_EVENT_DATA);
+    MCMGR_TriggerEvent(kMCMGR_RemoteApplicationEvent, APP_RPMSG_READY_EVENT_DATA, kMCMGR_Core0);
 .
 .
 .

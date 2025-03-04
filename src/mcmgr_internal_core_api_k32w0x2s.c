@@ -266,7 +266,7 @@ mcmgr_core_t mcmgr_get_current_core_internal(void)
     return (mcmgr_core_t)MSCM->CPXNUM;
 }
 
-mcmgr_status_t mcmgr_trigger_event_internal(uint32_t remoteData, bool forcedWrite)
+mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, uint32_t remoteData, bool forcedWrite)
 {
     /* When forcedWrite is false, execute the blocking call, i.e. wait until previously
        sent data is processed. Otherwise, run the non-blocking version of the MU send function. */
@@ -323,7 +323,7 @@ void mcmgr_mu_channel_handler(void)
             if (MCMGR_eventTable[(mcmgr_event_type_t)eventType].callback != ((void *)0))
             {
                 MCMGR_eventTable[(mcmgr_event_type_t)eventType].callback(
-                    eventData, MCMGR_eventTable[(mcmgr_event_type_t)eventType].callbackData);
+                    coreNum, eventData, MCMGR_eventTable[(mcmgr_event_type_t)eventType].callbackData);
             }
         }
     }

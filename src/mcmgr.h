@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2014-2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2024 NXP
+ * Copyright 2016-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -108,7 +108,7 @@ typedef enum _mcmgr_event_type_t
 } mcmgr_event_type_t;
 
 /*! @brief Type definition of event callback function pointer. */
-typedef void (*mcmgr_event_callback_t)(uint16_t data, void *context);
+typedef void (*mcmgr_event_callback_t)(uint16_t data, void *context, mcmgr_core_t coreNum);
 
 /*! @brief Set to 1 to enable exception handling. */
 #ifndef MCMGR_HANDLE_EXCEPTIONS
@@ -175,11 +175,12 @@ mcmgr_status_t MCMGR_StartCore(mcmgr_core_t coreNum, void *bootAddress, uint32_t
  * This function read startup data provided by the master core.
  * Use only on the slave core during the startup.
  *
+ * @param[in] coreNum Enum of the core from which to get statup data.
  * @param[out] startupData Data to read by this function.
  *
  * @return kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure.
  */
-mcmgr_status_t MCMGR_GetStartupData(uint32_t *startupData);
+mcmgr_status_t MCMGR_GetStartupData(mcmgr_core_t coreNum, uint32_t *startupData);
 
 /*!
  * @brief Stop a selected core
@@ -256,12 +257,13 @@ mcmgr_status_t MCMGR_RegisterEvent(mcmgr_event_type_t type, mcmgr_event_callback
  * This function triggers an event handler
  * on the remote core.
  *
+ * @param[in] coreNum Enum of core to be triggered.
  * @param[in] type Type of the event.
  * @param[in] eventData Data to send to remote core.
  *
  * @return kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure.
  */
-mcmgr_status_t MCMGR_TriggerEvent(mcmgr_event_type_t type, uint16_t eventData);
+mcmgr_status_t MCMGR_TriggerEvent(mcmgr_core_t coreNum, mcmgr_event_type_t type, uint16_t eventData);
 
 /*!
  * @brief Trigger event handler, force version
@@ -269,12 +271,13 @@ mcmgr_status_t MCMGR_TriggerEvent(mcmgr_event_type_t type, uint16_t eventData);
  * This function triggers an event handler
  * on the remote core, force version that does not check the consumption of previously sent data.
  *
+ * @param[in] coreNum Enum of core to be triggered.
  * @param[in] type Type of the event.
  * @param[in] eventData Data to send to remote core.
  *
  * @return kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure.
  */
-mcmgr_status_t MCMGR_TriggerEventForce(mcmgr_event_type_t type, uint16_t eventData);
+mcmgr_status_t MCMGR_TriggerEventForce(mcmgr_core_t coreNum, mcmgr_event_type_t type, uint16_t eventData);
 
 /*!
  * @brief Process RX data in deffered rx task.

@@ -5,7 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [Unreleased][Unreleased]
+
+### Added
+
+- Added support to handle more then two cores.  
+  Breaking API change by adding parameter `coreNum` specifying core number in functions bellow.
+  * MCMGR_GetStartupData(uint32_t *startupData, mcmgr_core_t coreNum)
+  * MCMGR_TriggerEvent(mcmgr_event_type_t type, uint16_t eventData, mcmgr_core_t coreNum)
+  * MCMGR_TriggerEventForce(mcmgr_event_type_t type, uint16_t eventData, mcmgr_core_t coreNum)
+  * typedef void (*mcmgr_event_callback_t)(uint16_t data, void *context, mcmgr_core_t coreNum);
+    
+  When registering the event with function `MCMGR_RegisterEvent()` user now needs to
+  provide `callbackData` pointer to array of elements per every core in system (see README.md for example).  
+  In case of systems with only two cores the `coreNum` in callback can be ignored as events can arrive only from one core.
 
 ### Added
 
@@ -15,8 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- `mcmgr_stop_core_internal()` function now returns `kStatus_MCMGR_NotImplemented` status code instead  
-  of `kStatus_MCMGR_Success` when device does not support stop of secondary core.  
+- `mcmgr_stop_core_internal()` function now returns `kStatus_MCMGR_NotImplemented` status code instead
+  of `kStatus_MCMGR_Success` when device does not support stop of secondary core.
   Ports affected: `kw32w1`, `kw45b41`, `kw45b42`, `mcxw716`, `mcxw727`.
 
 ## [v4.1.6]
