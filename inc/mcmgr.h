@@ -11,6 +11,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "mcmgr_platform.h"
+
 /*!
  * @addtogroup mcmgr
  * @{

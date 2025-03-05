@@ -11,6 +11,7 @@
 #include "fsl_imu.h"
 #include "mcmgr_imu_internal.h"
 
+
 #if defined(IMU_CPU_INDEX) && (IMU_CPU_INDEX == 1U)
 #define IMU_LINK kIMU_LinkCpu1Cpu2
 #elif defined(IMU_CPU_INDEX) && (IMU_CPU_INDEX == 2U)

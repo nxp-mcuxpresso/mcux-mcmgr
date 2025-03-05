@@ -10,6 +10,7 @@
 #include "fsl_mu.h"
 #include "board.h"
 
+
 #if (defined(MIMXRT735S_cm33_core0_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) || \
      defined(MIMXRT798S_cm33_core0_SERIES) || defined(MIMXRT735S_cm33_core1_SERIES) || \
      defined(MIMXRT758S_cm33_core1_SERIES) || defined(MIMXRT798S_cm33_core1_SERIES) \
@@ -32,15 +33,6 @@ extern void MU2_A_IRQHandler(void *arg);
 extern void MU3_B_IRQHandler(void *arg);
 extern void MU0_B_IRQHandler(void *arg);
 #endif
-
-/* Count of cores in the system */
-#define MCMGR_CORECOUNT 4
-
-/* Count of memory regions in the system */
-#define MCMGR_MEMREGCOUNT 2
-
-/* MCMGR MU channel index - used for passing startupData */
-#define MCMGR_MU_CHANNEL 3
 
 /* MU TR/RR $MCMGR_MU_CHANNEL is managed by MCMGR */
 #define MU_RX_ISR_Handler(x)     MU_RX_ISR(x)

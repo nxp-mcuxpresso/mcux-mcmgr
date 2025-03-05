@@ -11,11 +11,6 @@
 #include "fsl_device_registers.h"
 #include "fsl_mailbox.h"
 
-/* Count of cores in the system */
-#define MCMGR_CORECOUNT 2
-
-/* Count of memory regions in the system */
-#define MCMGR_MEMREGCOUNT 2
 
 volatile mcmgr_core_context_t s_mcmgrCoresContext[MCMGR_CORECOUNT] = {
     {.state = kMCMGR_ResetCoreState, .startupData = 0}, {.state = kMCMGR_ResetCoreState, .startupData = 0}};

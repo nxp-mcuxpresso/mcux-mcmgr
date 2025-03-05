@@ -11,14 +11,6 @@
 #include "fsl_device_registers.h"
 #include "fsl_mu.h"
 
-/* Count of cores in the system */
-#define MCMGR_CORECOUNT 2
-
-/* Count of memory regions in the system */
-#define MCMGR_MEMREGCOUNT 2
-
-/* MCMGR MU channel index - used for passing startupData */
-#define MCMGR_MU_CHANNEL 3
 
 /* MU TR/RR $MCMGR_MU_CHANNEL is managed by MCMGR */
 #define MU_RX_ISR_Handler(x)     MU_RX_ISR(x)

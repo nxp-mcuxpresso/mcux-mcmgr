@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   When registering the event with function `MCMGR_RegisterEvent()` user now needs to
   provide `callbackData` pointer to array of elements per every core in system (see README.md for example).  
   In case of systems with only two cores the `coreNum` in callback can be ignored as events can arrive only from one core.
+- Added new platform specific include file `mcmgr_platform.h`.  
+  It will contain common platform specific macros that can be then used in `mcmgr` and application.  
+  e.g. platform core count `MCMGR_CORECOUNT 4`.
+
 
 ### Added
 

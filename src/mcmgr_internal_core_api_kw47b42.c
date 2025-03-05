@@ -15,14 +15,6 @@
 #elif defined(IMU_CPU_INDEX) && (IMU_CPU_INDEX == 2U)
 #define IMU_LINK kIMU_LinkCpu2Cpu1
 #endif
-/* Count of cores in the system */
-#define MCMGR_CORECOUNT 2
-
-/* Count of memory regions in the system */
-#define MCMGR_MEMREGCOUNT 2
-
-/* MCMGR MU channel index - used for passing startupData */
-#define MCMGR_IMU_CHANNEL 1
 
 #define IMU_RX_ISR_Handler(x)    IMU_RX_ISR(x)
 #define IMU_RX_ISR(number)       MU_RxFullFlagISR
