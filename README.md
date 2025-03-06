@@ -75,8 +75,8 @@ Code for the primary side:
 #define APP_SECONDARY_CORE kMCMGR_Core1
 
 /* Callback function registered via the MCMGR_RegisterEvent() and triggered by MCMGR_TriggerEvent() called on the secondary core side */
-void RPMsgRemoteReadyEventHandler(uint16_t eventData, void *context, mcmgr_core_t coreNum)
-{   
+void RPMsgRemoteReadyEventHandler(mcmgr_core_t coreNum, uint16_t eventData, void *context)
+{
     uint16_t *data = &((uint16_t *)context)[coreNum];
 
     *data = eventData;
@@ -129,7 +129,7 @@ void main()
 .
 
     /* Signal the to other core that we are ready by triggering the event and passing the APP_RPMSG_READY_EVENT_DATA */
-    MCMGR_TriggerEvent(kMCMGR_RemoteApplicationEvent, APP_RPMSG_READY_EVENT_DATA, kMCMGR_Core0);
+    MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteApplicationEvent, APP_RPMSG_READY_EVENT_DATA);
 .
 .
 .

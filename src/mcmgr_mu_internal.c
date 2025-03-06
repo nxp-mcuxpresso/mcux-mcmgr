@@ -1,7 +1,6 @@
 /*
  * Copyright 2017-2025 NXP
  *
- *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -84,7 +83,7 @@ static void mu_isr(MU_Type *base, mcmgr_core_t coreNum)
         if (MCMGR_eventTable[kMCMGR_RemoteCoreDownEvent].callback != ((void *)0))
         {
             MCMGR_eventTable[kMCMGR_RemoteCoreDownEvent].callback(
-                0, MCMGR_eventTable[kMCMGR_RemoteCoreDownEvent].callbackData);
+                coreNum, 0, MCMGR_eventTable[kMCMGR_RemoteCoreDownEvent].callbackData);
         }
         return;
     }
@@ -226,51 +225,51 @@ void MU0_B_IRQHandler(void *arg)
 #elif (defined(KW43B43ZC7_SERIES))
 int MU0_IRQHandler(void)
 {
-    mu_isr(MU0_MUA, kMCMGR_Core0);
+    mu_isr(MU0_MUA, kMCMGR_Core1);
     return 0;
 }
 #elif (defined(KW43B43ZC7_NBU_SERIES))
 int MU0_IRQHandler(void)
 {
-    mu_isr(MU0_MUB, kMCMGR_Core1);
+    mu_isr(MU0_MUB, kMCMGR_Core0);
     return 0;
 }
 #elif (defined(MCXL255_cm33_SERIES))
 int MU_A_TX_IRQHandler(void)
 {
-    mu_isr(MUA);
+    mu_isr(MUA, kMCMGR_Core1);
     return 0;
 }
 int MU_A_RX_IRQHandler(void)
 {
-    mu_isr(MUA);
+    mu_isr(MUA, kMCMGR_Core1);
     return 0;
 }
 int MU_A_INT_IRQHandler(void)
 {
-    mu_isr(MUA);
+    mu_isr(MUA, kMCMGR_Core1);
     return 0;
 }
 #elif (defined(MCXL255_cm0plus_SERIES))
 int MU_B_TX_IRQHandler(void)
 {
-    mu_isr(MUB);
+    mu_isr(MUB, kMCMGR_Core0);
     return 0;
 }
 int MU_B_RX_IRQHandler(void)
 {
-    mu_isr(MUB);
+    mu_isr(MUB, kMCMGR_Core0);
     return 0;
 }
 int MU_B_INT_IRQHandler(void)
 {
-    mu_isr(MUB);
+    mu_isr(MUB, kMCMGR_Core0);
     return 0;
 }
 #elif defined(FSL_FEATURE_MU_SIDE_A)
 int MUA_IRQHandler(void)
 {
-    mu_isr(MUA, kMCMGR_Core0);
+    mu_isr(MUA, kMCMGR_Core1);
     /* ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
      * exception return operation might vector to incorrect interrupt.
      * For Cortex-M7, if core speed much faster than peripheral register write speed,
@@ -284,7 +283,7 @@ int MUA_IRQHandler(void)
 #elif defined(FSL_FEATURE_MU_SIDE_B)
 int MUB_IRQHandler(void)
 {
-    mu_isr(MUB, kMCMGR_Core1);
+    mu_isr(MUB, kMCMGR_Core0);
     /* ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
      * exception return operation might vector to incorrect interrupt.
      * For Cortex-M7, if core speed much faster than peripheral register write speed,

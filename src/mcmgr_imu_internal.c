@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2024 NXP
+ * Copyright 2020-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -23,14 +23,14 @@
 /* Weak MU ISR stubs */
 /* implement these in your application to override */
 
-void MU_TxEmptyFlagISR(void);
-void MU_RxFullFlagISR(void);
+void MU_TxEmptyFlagISR(mcmgr_core_t coreNum);
+void MU_RxFullFlagISR(mcmgr_core_t coreNum);
 
-__attribute__((weak)) void MU_TxEmptyFlagISR(void){};
-__attribute__((weak)) void MU_RxFullFlagISR(void){};
+__attribute__((weak)) void MU_TxEmptyFlagISR(mcmgr_core_t coreNum){};
+__attribute__((weak)) void MU_RxFullFlagISR(mcmgr_core_t coreNum){};
 
 /* MU ISR router */
-static void imu_rx_isr(void)
+static void imu_rx_isr(mcmgr_core_t coreNum)
 {
     mcmgr_imu_remote_active_req();
 #if (defined(MCMGR_DEFERRED_CALLBACK_ALLOWED) && (MCMGR_DEFERRED_CALLBACK_ALLOWED == 1U))
@@ -38,7 +38,7 @@ static void imu_rx_isr(void)
     mcmgr_imu_deferred_call(1U);
 #else
     IMU_ClearPendingInterrupts(IMU_LINK, IMU_MSG_FIFO_CNTL_MSG_RDY_INT_CLR_MASK);
-    MU_RxFullFlagISR();
+    MU_RxFullFlagISR(coreNum);
 #endif
     /* Need to release active request only after IMU interrupt clearing */
     mcmgr_imu_remote_active_rel();
@@ -47,7 +47,7 @@ static void imu_rx_isr(void)
 #if defined(IMU_CPU_INDEX) && (IMU_CPU_INDEX == 1U)
 int32_t RF_IMU0_IRQHandler(void)
 {
-    imu_rx_isr();
+    imu_rx_isr(kMCMGR_Core1);
     SDK_ISR_EXIT_BARRIER;
     return 0;
 }
@@ -56,7 +56,7 @@ int32_t RF_IMU0_IRQHandler(void)
 #if defined(IMU_CPU_INDEX) && (IMU_CPU_INDEX == 2U)
 int32_t CPU2_MSG_RDY_INT_IRQHandler(void)
 {
-    imu_rx_isr();
+    imu_rx_isr(kMCMGR_Core0);
     SDK_ISR_EXIT_BARRIER;
     return 0;
 }

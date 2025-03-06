@@ -110,7 +110,7 @@ typedef enum _mcmgr_event_type_t
 } mcmgr_event_type_t;
 
 /*! @brief Type definition of event callback function pointer. */
-typedef void (*mcmgr_event_callback_t)(uint16_t data, void *context, mcmgr_core_t coreNum);
+typedef void (*mcmgr_event_callback_t)(mcmgr_core_t coreNum, uint16_t data, void *context);
 
 /*! @brief Set to 1 to enable exception handling. */
 #ifndef MCMGR_HANDLE_EXCEPTIONS

@@ -9,20 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added support to handle more then two cores.  
-  Breaking API change by adding parameter `coreNum` specifying core number in functions bellow.
+- Added support to handle more then two cores. Breaking API change by adding parameter `coreNum` specifying core number in functions bellow.
+
   * MCMGR_GetStartupData(uint32_t *startupData, mcmgr_core_t coreNum)
   * MCMGR_TriggerEvent(mcmgr_event_type_t type, uint16_t eventData, mcmgr_core_t coreNum)
   * MCMGR_TriggerEventForce(mcmgr_event_type_t type, uint16_t eventData, mcmgr_core_t coreNum)
   * typedef void (*mcmgr_event_callback_t)(uint16_t data, void *context, mcmgr_core_t coreNum);
-    
-  When registering the event with function `MCMGR_RegisterEvent()` user now needs to
-  provide `callbackData` pointer to array of elements per every core in system (see README.md for example).  
-  In case of systems with only two cores the `coreNum` in callback can be ignored as events can arrive only from one core.
-- Added new platform specific include file `mcmgr_platform.h`.  
-  It will contain common platform specific macros that can be then used in `mcmgr` and application.  
-  e.g. platform core count `MCMGR_CORECOUNT 4`.
 
+  When registering the event with function `MCMGR_RegisterEvent()` user now needs to
+  provide `callbackData` pointer to array of elements per every core in system (see README.md for example).In case of systems with only two cores the `coreNum` in callback can be ignored as events can arrive only from one core.
+  Please see Porting guide for more details: [PortingGuideTo_v5.md](doxygen/porting_guide_to_v5.md)
+- Updated all porting files to support new MCMGR API.
+- Added new platform specific include file `mcmgr_platform.h`.
+  It will contain common platform specific macros that can be then used in `mcmgr` and application.
+  e.g. platform core count `MCMGR_CORECOUNT 4`.
+- Move all header files to new `inc` directory.
+- Added new platform-specific include files `inc/platform/<platform_name>/mcmgr_platform.h`.
 
 ### Added
 

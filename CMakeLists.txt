@@ -11,7 +11,7 @@ if (CONFIG_MCUX_COMPONENT_middleware.multicore.mcmgr)
 
     mcux_add_source(
         SOURCES inc/mcmgr.h
-                src/mcmgr_internal_core_api.h
+                inc/mcmgr_internal_core_api.h
                 src/mcmgr.c
     )
 
@@ -100,7 +100,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.multicore.mcmgr.k32w1)
             SOURCES src/mcmgr_internal_core_api_k32w1.c
                     src/mcmgr_internal_core_api_k32w1_ext.c
                     src/mcmgr_imu_internal.c
-                    src/mcmgr_imu_internal.h
+                    inc/mcmgr_imu_internal.h
     )
 
     mcux_add_include(
@@ -117,7 +117,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.multicore.mcmgr.kw45b41)
             SOURCES src/mcmgr_internal_core_api_kw45b41.c
                     src/mcmgr_internal_core_api_kw45b41_ext.c
                     src/mcmgr_imu_internal.c
-                    src/mcmgr_imu_internal.h
+                    inc/mcmgr_imu_internal.h
     )
 
     mcux_add_include(
@@ -134,7 +134,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.multicore.mcmgr.kw47b42)
             SOURCES src/mcmgr_internal_core_api_kw47b42.c
                     src/mcmgr_internal_core_api_kw47b42_ext.c
                     src/mcmgr_imu_internal.c
-                    src/mcmgr_imu_internal.h
+                    inc/mcmgr_imu_internal.h
     )
 
     mcux_add_include(
@@ -215,7 +215,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.multicore.mcmgr.mcxw716)
             SOURCES src/mcmgr_internal_core_api_mcxw716.c
                     src/mcmgr_internal_core_api_mcxw716_ext.c
                     src/mcmgr_imu_internal.c
-                    src/mcmgr_imu_internal.h
+                    inc/mcmgr_imu_internal.h
     )
 
     mcux_add_include(
@@ -232,7 +232,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.multicore.mcmgr.mcxw727)
             SOURCES src/mcmgr_internal_core_api_mcxw727.c
                     src/mcmgr_internal_core_api_mcxw727_ext.c
                     src/mcmgr_imu_internal.c
-                    src/mcmgr_imu_internal.h
+                    inc/mcmgr_imu_internal.h
     )
 
     mcux_add_include(

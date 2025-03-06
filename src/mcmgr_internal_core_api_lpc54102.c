@@ -1,8 +1,6 @@
 /*
  * Copyright (c) 2014-2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2023 NXP
- * All rights reserved.
- *
+ * Copyright 2016-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -12,6 +10,15 @@
 #include "fsl_device_registers.h"
 #include "fsl_mailbox.h"
 
+
+/* At start make decision for what core mcmgr is build for at the compile time */
+#if (defined(FSL_FEATURE_MAILBOX_SIDE_A))
+#define MCMGR_BUILD_FOR_CORE_0
+#elif (defined(FSL_FEATURE_MAILBOX_SIDE_B))
+#define MCMGR_BUILD_FOR_CORE_1
+#else
+#error "Building for not supported platform!"
+#endif
 
 volatile mcmgr_core_context_t s_mcmgrCoresContext[MCMGR_CORECOUNT] = {
     {.state = kMCMGR_ResetCoreState, .startupData = 0}, {.state = kMCMGR_ResetCoreState, .startupData = 0}};
@@ -34,14 +41,18 @@ mcmgr_status_t mcmgr_early_init_internal(mcmgr_core_t coreNum)
         MAILBOX_Init(MAILBOX);
 
         /* Trigger core up event here, core is starting! */
-        return MCMGR_TriggerEvent(kMCMGR_RemoteCoreUpEvent, 0);
+#if (defined(MCMGR_BUILD_FOR_CORE_0))
+        return MCMGR_TriggerEvent(kMCMGR_Core1, kMCMGR_RemoteCoreUpEvent, 0);
+#else
+        return MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0);
+#endif
     }
     return kStatus_MCMGR_Error;
 }
 
 mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
 {
-#if defined(FSL_FEATURE_MAILBOX_SIDE_A)
+#if defined(MCMGR_BUILD_FOR_CORE_0)
     NVIC_SetPriority(MAILBOX_IRQn, 5);
 #else
     NVIC_SetPriority(MAILBOX_IRQn, 2);
@@ -126,7 +137,7 @@ mcmgr_status_t mcmgr_get_core_property_internal(mcmgr_core_t coreNum,
 
 mcmgr_core_t mcmgr_get_current_core_internal(void)
 {
-#if defined(FSL_FEATURE_MAILBOX_SIDE_A)
+#if defined(MCMGR_BUILD_FOR_CORE_0)
     return kMCMGR_Core0;
 #else
     return kMCMGR_Core1;
@@ -135,7 +146,9 @@ mcmgr_core_t mcmgr_get_current_core_internal(void)
 
 mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, uint32_t remoteData, bool forcedWrite)
 {
-#if defined(FSL_FEATURE_MAILBOX_SIDE_A)
+    (void)coreNum; /* Unused. */
+
+#if defined(MCMGR_BUILD_FOR_CORE_0)
     mailbox_cpu_id_t cpu_id = kMAILBOX_CM0Plus;
 #else
     mailbox_cpu_id_t cpu_id = kMAILBOX_CM4;
@@ -159,10 +172,12 @@ mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, uint32_t remot
  */
 void MAILBOX_IRQHandler(void)
 {
-#if defined(FSL_FEATURE_MAILBOX_SIDE_A)
+#if defined(MCMGR_BUILD_FOR_CORE_0)
     mailbox_cpu_id_t cpu_id = kMAILBOX_CM4;
+    mcmgr_core_t coreNum = kMCMGR_Core1; /* This is core from which irq arrived. */
 #else
     mailbox_cpu_id_t cpu_id = kMAILBOX_CM0Plus;
+    mcmgr_core_t coreNum = kMCMGR_Core0;
 #endif
     uint32_t data;
     uint16_t eventType;
@@ -202,8 +217,17 @@ void MAILBOX_IRQHandler(void)
 /* This overrides the weak DefaultISR implementation from startup file */
 void DefaultISR(void)
 {
+    mcmgr_core_t target_core;
     uint32_t exceptionNumber = __get_IPSR();
-    (void)MCMGR_TriggerEvent(kMCMGR_RemoteExceptionEvent, (uint16_t)exceptionNumber);
+
+    /* Select what core to trigger in case of exception */
+#if defined(FSL_FEATURE_MU_SIDE_A)
+    target_core = kMCMGR_Core1;
+#elif defined(FSL_FEATURE_MU_SIDE_B)
+    target_core = kMCMGR_Core0;
+#endif
+
+    (void)MCMGR_TriggerEvent(target_core, kMCMGR_RemoteExceptionEvent, (uint16_t)exceptionNumber);
     for (;;)
     {
     } /* stop here */

@@ -15,6 +15,6 @@
 #define MCMGR_MEMREGCOUNT 2
 
 /* MCMGR MU channel index - used for passing startupData */
-#define MCMGR_MU_CHANNEL 3
+#define MCMGR_IMU_CHANNEL 1
 
 #endif /* MCMGR_PLATFORM_H_ */

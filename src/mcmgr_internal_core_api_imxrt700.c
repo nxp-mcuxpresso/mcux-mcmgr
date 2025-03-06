@@ -10,18 +10,26 @@
 #include "fsl_mu.h"
 #include "board.h"
 
-
+/* At start make decision for what core mcmgr is build for at the compile time */
 #if (defined(MIMXRT735S_cm33_core0_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) || \
-     defined(MIMXRT798S_cm33_core0_SERIES) || defined(MIMXRT735S_cm33_core1_SERIES) || \
-     defined(MIMXRT758S_cm33_core1_SERIES) || defined(MIMXRT798S_cm33_core1_SERIES) \
-    )
+     defined(MIMXRT798S_cm33_core0_SERIES))
+#define MCMGR_BUILD_FOR_CORE_0
+#elif (defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core1_SERIES) || \
+       defined(MIMXRT798S_cm33_core1_SERIES))
+#define MCMGR_BUILD_FOR_CORE_1
+#elif (defined(MIMXRT735S_hifi4_SERIES) || defined(MIMXRT758S_hifi4_SERIES) || defined(MIMXRT798S_hifi4_SERIES))
+#define MCMGR_BUILD_FOR_CORE_2
+#elif (defined(MIMXRT735S_hifi1_SERIES) || defined(MIMXRT758S_hifi1_SERIES) || defined(MIMXRT798S_hifi1_SERIES))
+#define MCMGR_BUILD_FOR_CORE_3
+#else
+#error "Building for not supported platform!"
+#endif
+
+#if (defined(MCMGR_BUILD_FOR_CORE_0) || defined(MCMGR_BUILD_FOR_CORE_1))
 #include "dsp_support.h"
 #endif
 
-#if (defined(MIMXRT735S_hifi4_SERIES) || defined(MIMXRT758S_hifi4_SERIES) || \
-     defined(MIMXRT798S_hifi4_SERIES) || defined(MIMXRT735S_hifi1_SERIES) || \
-     defined(MIMXRT758S_hifi1_SERIES) || defined(MIMXRT798S_hifi1_SERIES) \
-    )
+#if (defined(MCMGR_BUILD_FOR_CORE_2) || defined(MCMGR_BUILD_FOR_CORE_3))
 #include <xtensa/xos.h>
 #include "fsl_inputmux.h"
 
@@ -79,93 +87,89 @@ mcmgr_status_t mcmgr_early_init_internal(mcmgr_core_t coreNum)
 
     mcmgr_status_t ret = kStatus_MCMGR_Success;
 
-#if (defined(MIMXRT735S_cm33_core0_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) || \
-     defined(MIMXRT798S_cm33_core0_SERIES))
+#if (defined(MCMGR_BUILD_FOR_CORE_0))
     if (coreNum == kMCMGR_Core0)
     {
         /* CPU0 to CPU1 communication case */
         init_mu(MU1_MUA);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_RemoteCoreUpEvent, 0, kMCMGR_Core1);
+        ret = MCMGR_TriggerEvent(kMCMGR_Core1, kMCMGR_RemoteCoreUpEvent, 0);
 
         /* CPU0 to HiFi4 communication case */
         init_mu(MU4_MUA);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_RemoteCoreUpEvent, 0, kMCMGR_Core2);
+        ret = MCMGR_TriggerEvent(kMCMGR_Core2, kMCMGR_RemoteCoreUpEvent, 0);
 
         /* CPU0 to HiFi1 communication case */
         init_mu(MU0_MUA);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_RemoteCoreUpEvent, 0, kMCMGR_Core3);
+        ret = MCMGR_TriggerEvent(kMCMGR_Core3, kMCMGR_RemoteCoreUpEvent, 0);
     }
     else
     {
         ret = kStatus_MCMGR_Error;
     }
-#elif (defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core1_SERIES) || \
-       defined(MIMXRT798S_cm33_core1_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_1))
     if (coreNum == kMCMGR_Core1)
     {
         /* CPU1 to HiFi1 communication case */
         init_mu(MU3_MUA);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_RemoteCoreUpEvent, 0, kMCMGR_Core3);
+        ret = MCMGR_TriggerEvent(kMCMGR_Core3, kMCMGR_RemoteCoreUpEvent, 0);
 
         /* CPU1 to CPU0 communication case */
         init_mu(MU1_MUB);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_RemoteCoreUpEvent, 0, kMCMGR_Core0);
+        ret = MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0);
 
         /* CPU1 to Hifi4 communication case */
         init_mu(MU2_MUB);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_RemoteCoreUpEvent, 0, kMCMGR_Core2);
+        ret = MCMGR_TriggerEvent(kMCMGR_Core2, kMCMGR_RemoteCoreUpEvent, 0);
     }
     else
     {
         ret = kStatus_MCMGR_Error;
     }
-#elif (defined(MIMXRT735S_hifi4_SERIES) || defined(MIMXRT758S_hifi4_SERIES) || \
-       defined(MIMXRT798S_hifi4_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_2))
     if (coreNum == kMCMGR_Core2)
     {
         /* HiFi4 to CPU0 communication case */
         init_mu(MU4_MUB);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_RemoteCoreUpEvent, 0, kMCMGR_Core0);
+        ret = MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0);
 
         /* HiFi4 to CPU1 communication case */
         init_mu(MU2_MUA);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_RemoteCoreUpEvent, 0, kMCMGR_Core0);
+        ret = MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0);
     }
     else
     {
         ret = kStatus_MCMGR_Error;
     }
-#elif (defined(MIMXRT735S_hifi1_SERIES) || defined(MIMXRT758S_hifi1_SERIES) || \
-       defined(MIMXRT798S_hifi1_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_3))
     if (coreNum == kMCMGR_Core3)
     {
         /* HiFi1 to CPU0 communication case */
         init_mu(MU0_MUB);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_RemoteCoreUpEvent, 0, kMCMGR_Core0);
+        ret = MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0);
 
         /* HiFi1 to CPU1 communication case */
         init_mu(MU3_MUB);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_RemoteCoreUpEvent, 0, kMCMGR_Core1);
+        ret = MCMGR_TriggerEvent(kMCMGR_Core1, kMCMGR_RemoteCoreUpEvent, 0);
     }
     else
     {
@@ -177,8 +181,7 @@ mcmgr_status_t mcmgr_early_init_internal(mcmgr_core_t coreNum)
 
 mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
 {
-#if (defined(MIMXRT735S_cm33_core0_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) || \
-     defined(MIMXRT798S_cm33_core0_SERIES))
+#if (defined(MCMGR_BUILD_FOR_CORE_0))
     if (coreNum == kMCMGR_Core0)
     {
         /* CPU0 to CPU1 communication case */
@@ -218,8 +221,7 @@ mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
     {
         return kStatus_MCMGR_Error;
     }
-#elif (defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core1_SERIES) || \
-       defined(MIMXRT798S_cm33_core1_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_1))
     if (coreNum == kMCMGR_Core1)
     {
         /* CPU1 to HiFi1 communication case */
@@ -259,8 +261,7 @@ mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
     {
         return kStatus_MCMGR_Error;
     }
-#elif (defined(MIMXRT735S_hifi4_SERIES) || defined(MIMXRT758S_hifi4_SERIES) || \
-       defined(MIMXRT798S_hifi4_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_2))
     if (coreNum == kMCMGR_Core2)
     {
         /* HiFi4 to CPU0 communication case */
@@ -294,8 +295,7 @@ mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
     {
         return kStatus_MCMGR_Error;
     }
-#elif (defined(MIMXRT735S_hifi1_SERIES) || defined(MIMXRT758S_hifi1_SERIES) || \
-       defined(MIMXRT798S_hifi1_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_3))
     if (coreNum == kMCMGR_Core3)
     {
         /* HiFi1 to CPU0 communication case */
@@ -340,8 +340,7 @@ mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress
     {
         return kStatus_MCMGR_Error;
     }
-#if (defined(MIMXRT735S_cm33_core0_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) || \
-     defined(MIMXRT798S_cm33_core0_SERIES))
+#if (defined(MCMGR_BUILD_FOR_CORE_0))
     if (coreNum == kMCMGR_Core1)
     {
         /* CPU0 to CPU1 communication case */
@@ -367,14 +366,12 @@ mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress
     {
         /* CPU0 to HiFi4 communication case */
         BOARD_DSP_Init();
-        // SYSCON0->DSPSTALL = 0x0;
     }
     else
     {
         return kStatus_MCMGR_Error;
     }
-#elif (defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core1_SERIES) || \
-       defined(MIMXRT798S_cm33_core1_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_1))
     if (coreNum == kMCMGR_Core3)
     {
         /* CPU1 to HiFi1 communication case */
@@ -433,15 +430,13 @@ mcmgr_status_t mcmgr_get_core_property_internal(mcmgr_core_t coreNum,
 
 mcmgr_core_t mcmgr_get_current_core_internal(void)
 {
-#if (defined(MIMXRT735S_cm33_core0_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) || \
-     defined(MIMXRT798S_cm33_core0_SERIES))
+#if (defined(MCMGR_BUILD_FOR_CORE_0))
     return kMCMGR_Core0;
-#elif (defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core1_SERIES) || \
-       defined(MIMXRT798S_cm33_core1_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_1))
     return kMCMGR_Core1;
-#elif (defined(MIMXRT735S_hifi4_SERIES) || defined(MIMXRT758S_hifi4_SERIES) || defined(MIMXRT798S_hifi4_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_2))
     return kMCMGR_Core2;
-#elif (defined(MIMXRT735S_hifi1_SERIES) || defined(MIMXRT758S_hifi1_SERIES) || defined(MIMXRT798S_hifi1_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_3))
     return kMCMGR_Core3;
 #endif
 }
@@ -458,70 +453,60 @@ mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, uint32_t remot
 
     switch (coreNum) {
     case kMCMGR_Core0:
-#if (defined(MIMXRT735S_cm33_core0_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) || \
-     defined(MIMXRT798S_cm33_core0_SERIES))
+#if (defined(MCMGR_BUILD_FOR_CORE_0))
         /* Not supported, core cannot trigger itself */
         /* Keeping this empty intentionally as reference */
-#elif (defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core1_SERIES) || \
-       defined(MIMXRT798S_cm33_core1_SERIES))
+        mu = NULL;
+#elif (defined(MCMGR_BUILD_FOR_CORE_1))
         mu = MU1_MUB;
-#elif (defined(MIMXRT735S_hifi1_SERIES) || defined(MIMXRT758S_hifi1_SERIES) || \
-       defined(MIMXRT798S_hifi1_SERIES))
-        mu = MU0_MUB;
-#elif (defined(MIMXRT735S_hifi4_SERIES) || defined(MIMXRT758S_hifi4_SERIES) || \
-       defined(MIMXRT798S_hifi4_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_2))
         mu = MU4_MUB;
+#elif (defined(MCMGR_BUILD_FOR_CORE_3))
+        mu = MU0_MUB;
 #endif
         break;
 
     case kMCMGR_Core1:
-#if (defined(MIMXRT735S_cm33_core0_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) || \
-     defined(MIMXRT798S_cm33_core0_SERIES))
+#if (defined(MCMGR_BUILD_FOR_CORE_0))
         mu = MU1_MUA;
-#elif (defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core1_SERIES) || \
-       defined(MIMXRT798S_cm33_core1_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_1))
         /* Not supported, core cannot trigger itself */
         /* Keeping this empty intentionally as reference */
-#elif (defined(MIMXRT735S_hifi1_SERIES) || defined(MIMXRT758S_hifi1_SERIES) || \
-       defined(MIMXRT798S_hifi1_SERIES))
-        mu = MU3_MUB;
-#elif (defined(MIMXRT735S_hifi4_SERIES) || defined(MIMXRT758S_hifi4_SERIES) || \
-       defined(MIMXRT798S_hifi4_SERIES))
+        mu = NULL;
+#elif (defined(MCMGR_BUILD_FOR_CORE_2))
         mu = MU2_MUA;
+#elif (defined(MCMGR_BUILD_FOR_CORE_3))
+        mu = MU3_MUB;
 #endif
         break;
 
     case kMCMGR_Core2:
-#if (defined(MIMXRT735S_cm33_core0_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) || \
-     defined(MIMXRT798S_cm33_core0_SERIES))
+#if (defined(MCMGR_BUILD_FOR_CORE_0))
         mu = MU4_MUA;
-#elif (defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core1_SERIES) || \
-       defined(MIMXRT798S_cm33_core1_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_1))
         mu = MU2_MUB;
-#elif (defined(MIMXRT735S_hifi1_SERIES) || defined(MIMXRT758S_hifi1_SERIES) || \
-       defined(MIMXRT798S_hifi1_SERIES))
-        /* Not supported, core cannot trigger hifi4 */
-#elif (defined(MIMXRT735S_hifi4_SERIES) || defined(MIMXRT758S_hifi4_SERIES) || \
-       defined(MIMXRT798S_hifi4_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_2))
         /* Not supported, core cannot trigger itself */
         /* Keeping this empty intentionally as reference */
+        mu = NULL;
+#elif (defined(MCMGR_BUILD_FOR_CORE_3))
+        /* Not supported, core cannot trigger hifi4 */
+        mu = NULL;
 #endif
         break;
 
     case kMCMGR_Core3:
-#if (defined(MIMXRT735S_cm33_core0_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) || \
-     defined(MIMXRT798S_cm33_core0_SERIES))
+#if (defined(MCMGR_BUILD_FOR_CORE_0))
         mu = MU0_MUA;
-#elif (defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core1_SERIES) || \
-       defined(MIMXRT798S_cm33_core1_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_1))
         mu = MU3_MUA;
-#elif (defined(MIMXRT735S_hifi1_SERIES) || defined(MIMXRT758S_hifi1_SERIES) || \
-       defined(MIMXRT798S_hifi1_SERIES))
+#elif (defined(MCMGR_BUILD_FOR_CORE_2))
+        /* Not supported, core cannot trigger hifi1 */
+        mu = NULL;
+#elif (defined(MCMGR_BUILD_FOR_CORE_3))
         /* Not supported, core cannot trigger itself */
         /* Keeping this empty intentionally as reference */
-#elif (defined(MIMXRT735S_hifi4_SERIES) || defined(MIMXRT758S_hifi4_SERIES) || \
-       defined(MIMXRT798S_hifi4_SERIES))
-        /* Not supported, core cannot trigger hifi1 */
+        mu = NULL;
 #endif
         break;
 
@@ -584,9 +569,9 @@ void mcmgr_mu_channel_handler(MU_Type *base, mcmgr_core_t coreNum)
     if (MCMGR_eventTable[(mcmgr_event_type_t)eventType].callback != ((void *)0))
     {
         MCMGR_eventTable[(mcmgr_event_type_t)eventType].callback(
+            coreNum,
             eventData,
-            MCMGR_eventTable[(mcmgr_event_type_t)eventType].callbackData,
-            coreNum);
+            MCMGR_eventTable[(mcmgr_event_type_t)eventType].callbackData);
     }
 }
 
@@ -594,8 +579,20 @@ void mcmgr_mu_channel_handler(MU_Type *base, mcmgr_core_t coreNum)
 /* This overrides the weak DefaultISR implementation from startup file */
 void DefaultISR(void)
 {
+    mcmgr_core_t target_core;
+    /* Select what core to trigger in case of exception */
+#if (defined(MCMGR_BUILD_FOR_CORE_0))
+    target_core = kMCMGR_Core1;
+#elif (defined(MCMGR_BUILD_FOR_CORE_1))
+    target_core = kMCMGR_Core0;
+#elif (defined(MCMGR_BUILD_FOR_CORE_2))
+    target_core = kMCMGR_Core0;
+#elif (defined(MCMGR_BUILD_FOR_CORE_3))
+    target_core = kMCMGR_Core0;
+#endif
+
     uint32_t exceptionNumber = __get_IPSR();
-    (void)MCMGR_TriggerEvent(kMCMGR_RemoteExceptionEvent, (uint16_t)exceptionNumber);
+    (void)MCMGR_TriggerEvent(target_core, kMCMGR_RemoteExceptionEvent, (uint16_t)exceptionNumber);
     for (;;)
     {
     } /* stop here */
