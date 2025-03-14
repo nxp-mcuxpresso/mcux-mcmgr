@@ -111,7 +111,7 @@ mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress
     {
         return kStatus_MCMGR_Error;
     }
-    
+
 #if defined(KW43B43ZC7_SERIES)
     GlikeyWriteEnable(GLIKEY, 0U);
 #endif
@@ -125,8 +125,14 @@ mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress
     *((uint32_t *)0x5019fd00) = 0x00000000;
 #endif
 
-    SECCON->CPU1_CTRL = (uint32_t)(char *)bootAddress; 
- 
+    /* the FPGA ROM code makes the NBU boot from RAM and run a while(1) loop
+     * so we need to put it in reset before changing the boot address to make
+     * sure it will boot from the address we want it to */
+    SECCON->CPU1_RESET_CTRL = 0xA;
+    __DSB();
+
+    SECCON->CPU1_CTRL = (uint32_t)(char *)bootAddress;
+
     SYSCON->CPU1_WAIT = 0;
 
 #if defined(KW43B43ZC7_SERIES)
@@ -141,8 +147,8 @@ mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress
     *((uint32_t *)0x5019fd04) = 0x00280000;
     *((uint32_t *)0x5019fd00) = 0x00000000;
 #endif
- 
-  
+
+
     /* release CPU1 reset */
     SECCON->CPU1_RESET_CTRL = 0;
     /* pd_infra MRCC clk teal1 */
