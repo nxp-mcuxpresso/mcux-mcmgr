@@ -12,6 +12,8 @@ The Multicore Manager provides the following major functions:
 - Secondary/auxiliary core(s) startup and shutdown.
 - Remote core monitoring and event handling.
 
+For Further documentation, please look at doxygen documentation at: https://nxp-mcuxpresso.github.io/mcux-mcmgr/
+
 ## Usage of the MCMGR software component {#usage}
 
 The main use case of MCMGR is the secondary/auxiliary core start. This functionality is performed by the public API function.
