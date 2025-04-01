@@ -2,14 +2,14 @@ var group__mcmgr =
 [
     [ "MCMGR_DEFERRED_CALLBACK_ALLOWED", "group__mcmgr.html#ga678b367777e008f342967e6b091c3614", null ],
     [ "MCMGR_HANDLE_EXCEPTIONS", "group__mcmgr.html#ga5abd2254543ed537e35c9d5c5721d216", null ],
-    [ "mcmgr_core_property_t", "group__mcmgr.html#ga8f1bf3fd703cc893f2f25268027049f0", null ],
-    [ "mcmgr_core_status_t", "group__mcmgr.html#gace62a1a59ea2e0bba2308b85dd3d3490", null ],
-    [ "mcmgr_core_t", "group__mcmgr.html#gab4840600877ad51744dde7c8b640ef0d", null ],
-    [ "mcmgr_core_type_t", "group__mcmgr.html#gac8ed540d496c628b11acf68ef7f48d25", null ],
+    [ "mcmgr_core_property_t", "group__mcmgr.html#ga7198108f5e3c9eb6739662dd170a2791", null ],
+    [ "mcmgr_core_status_t", "group__mcmgr.html#ga0b191736437ecaaa970aef458184f672", null ],
+    [ "mcmgr_core_t", "group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d", null ],
+    [ "mcmgr_core_type_t", "group__mcmgr.html#ga16dce5ff4fc9aa51a6e0188f90a51691", null ],
     [ "mcmgr_event_callback_t", "group__mcmgr.html#gaab2d241f462fd7d5139ba39e82018cd4", null ],
-    [ "mcmgr_event_type_t", "group__mcmgr.html#ga907277b8a1b6df123a089fe93ddc1ab4", null ],
-    [ "mcmgr_start_mode_t", "group__mcmgr.html#ga47859f00295b5f0859d7e2968c020520", null ],
-    [ "mcmgr_status_t", "group__mcmgr.html#ga5139c4bfe5a3107c1d0a37d488ba7ed2", null ],
+    [ "mcmgr_event_type_t", "group__mcmgr.html#ga1307b1de876154b7b9c986cbaffd067a", null ],
+    [ "mcmgr_start_mode_t", "group__mcmgr.html#ga214ff3137404f7aa33601fc75fd32d52", null ],
+    [ "mcmgr_status_t", "group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec", null ],
     [ "_mcmgr_core", "group__mcmgr.html#ga04ccbddec3c91482490e57e53afbeb6f", [
       [ "kMCMGR_Core0", "group__mcmgr.html#gga04ccbddec3c91482490e57e53afbeb6fa3254afb69346be6f9167ffcf771de620", null ],
       [ "kMCMGR_Core1", "group__mcmgr.html#gga04ccbddec3c91482490e57e53afbeb6fae5ff151633b4ee4b9dc9e0825675ecc1", null ]
