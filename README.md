@@ -1,8 +1,25 @@
-# Multicore Manager (MCMGR) {#mainpage}
+# MCUXpresso SDK : mcuxsdk-middleware-mcmgr (Multicore Manager)
+
+## Overview
+This repository is for MCUXpresso SDK Multicore Manager middleware delivery and it contains Multicore Manager component officially provided in NXP MCUXpresso SDK. This repository is part of the MCUXpresso SDK overall delivery which is composed of several sub-repositories/projects. Navigate to the top/parent repository [mcuxsdk](https://github.com/nxp-mcuxpresso/mcuxsdk-manifests/) for the complete delivery of MCUXpresso SDK to be able to build and run Multicore Manager examples that are based on mcux-sdk-middleware-mcmgr component.
+
+## Documentation
+Overall details can be reviewed here: [MCUXpresso SDK Online Documentation](https://mcuxpresso.nxp.com/mcuxsdk/latest/html/introduction/README.html)
+
+Visit [Multicore Manager - Documentation](https://mcuxpresso.nxp.com/mcuxsdk/latest/html/middleware/multicore/mcmgr/README.html) to review details on the contents in this sub-repo.
+
+## Setup
+Instructions on how to install the MCUXpresso SDK provided from GitHub via west manifest [Getting Started with SDK - Detailed Installation Instructions](https://mcuxpresso.nxp.com/mcuxsdk/latest/html/gsd/installation.html#installation)
+
+## Contribution
+We welcome and encourage the community to submit patches directly to the mcmgr project placed on github. Contributing can be managed via pull-requests. Before a pull-request is created the code should be tested and properly formatted.
+
+---------------------------------
+# Multicore Manager (MCMGR)
 
 The Multicore Manager (MCMGR) software library provides a number of services for multicore systems. This library is distributed as a part of the Multicore SDK (MCSDK). Together, the MCSDK and the MCUXpresso SDK (SDK) form a framework for development of software for NXP multicore devices.
 
-The MCMGR component is located in the &lt;MCUXpressoSDK_install_dir&gt;/middleware/multicore/mcmgr directory.
+The MCMGR component is located in the `<MCUXpressoSDK_install_dir>/middleware/multicore/mcmgr` directory.
 
 ![](./doxygen/mcsdk.png)
 
@@ -12,7 +29,7 @@ The Multicore Manager provides the following major functions:
 - Secondary/auxiliary core(s) startup and shutdown.
 - Remote core monitoring and event handling.
 
-## Usage of the MCMGR software component {#usage}
+## Usage of the MCMGR software component
 
 The main use case of MCMGR is the secondary/auxiliary core start. This functionality is performed by the public API function.
 
@@ -115,7 +132,7 @@ void main()
 }
 ```
 
-## MCMGR Data Exchange Diagram {#data_exchange_diagram}
+## MCMGR Data Exchange Diagram
 
 The following picture shows how the handshakes are supposed to work between the two cores in the MCMGR software.
 
