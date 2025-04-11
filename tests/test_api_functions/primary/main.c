@@ -171,6 +171,10 @@ void mcmgr_test_start_core3()
 #if (defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
         (uint32_t)0x20500000, // SP
         (uint32_t)0x9,        // PC
+/* MCXL20 CM0+ core runs from RAM with aliased address, SP and PC need to be extra defined */
+#elif (defined(MCXL255_cm33_SERIES))
+        (uint32_t)0x00005000, // SP
+        (uint32_t)0x9,        // PC
 #else
         (uint32_t)TEST_ADDRESS + 0x100, // SP
         (uint32_t)BOOT_ADDRESS + 0x9,   // PC
@@ -249,7 +253,7 @@ void mcmgr_test_stop_core2()
 // really stopped, it should remain cleared.
 void mcmgr_test_stop_core3()
 {
-#if defined(CPU_MIMXRT1176DVMAA_cm7) || defined(CPU_MIMXRT1166DVM6A_cm7)
+#if defined(CPU_MIMXRT1176DVMAA_cm7) || defined(CPU_MIMXRT1166DVM6A_cm7) || defined(MCXL255_cm33_SERIES)
     mcmgr_status_t retVal = MCMGR_StopCore(kMCMGR_Core1);
     TEST_ASSERT(retVal == kStatus_MCMGR_NotImplemented);
 #else
@@ -353,11 +357,11 @@ int main(int argc, char **argv)
 #endif /* (defined(defined(MIMXRT1187_cm33_SERIES) ||  defined(MIMXRT1189_cm33_SERIES)) */
 
 #if !(defined(CPU_MIMXRT1176DVMAA_cm7) || defined(CPU_MIMXRT1166DVM6A_cm7) || defined(MIMXRT1187_cm33_SERIES) || \
-      defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES))
+    defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES) || defined(MCXL255_cm33_SERIES))
     RUN_EXAMPLE(mcmgr_test_stop_core1, MAKE_UNITY_NUM(k_unity_mcmgr, 9));
     RUN_EXAMPLE(mcmgr_test_stop_core2, MAKE_UNITY_NUM(k_unity_mcmgr, 10));
 #endif /* !(defined(CPU_MIMXRT1176DVMAA_cm7) || defined(CPU_MIMXRT1166DVM6A_cm7) || defined(MIMXRT1187_cm33_SERIES) || \
-          defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES)) */
+          defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES) || defined(MCXL255_cm33_SERIES)) */
 #if !(defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES))
     RUN_EXAMPLE(mcmgr_test_stop_core3, MAKE_UNITY_NUM(k_unity_mcmgr, 11));
 #endif /* !(defined(MIMXRT1187_cm33_SERIES) ||  defined(MIMXRT1189_cm33_SERIES) || \

@@ -4,14 +4,14 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
-test_sync_start_primary_core:
+test_api_functions_primary_core:
   use_sysbuild: true
   section-type: 'application'
   contents:
     meta_path: middleware/multicore/mcmgr/tests/test_api_functions/primary
     project-root-path: boards/${board}/middleware/multicore/mcmgr/tests/test_api_functions/${multicore_foldername}/
     document:
-      name: test_sync_start_primary_core
+      name: test_api_functions_primary_core
       category: multicore_tests
       brief: test_api_functions test suite
         - test_init_success
@@ -101,3 +101,4 @@ test_sync_start_primary_core:
     frdmk32l3a6@cm4: []
     kw47evk@cm33_core0: []
     kw47loc@cm33_core0: []
+    frdmmcxl255@cm33: []

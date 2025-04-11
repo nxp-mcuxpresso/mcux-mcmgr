@@ -26,6 +26,9 @@
 #define MU_RX_ISR_FLAG(number)   kMU_Rx##number##FullInterruptEnable
 #define mcmgr_mu_channel_flag    MU_RX_ISR_FLAG_Mask(MCMGR_MU_CHANNEL)
 
+/* MCMGR boot address of RAM */
+#define MCMGR_BOOT_ADDRESS_RAM (0xA1000000U)
+
 volatile mcmgr_core_context_t s_mcmgrCoresContext[MCMGR_CORECOUNT] = {
     {.state = kMCMGR_ResetCoreState, .startupData = 0}, {.state = kMCMGR_ResetCoreState, .startupData = 0}};
 
@@ -95,7 +98,7 @@ mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
 
 mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress)
 {
-    if ((coreNum != kMCMGR_Core1)) // || (bootAddress != (void *)(char *)0))
+    if ((coreNum != kMCMGR_Core1)  || (bootAddress != (void *)(char *)MCMGR_BOOT_ADDRESS_RAM))
     {
         return kStatus_MCMGR_Error;
     }
@@ -130,23 +133,8 @@ mcmgr_status_t mcmgr_get_startup_data_internal(mcmgr_core_t coreNum, uint32_t *s
 
 mcmgr_status_t mcmgr_stop_core_internal(mcmgr_core_t coreNum)
 {
-    if (coreNum != kMCMGR_Core1)
-    {
-        return kStatus_MCMGR_Error;
-    }
-#if defined(FSL_FEATURE_MU_SIDE_A)
-#if 0
-    if (0U == (MU_GetStatusFlags(MUA) & MU_SR_RDIP_MASK))
-    {
-        /* cannot stop already stopped core... */
-        return kStatus_MCMGR_Error;
-    }
-
-    MU_HardwareResetOtherCore(MUA, false, true, kMU_CoreBootFromDflashBase);
-#endif
-#endif
-    s_mcmgrCoresContext[coreNum].state = kMCMGR_ResetCoreState;
-    return kStatus_MCMGR_Success;
+    /* It is not allowed to stop the secondary core */
+    return kStatus_MCMGR_NotImplemented;
 }
 
 mcmgr_status_t mcmgr_get_core_property_internal(mcmgr_core_t coreNum,
@@ -250,6 +238,8 @@ void NMI_Handler(void)
     DefaultISR();
 }
 
+#if defined(__CORTEX_M) && (__CORTEX_M == (33U))
+/* Cortex-M33 contains additional exception handlers */
 void MemManage_Handler(void)
 {
     DefaultISR();
@@ -264,5 +254,6 @@ void UsageFault_Handler(void)
 {
     DefaultISR();
 }
+#endif
 
 #endif /* MCMGR_HANDLE_EXCEPTIONS */
