@@ -208,6 +208,14 @@ if(CONFIG_MCUX_COMPONENT_middleware.multicore.mcmgr.mcxl20)
             SOURCES src/mcmgr_internal_core_api_mcxl20.c
                     src/mcmgr_mu_internal.c
             )
+
+            mcux_add_include(
+                INCLUDES inc/platform/mcxl20/
+            )
+        
+            mcux_add_source(
+                SOURCES inc/platform/mcxl20/mcmgr_platform.h
+            )
 endif()
 
 if(CONFIG_MCUX_COMPONENT_middleware.multicore.mcmgr.mcxw716)

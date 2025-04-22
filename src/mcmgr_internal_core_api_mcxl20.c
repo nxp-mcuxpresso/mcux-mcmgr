@@ -9,14 +9,14 @@
 #include "fsl_device_registers.h"
 #include "fsl_mu.h"
 
-/* Count of cores in the system */
-#define MCMGR_CORECOUNT 2
-
-/* Count of memory regions in the system */
-#define MCMGR_MEMREGCOUNT 2
-
-/* MCMGR MU channel index - used for passing startupData */
-#define MCMGR_MU_CHANNEL 3
+/* At start make decision for what core mcmgr is build for at the compile time */
+#if (defined(FSL_FEATURE_MU_SIDE_A))
+#define MCMGR_BUILD_FOR_CORE_0
+#elif (defined(FSL_FEATURE_MU_SIDE_B))
+#define MCMGR_BUILD_FOR_CORE_1
+#else
+#error "Building for not supported platform!"
+#endif
 
 /* MU TR/RR $MCMGR_MU_CHANNEL is managed by MCMGR */
 #define MU_RX_ISR_Handler(x)     MU_RX_ISR(x)
@@ -45,17 +45,21 @@ mcmgr_status_t mcmgr_early_init_internal(mcmgr_core_t coreNum)
     /* This function is intended to be called as close to the reset entry as possible,
        (within the startup sequence in SystemInitHook) to allow CoreUp event triggering.
        Avoid using uninitialized data here. */
+       mcmgr_core_t target_core;
+
     switch (coreNum)
     {
         case kMCMGR_Core0:
 /* MUA clk enable */
-#if defined(FSL_FEATURE_MU_SIDE_A)
+#if defined(MCMGR_BUILD_FOR_CORE_0)
+            target_core = kMCMGR_Core1;
             MU_Init(MUA);
             MU_ResetBothSides(MUA);
 #endif
             break;
         case kMCMGR_Core1:
-#if defined(FSL_FEATURE_MU_SIDE_B)
+#if defined(MCMGR_BUILD_FOR_CORE_1)
+            target_core = kMCMGR_Core0;
             MU_Init(MUB);
 #endif
             break;
@@ -64,12 +68,12 @@ mcmgr_status_t mcmgr_early_init_internal(mcmgr_core_t coreNum)
     }
 
     /* Trigger core up event here, core is starting! */
-    return MCMGR_TriggerEvent(kMCMGR_RemoteCoreUpEvent, 0);
+    return MCMGR_TriggerEvent(target_core, kMCMGR_RemoteCoreUpEvent, 0);
 }
 
 mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
 {
-#if defined(FSL_FEATURE_MU_SIDE_A)
+#if defined(MCMGR_BUILD_FOR_CORE_0)
     MU_EnableInterrupts(MUA, (uint32_t)mcmgr_mu_channel_flag);
 
 #if (defined(FSL_FEATURE_MU_HAS_RESET_ASSERT_INT) && FSL_FEATURE_MU_HAS_RESET_ASSERT_INT)
@@ -80,7 +84,7 @@ mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
 
     NVIC_EnableIRQ(MU_A_RX_IRQn);
 
-#elif defined(FSL_FEATURE_MU_SIDE_B)
+#elif defined(MCMGR_BUILD_FOR_CORE_1)
     MU_EnableInterrupts(MUB, (uint32_t)mcmgr_mu_channel_flag);
 
 #if (defined(FSL_FEATURE_MU_HAS_RESET_ASSERT_INT) && FSL_FEATURE_MU_HAS_RESET_ASSERT_INT)
@@ -102,7 +106,7 @@ mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress
     {
         return kStatus_MCMGR_Error;
     }
-#if defined(FSL_FEATURE_MU_SIDE_A)
+#if defined(MCMGR_BUILD_FOR_CORE_0)
     AON__CGU->PER_CLK_EN = 0x7fe7;
     AON__CGU->RST_SUB_BLK |= CGU_RST_SUB_BLK_CMOP_RST_REL_MASK;
 #endif
@@ -147,32 +151,35 @@ mcmgr_status_t mcmgr_get_core_property_internal(mcmgr_core_t coreNum,
 
 mcmgr_core_t mcmgr_get_current_core_internal(void)
 {
-#if defined(FSL_FEATURE_MU_SIDE_A)
+#if defined(MCMGR_BUILD_FOR_CORE_0)
     return kMCMGR_Core0;
-#elif defined(FSL_FEATURE_MU_SIDE_B)
+#elif defined(MCMGR_BUILD_FOR_CORE_1)
     return kMCMGR_Core1;
 #endif
 }
 
-mcmgr_status_t mcmgr_trigger_event_internal(uint32_t remoteData, bool forcedWrite)
+mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, uint32_t remoteData, bool forcedWrite)
 {
+    /* Can be unused for two core platform. ifdefs are selecting core to trigger. */
+    (void)coreNum;
+
     /* When forcedWrite is false, execute the blocking call, i.e. wait until previously
        sent data is processed. Otherwise, run the non-blocking version of the MU send function. */
     if (false == forcedWrite)
     {
         /* This is a blocking call */
-#if defined(FSL_FEATURE_MU_SIDE_A)
+#if defined(MCMGR_BUILD_FOR_CORE_0)
         MU_SendMsg(MUA, MCMGR_MU_CHANNEL, remoteData);
-#elif defined(FSL_FEATURE_MU_SIDE_B)
+#elif defined(MCMGR_BUILD_FOR_CORE_1)
         MU_SendMsg(MUB, MCMGR_MU_CHANNEL, remoteData);
 #endif
     }
     else
     {
         /* This is a non-blocking call */
-#if defined(FSL_FEATURE_MU_SIDE_A)
+#if defined(MCMGR_BUILD_FOR_CORE_0)
         MU_SendMsgNonBlocking(MUA, MCMGR_MU_CHANNEL, remoteData);
-#elif defined(FSL_FEATURE_MU_SIDE_B)
+#elif defined(MCMGR_BUILD_FOR_CORE_1)
         MU_SendMsgNonBlocking(MUB, MCMGR_MU_CHANNEL, remoteData);
 #endif
     }
@@ -184,7 +191,7 @@ mcmgr_status_t mcmgr_trigger_event_internal(uint32_t remoteData, bool forcedWrit
  *
  * This function is called when data from MU is received
  */
-void mcmgr_mu_channel_handler(void)
+void mcmgr_mu_channel_handler(MU_Type *base, mcmgr_core_t coreNum)
 {
     uint32_t data;
     uint16_t eventType;
@@ -193,11 +200,7 @@ void mcmgr_mu_channel_handler(void)
     /* Non-blocking version of the receive function needs to be called here to avoid
        deadlock in ISR. The RX register must contain the payload now because the RX flag/event
        has been identified before reaching this point (mcmgr_mu_channel_handler function). */
-#if defined(FSL_FEATURE_MU_SIDE_A)
-    data = MU_ReceiveMsgNonBlocking(MUA, MCMGR_MU_CHANNEL);
-#elif defined(FSL_FEATURE_MU_SIDE_B)
-    data = MU_ReceiveMsgNonBlocking(MUB, MCMGR_MU_CHANNEL);
-#endif
+    data = MU_ReceiveMsgNonBlocking(base, MCMGR_MU_CHANNEL);
 
     /* To be MISRA compliant, return value needs to be checked even it could not never be 0 */
     if (0U != data)
@@ -211,7 +214,7 @@ void mcmgr_mu_channel_handler(void)
             if (MCMGR_eventTable[(mcmgr_event_type_t)eventType].callback != ((void *)0))
             {
                 MCMGR_eventTable[(mcmgr_event_type_t)eventType].callback(
-                    eventData, MCMGR_eventTable[(mcmgr_event_type_t)eventType].callbackData);
+                    coreNum, eventData, MCMGR_eventTable[(mcmgr_event_type_t)eventType].callbackData);
             }
         }
     }
@@ -221,8 +224,17 @@ void mcmgr_mu_channel_handler(void)
 /* This overrides the weak DefaultISR implementation from startup file */
 void DefaultISR(void)
 {
+    mcmgr_core_t target_core;
     uint32_t exceptionNumber = __get_IPSR();
-    (void)MCMGR_TriggerEvent(kMCMGR_RemoteExceptionEvent, (uint16_t)exceptionNumber);
+
+    /* Select what core to trigger in case of exception */
+#if defined(MCMGR_BUILD_FOR_CORE_0)
+    target_core = kMCMGR_Core1;
+#else
+    target_core = kMCMGR_Core0;
+#endif
+
+    (void)MCMGR_TriggerEvent(target_core, kMCMGR_RemoteExceptionEvent, (uint16_t)exceptionNumber);
     for (;;)
     {
     } /* stop here */
