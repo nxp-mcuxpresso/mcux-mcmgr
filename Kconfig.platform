@@ -36,7 +36,7 @@ config MCUX_COMPONENT_middleware.multicore.mcmgr.imxrt1180
     default y
     select MCUX_COMPONENT_driver.mu1
     depends on MCUX_HW_DEVICE_MIMXRT1187 || MCUX_HW_DEVICE_MIMXRT1189 || \
-               MCUX_HW_DEVICE_MIMXRT1189A
+               MCUX_HW_DEVICE_MIMXRT1189A || MCUX_HW_DEVICE_MIMXRT1186
     help
         "Multicore Manger Porting Layer for i.MX RT1180"
 

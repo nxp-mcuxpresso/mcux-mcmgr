@@ -41,7 +41,8 @@ __attribute__((weak)) void MU_GenInt2FlagISR(MU_Type *base, mcmgr_core_t coreNum
 __attribute__((weak)) void MU_GenInt1FlagISR(MU_Type *base, mcmgr_core_t coreNum){};
 __attribute__((weak)) void MU_GenInt0FlagISR(MU_Type *base, mcmgr_core_t coreNum){};
 
-#if (defined(MIMXRT1187_cm7_SERIES) || defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm7_SERIES) || \
+#if (defined(MIMXRT1186_cm7_SERIES) || defined(MIMXRT1186_cm33_SERIES) ||                                   \
+     defined(MIMXRT1187_cm7_SERIES) || defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm7_SERIES) || \
      defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT735S_cm33_core0_SERIES) ||                            \
      defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) ||                      \
      defined(MIMXRT758S_cm33_core1_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES) ||                      \
@@ -93,7 +94,8 @@ static void mu_isr(MU_Type *base, mcmgr_core_t coreNum)
 
     /* Start with Transmit Empty status flags, these are all set after the reset so do not call callback unless
        the respective Transmit Interrupt Enable flag in the CR/TCR register is set. */
-#if (defined(MIMXRT1187_cm7_SERIES) || defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm7_SERIES) || \
+#if (defined(MIMXRT1186_cm7_SERIES) || defined(MIMXRT1186_cm33_SERIES) ||                                   \
+     defined(MIMXRT1187_cm7_SERIES) || defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm7_SERIES) || \
      defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT735S_cm33_core0_SERIES) ||                            \
      defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) ||                      \
      defined(MIMXRT758S_cm33_core1_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES) ||                      \
@@ -135,13 +137,13 @@ static void mu_isr(MU_Type *base, mcmgr_core_t coreNum)
     }
 }
 
-#if (defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
+#if (defined(MIMXRT1186_cm33_SERIES) || defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
 int MU1_IRQHandler(void)
 {
     mu_isr(MU1_MUA, kMCMGR_Core1);
     return 0;
 }
-#elif (defined(MIMXRT1187_cm7_SERIES) || defined(MIMXRT1189_cm7_SERIES))
+#elif (defined(MIMXRT1186_cm7_SERIES) || defined(MIMXRT1187_cm7_SERIES) || defined(MIMXRT1189_cm7_SERIES))
 int MU1_IRQHandler(void)
 {
     mu_isr(MU1_MUB, kMCMGR_Core0);
