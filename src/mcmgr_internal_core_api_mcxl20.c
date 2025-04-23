@@ -108,7 +108,7 @@ mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress
     }
 #if defined(MCMGR_BUILD_FOR_CORE_0)
     AON__CGU->PER_CLK_EN = 0x7fe7;
-    AON__CGU->RST_SUB_BLK |= CGU_RST_SUB_BLK_CMOP_RST_REL_MASK;
+    AON__CGU->RST_SUB_BLK |= CGU_RST_SUB_BLK_CM0P_RST_REL_MASK;
 #endif
     return kStatus_MCMGR_Success;
 }
