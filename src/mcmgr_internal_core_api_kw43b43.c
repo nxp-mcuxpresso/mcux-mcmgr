@@ -28,6 +28,12 @@
 #define MU_RX_ISR_FLAG(number)   kMU_Rx##number##FullInterruptEnable
 #define mcmgr_mu_channel_flag    MU_RX_ISR_FLAG_Mask(MCMGR_MU_CHANNEL)
 
+/* SYSCON authorize write */
+#define SYSCON_AUTH_PATTERN 0xaaaaaaaa
+
+/* SECCON unlock code */
+#define SECCON_UNLOCK_PATTERN 0xA
+
 volatile mcmgr_core_context_t s_mcmgrCoresContext[MCMGR_CORECOUNT] = {
     {.state = kMCMGR_ResetCoreState, .startupData = 0}, {.state = kMCMGR_ResetCoreState, .startupData = 0}};
 
@@ -119,49 +125,28 @@ mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress
 #if defined(KW43B43ZC7_SERIES)
     GlikeyWriteEnable(GLIKEY, 0U);
 #endif
-#if 0
-    *((uint32_t *)0x5019fd00) = 0x00060000;//clear bit18
-    *((uint32_t *)0x5019fd00) = 0x00020000;
-    *((uint32_t *)0x5019fd00) = 0x00010000;
-    *((uint32_t *)0x5019fd04) = 0x00290000;
-    *((uint32_t *)0x5019fd00) = 0x00020000;
-    *((uint32_t *)0x5019fd04) = 0x00280000;
-    *((uint32_t *)0x5019fd00) = 0x00000000;
-#endif
-
     /* the FPGA ROM code makes the NBU boot from RAM and run a while(1) loop
      * so we need to put it in reset before changing the boot address to make
      * sure it will boot from the address we want it to */
-    SECCON->CPU1_RESET_CTRL = 0xA;
-    __DSB();
+    SECCON->CPU1_RESET_CTRL = SECCON_CPU1_RESET_CTRL_CPU1_RESET(SECCON_UNLOCK_PATTERN) |
+                              SECCON_CPU1_RESET_CTRL_CPU1_CTRL_LOCK(SECCON_UNLOCK_PATTERN) |
+                              SECCON_CPU1_RESET_CTRL_CPU1_RESET_CTRL_LOCK(SECCON_UNLOCK_PATTERN);
 
     SECCON->CPU1_CTRL = (uint32_t)(char *)bootAddress;
-
-    SYSCON->CPU1_WAIT = 0;
-
+    SYSCON->AUTHENTICATE = SYSCON_AUTH_PATTERN;
+    SYSCON->CPU1_WAIT = 0U;
 #if defined(KW43B43ZC7_SERIES)
     GlikeyWriteEnable(GLIKEY, 0U);
 #endif
-#if 0
-    *((uint32_t *)0x5019fd00) = 0x00060000;//clear bit18
-    *((uint32_t *)0x5019fd00) = 0x00020000;
-    *((uint32_t *)0x5019fd00) = 0x00010000;
-    *((uint32_t *)0x5019fd04) = 0x00290000;
-    *((uint32_t *)0x5019fd00) = 0x00020000;
-    *((uint32_t *)0x5019fd04) = 0x00280000;
-    *((uint32_t *)0x5019fd00) = 0x00000000;
-#endif
-
 
     /* release CPU1 reset */
     SECCON->CPU1_RESET_CTRL = 0;
     /* pd_infra MRCC clk teal1 */
     SECCON->CPU1_DEBUG_EN_DP = SECCON_CPU1_DEBUG_EN_DP_CPU1_NIDEN(1) | SECCON_CPU1_DEBUG_EN_DP_CPU1_DBGEN(1);
+
     MRCC_0->MRCC_UTEAL_1_CLKSEL = MRCC_MRCC_UTEAL_1_CLKSEL_CC(1) | MRCC_MRCC_UTEAL_1_CLKSEL_RSTB(1) | MRCC_MRCC_UTEAL_1_CLKSEL_PR(1);
 
-    uint32_t wdata;
-    wdata = *((uint32_t *)0x501a3018)&0xdfffffff;
-    *((uint32_t *)0x501a3018) = wdata;
+    RFMC->RF2P4GHZ_CTRL &= ~RFMC_RF2P4GHZ_CTRL_CPU_RST_MASK;
 
     return kStatus_MCMGR_Success;
 }
