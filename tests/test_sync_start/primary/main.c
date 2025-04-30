@@ -91,7 +91,7 @@ static volatile int appEvent         = 0;
 static volatile int remoteCoreUpDone = 0;
 static int dummy                     = 0;
 
-void MCMGR_RemoteExceptionEventHandler(uint16_t remoteData, void *context)
+void MCMGR_RemoteExceptionEventHandler(mcmgr_core_t coreNum, uint16_t remoteData, void *context)
 {
     int *exceptionEvent = (int *)context;
     *exceptionEvent     = 1;
@@ -99,7 +99,7 @@ void MCMGR_RemoteExceptionEventHandler(uint16_t remoteData, void *context)
     TEST_ASSERT(remoteData == EXCEPTION_NUMBER);
 }
 
-void MCMGR_RemoteApplicationEventHandler(uint16_t remoteData, void *context)
+void MCMGR_RemoteApplicationEventHandler(mcmgr_core_t coreNum, uint16_t remoteData, void *context)
 {
     int *appEvent = (int *)context;
     *appEvent     = 1;
@@ -107,7 +107,7 @@ void MCMGR_RemoteApplicationEventHandler(uint16_t remoteData, void *context)
     TEST_ASSERT(remoteData == TEST_VALUE_16B);
 }
 
-void MCMGR_RemoteCoreUpEventHandler(uint16_t remoteData, void *context)
+void MCMGR_RemoteCoreUpEventHandler(mcmgr_core_t coreNum, uint16_t remoteData, void *context)
 {
     int *remoteCoreUpDone = (int *)context;
     *remoteCoreUpDone     = 1;
@@ -190,12 +190,12 @@ void mcmgr_test_start_register_trigger()
     TEST_ASSERT(val == TEST_VALUE);
 
     /* Trigger back an event */
-    retVal = MCMGR_TriggerEvent(kMCMGR_RemoteApplicationEvent, TEST_VALUE_16B);
+    retVal = MCMGR_TriggerEvent(kMCMGR_Core1, kMCMGR_RemoteApplicationEvent, TEST_VALUE_16B);
     // Did MCMGR_TriggerEvent function succeed?
     TEST_ASSERT(retVal == kStatus_MCMGR_Success);
 
     /* Trigger kMCMGR_RemoteRPMsgEvent that has no registerred callback on the remote side */
-    retVal = MCMGR_TriggerEvent(kMCMGR_RemoteRPMsgEvent, 0);
+    retVal = MCMGR_TriggerEvent(kMCMGR_Core1, kMCMGR_RemoteRPMsgEvent, 0);
     // Did MCMGR_TriggerEvent function succeed?
     TEST_ASSERT(retVal == kStatus_MCMGR_Success);
 }
@@ -204,12 +204,12 @@ void mcmgr_test_bad_args()
 {
     mcmgr_status_t retVal = kStatus_MCMGR_Error;
     /* Bad event number */
-    retVal = MCMGR_TriggerEvent((mcmgr_event_type_t)(kMCMGR_EventTableLength + 1), 123);
+    retVal = MCMGR_TriggerEvent(kMCMGR_Core1, (mcmgr_event_type_t)(kMCMGR_EventTableLength + 1), 123);
     // Did function succeed?
     TEST_ASSERT(retVal == kStatus_MCMGR_Error);
 
     /* Bad event number using MCMGR_TriggerEventForce() */
-    retVal = MCMGR_TriggerEventForce((mcmgr_event_type_t)(kMCMGR_EventTableLength + 1), 123);
+    retVal = MCMGR_TriggerEventForce(kMCMGR_Core1, (mcmgr_event_type_t)(kMCMGR_EventTableLength + 1), 123);
     // Did function succeed?
     TEST_ASSERT(retVal == kStatus_MCMGR_Error);
 
@@ -219,7 +219,7 @@ void mcmgr_test_bad_args()
     // IMU_LOCK_TX_FIFO(kIMU_LinkCpu1Cpu2);
     IMU_SendMsgsBlocking(kIMU_LinkCpu1Cpu2, &dummy, 1,
                          true); /* lockSendFifo param needs to be set to true to casue the TX lock */
-    retVal = MCMGR_TriggerEventForce(kMCMGR_RemoteApplicationEvent, 123);
+    retVal = MCMGR_TriggerEventForce(kMCMGR_Core1, kMCMGR_RemoteApplicationEvent, 123);
     // Did function succeed?
     TEST_ASSERT(retVal == kStatus_MCMGR_Error);
     IMU_UNLOCK_TX_FIFO(kIMU_LinkCpu1Cpu2);
@@ -244,7 +244,7 @@ void mcmgr_test_bad_args()
     // Did function succeed?
     TEST_ASSERT(retVal == kStatus_MCMGR_Error);
 
-    retVal = MCMGR_GetStartupData(NULL);
+    retVal = MCMGR_GetStartupData(kMCMGR_Core1, NULL);
     // Did function succeed?
     TEST_ASSERT(retVal == kStatus_MCMGR_Error);
 }
@@ -299,7 +299,7 @@ int main(void)
 #endif
 #endif /*__COVERAGESCANNER__*/
     /* Trigger the event on the secondary side to start code that causes hardfault */
-    MCMGR_TriggerEvent(kMCMGR_RemoteApplicationEvent, HARDFAULT_TRIGGER_EVENT);
+    MCMGR_TriggerEvent(kMCMGR_Core1, kMCMGR_RemoteApplicationEvent, HARDFAULT_TRIGGER_EVENT);
 
     CornBreakpointFunc();
     while (1)

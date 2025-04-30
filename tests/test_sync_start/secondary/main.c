@@ -26,7 +26,7 @@
  * Code
  ******************************************************************************/
 static volatile int appEvent = 0;
-void MCMGR_RemoteApplicationEventHandler(uint16_t remoteData, void *context)
+void MCMGR_RemoteApplicationEventHandler(mcmgr_core_t coreNum, uint16_t remoteData, void *context)
 {
    int* appEvent = (int*)context;
    *appEvent = remoteData;
@@ -55,10 +55,10 @@ void mcmgr_test_init_success_sec_core()
 
     /* Get the startup data */
     do{
-        status = MCMGR_GetStartupData(&startupData);
+        status = MCMGR_GetStartupData(kMCMGR_Core0, &startupData);
     }while(status != kStatus_MCMGR_Success);
 
-   
+
     // wait here, to make sure it is not a coincidence
     // the master core manages to read the TEST_VALUE.
     int i;
@@ -70,16 +70,16 @@ void mcmgr_test_init_success_sec_core()
     ((uint32_t *)startupData)[0] = TEST_VALUE;
 
     // Now, start function on master can return
-    // pass the TEST_VALUE_16B to the other side in the callback 
-    status = MCMGR_TriggerEvent(kMCMGR_RemoteApplicationEvent, TEST_VALUE_16B);
+    // pass the TEST_VALUE_16B to the other side in the callback
+    status = MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteApplicationEvent, TEST_VALUE_16B);
     TEST_ASSERT(status == kStatus_MCMGR_Success);
 }
 
 void mcmgr_test_bad_args_sec_core()
 {
     mcmgr_status_t retVal = kStatus_MCMGR_Success;
-    /* Testing bad args, to be added into unity */ 
-    retVal = MCMGR_GetStartupData(NULL);
+    /* Testing bad args, to be added into unity */
+    retVal = MCMGR_GetStartupData(kMCMGR_Core0, NULL);
     TEST_ASSERT(retVal == kStatus_MCMGR_Error);
 }
 
@@ -96,17 +96,17 @@ void run_tests(void *unused)
 int main(void)
 {
     int i = 0;
-    
+
     BOARD_InitHardware();
 
     UnityBegin();
     run_tests(NULL);
     UnityEnd();
-  
+
     // wait until the primary core notifies hardfault can be triggered
     while(HARDFAULT_TRIGGER_EVENT != appEvent);
 
-    // Now, trigger an exception here! Try to write to flash. 
+    // Now, trigger an exception here! Try to write to flash.
     *((uint32_t*)0xFFFFFFFF) = i;
 
     while (1)
