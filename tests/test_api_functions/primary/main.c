@@ -98,7 +98,7 @@ const uint32_t code[] __attribute__((section(".core1_code")))
         TEST_ADDRESS,         // test address where second core writes
         TEST_VALUE            // value second core writes
 #endif
-   
+
  };
 #endif
 
@@ -253,7 +253,7 @@ void mcmgr_test_stop_core2()
 // really stopped, it should remain cleared.
 void mcmgr_test_stop_core3()
 {
-#if defined(CPU_MIMXRT1176DVMAA_cm7) || defined(CPU_MIMXRT1166DVM6A_cm7) || defined(MCXL255_cm33_SERIES)
+#if defined(MIMXRT1176_cm7_SERIES) || defined(MIMXRT1166_cm7_SERIES) || defined(MCXL255_cm33_SERIES)
     mcmgr_status_t retVal = MCMGR_StopCore(kMCMGR_Core1);
     TEST_ASSERT(retVal == kStatus_MCMGR_NotImplemented);
 #else
@@ -356,11 +356,11 @@ int main(int argc, char **argv)
     RUN_EXAMPLE(mcmgr_test_get_ele_stat, MAKE_UNITY_NUM(k_unity_mcmgr, 8));
 #endif /* (defined(defined(MIMXRT1187_cm33_SERIES) ||  defined(MIMXRT1189_cm33_SERIES)) */
 
-#if !(defined(CPU_MIMXRT1176DVMAA_cm7) || defined(CPU_MIMXRT1166DVM6A_cm7) || defined(MIMXRT1187_cm33_SERIES) || \
+#if !(defined(MIMXRT1176_cm7_SERIES) || defined(MIMXRT1166_cm7_SERIES) || defined(MIMXRT1187_cm33_SERIES) || \
     defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES) || defined(MCXL255_cm33_SERIES))
     RUN_EXAMPLE(mcmgr_test_stop_core1, MAKE_UNITY_NUM(k_unity_mcmgr, 9));
     RUN_EXAMPLE(mcmgr_test_stop_core2, MAKE_UNITY_NUM(k_unity_mcmgr, 10));
-#endif /* !(defined(CPU_MIMXRT1176DVMAA_cm7) || defined(CPU_MIMXRT1166DVM6A_cm7) || defined(MIMXRT1187_cm33_SERIES) || \
+#endif /* !(defined(MIMXRT1176_cm7_SERIES) || defined(MIMXRT1166_cm7_SERIES) || defined(MIMXRT1187_cm33_SERIES) || \
           defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES) || defined(MCXL255_cm33_SERIES)) */
 #if !(defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES))
     RUN_EXAMPLE(mcmgr_test_stop_core3, MAKE_UNITY_NUM(k_unity_mcmgr, 11));

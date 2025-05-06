@@ -29,7 +29,7 @@
 
 // address of RAM, which is used to tests for read/write from both cores
 // this address should be from memory region defined by previous macros
-#if defined(CPU_MIMXRT1176DVMAA_cm7) || defined(CPU_MIMXRT1166DVM6A_cm7)
+#if defined(MIMXRT1176_cm7_SERIES) || defined(MIMXRT1166_cm7_SERIES)
 /* Because the RAM the secondary core runs from is not defined as non-cachable
    in rt1170/rt1160 platform, we have to use the start of shared memory instead for
    this platform. */
