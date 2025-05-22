@@ -123,6 +123,30 @@ typedef void (*mcmgr_event_callback_t)(mcmgr_core_t coreNum, uint16_t data, void
 #endif
 
 /*!
+ * @brief Maximum polling iterations for MCMGR waiting loops
+ *
+ * This parameter defines the maximum number of iterations for any polling loop
+ * in the MCMGR code before timing out and returning an error.
+ *
+ * It applies to all waiting loops in MCMGR, such as waiting for a core to start,
+ * waiting for a response from another core, or waiting for a resource to become
+ * available.
+ *
+ * This is a count of loop iterations, not a time-based value.
+ *
+ * If defined as 0, polling loops will continue indefinitely until their exit condition
+ * is met, which could potentially cause the system to hang if a core becomes
+ * unresponsive.
+ */
+#ifndef MCMGR_BUSY_POLL_COUNT
+    #ifdef CONFIG_MCMGR_BUSY_POLL_COUNT
+        #define MCMGR_BUSY_POLL_COUNT CONFIG_MCMGR_BUSY_POLL_COUNT
+    #else
+        #define MCMGR_BUSY_POLL_COUNT 0U
+    #endif
+#endif
+
+/*!
  * @brief Version of MCMGR
  *
  * Version 1.0.0, for version 1.2.3 it will be 0x00010203

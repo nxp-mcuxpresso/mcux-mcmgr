@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added `MCMGR_BUSY_POLL_COUNT` macro to prevent infinite polling loops in MCMGR operations.
+- Implemented timeout mechanism for all polling loops in MCMGR code.
 - Added support to handle more then two cores. Breaking API change by adding parameter `coreNum` specifying core number in functions bellow.
 
   * MCMGR_GetStartupData(uint32_t *startupData, mcmgr_core_t coreNum)

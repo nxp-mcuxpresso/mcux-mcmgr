@@ -13,4 +13,21 @@ if MCUX_COMPONENT_middleware.multicore.mcmgr
 
 rsource "./Kconfig.platform"
 
+    config MCMGR_BUSY_POLL_COUNT
+        int "Maximum polling iterations for MCMGR waiting loops (0 means poll indefinitely)"
+        default 0
+        help
+          This parameter defines the maximum number of iterations for any polling loop
+          in the MCMGR code before timing out and returning an error.
+
+          It applies to all waiting loops in MCMGR, such as waiting for a core to start,
+          waiting for a response from another core, or waiting for a resource to become
+          available.
+
+          This is a count of loop iterations, not a time-based value.
+
+          If set to 0, polling loops will continue indefinitely until their exit condition
+          is met, which could potentially cause the system to hang if a core becomes
+          unresponsive.
+
 endif
