@@ -217,7 +217,8 @@ void mcmgr_test_bad_args()
     /* Force IMU_SendMsgsBlocking() to return IMU_ERR_TX_FIFO_LOCKED error and consequently the
      * MCMGR_TriggerEventForce() error */
     // IMU_LOCK_TX_FIFO(kIMU_LinkCpu1Cpu2);
-    IMU_SendMsgsBlocking(kIMU_LinkCpu1Cpu2, &dummy, 1,
+    const uint32_t dummy_msg = 0;
+    IMU_SendMsgsBlocking(kIMU_LinkCpu1Cpu2, &dummy_msg, 1,
                          true); /* lockSendFifo param needs to be set to true to casue the TX lock */
     retVal = MCMGR_TriggerEventForce(kMCMGR_Core1, kMCMGR_RemoteApplicationEvent, 123);
     // Did function succeed?
