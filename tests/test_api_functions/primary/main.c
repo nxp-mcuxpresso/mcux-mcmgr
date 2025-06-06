@@ -253,7 +253,8 @@ void mcmgr_test_stop_core2()
 // really stopped, it should remain cleared.
 void mcmgr_test_stop_core3()
 {
-#if defined(MIMXRT1176_cm7_SERIES) || defined(MIMXRT1166_cm7_SERIES) || defined(MCXL255_cm33_SERIES)
+#if defined(MIMXRT1176_cm7_SERIES) || defined(MIMXRT1166_cm7_SERIES) || defined(MCXL255_cm33_SERIES) || \
+    defined(KW45B41Z83_cm33_SERIES) || defined(KW47B42ZB7_cm33_core0_SERIES) || defined(MCXW727C_cm33_core0_SERIES)
     mcmgr_status_t retVal = MCMGR_StopCore(kMCMGR_Core1);
     TEST_ASSERT(retVal == kStatus_MCMGR_NotImplemented);
 #else

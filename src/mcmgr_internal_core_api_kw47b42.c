@@ -55,9 +55,9 @@ mcmgr_status_t mcmgr_early_init_internal(mcmgr_core_t coreNum)
 
     /* Trigger core up event here, core is starting! */
 #if (defined(MCMGR_BUILD_FOR_CORE_0))
-    MCMGR_TriggerEvent(kMCMGR_Core1, kMCMGR_RemoteCoreUpEvent, 0);
+    status = MCMGR_TriggerEvent(kMCMGR_Core1, kMCMGR_RemoteCoreUpEvent, 0);
 #else
-    MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0);
+    status = MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0);
 #endif
 
     mcmgr_imu_remote_active_rel();

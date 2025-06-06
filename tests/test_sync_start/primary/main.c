@@ -27,26 +27,23 @@
 // invalid number of core, used as invalid argument to API functions
 #define INVALID_CORE_NUMBER 100
 
-// address of RAM, which is used to tests for read/write from both cores
-// this address should be from memory region defined by previous macros
-#if defined(MIMXRT1176_cm7_SERIES) || defined(MIMXRT1166_cm7_SERIES)
-/* Because the RAM the secondary core runs from is not defined as non-cachable
-   in rt1170/rt1160 platform, we have to use the start of shared memory instead for
-   this platform. */
-#define TEST_ADDRESS (((uint32_t)0x202c0000))
-#elif (defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
-#define TEST_ADDRESS (((uint32_t)0x20520000))
-#elif defined(KW45B41Z83_cm33_SERIES)
-#define TEST_ADDRESS (((uint32_t)0x489C0000))
-#elif (defined(KW47B42ZB7_cm33_core0_SERIES) || defined(MCXW727C_cm33_core0_SERIES))
-#define TEST_ADDRESS (((uint32_t)0x489C8800))
-#elif (defined(MIMXRT798S_cm33_core0_SERIES))
-#define TEST_ADDRESS (((uint32_t)0x20200000))
-#elif defined(K32L3A60_cm4_SERIES)
-#define TEST_ADDRESS (((uint32_t)0x2002E800))
-#else
-#define TEST_ADDRESS (((uint32_t)CORE1_BOOT_ADDRESS) + 8 * 1024)
+#define SH_MEM_TOTAL_SIZE (6144)
+#if defined(__ICCARM__) /* IAR Workbench */
+#pragma location = "rpmsg_sh_mem_section"
+char rpmsg_lite_base[SH_MEM_TOTAL_SIZE];
+#elif defined(__CC_ARM) || defined(__ARMCC_VERSION) /* Keil MDK */
+char rpmsg_lite_base[SH_MEM_TOTAL_SIZE] __attribute__((section("rpmsg_sh_mem_section")));
+#elif defined(__GNUC__)
+char rpmsg_lite_base[SH_MEM_TOTAL_SIZE] __attribute__((section(".noinit.$rpmsg_sh_mem")));
 #endif
+
+// address of RAM, which is used to tests for read/write from both cores
+#if defined(KW45B41Z83_cm33_SERIES)
+#define TEST_ADDRESS (((uint32_t)0x489C0000))
+#else
+#define TEST_ADDRESS ((uint32_t)rpmsg_lite_base)
+#endif
+
 #define TEST_VALUE     0xAAAAAAAA
 #define TEST_VALUE_16B 0xBBBB
 
