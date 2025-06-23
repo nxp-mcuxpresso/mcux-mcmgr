@@ -17,6 +17,7 @@ if (CONFIG_MCUX_COMPONENT_middleware.multicore.mcmgr)
 
     mcux_add_configuration(
             CC "-DMULTICORE_APP=1"
+            CX "-DMULTICORE_APP=1"
     )
 endif()
 
