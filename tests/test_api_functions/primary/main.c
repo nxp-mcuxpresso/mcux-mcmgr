@@ -13,7 +13,7 @@
 #include "fsl_debug_console.h"
 
 // Libraries necessary to work with FW ELE, defined by previous macros.
-#if (defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
+#if (defined(MIMXRT1186_cm33_SERIES) || defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
 #include "ele_crypto.h" /* ELE Crypto SW */
 #include "fsl_s3mu.h"   /* Messaging unit driver */
 #endif
@@ -42,7 +42,7 @@
 #define TEST_ADDRESS (((uint32_t)0x489C8800))
 #elif defined(K32L3A60_cm4_SERIES)
 #define TEST_ADDRESS (((uint32_t)0x2002E800))
-#elif (defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
+#elif (defined(MIMXRT1186_cm33_SERIES) || defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
 #define S3MU         MU_RT_S3MUA
 #define TEST_ADDRESS (((uint32_t)0x20520000))
 #elif (defined(MIMXRT798S_cm33_core0_SERIES))
@@ -168,7 +168,7 @@ void mcmgr_test_start_core3()
 
     uint32_t code[] = {
 /* RT1180 CM7 core runs from ITCM with aliased address, SP and PC need to be extra defined */
-#if (defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
+#if (defined(MIMXRT1186_cm33_SERIES) || defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
         (uint32_t)0x20500000, // SP
         (uint32_t)0x9,        // PC
 /* MCXL20 CM0+ core runs from RAM with aliased address, SP and PC need to be extra defined */
@@ -225,7 +225,7 @@ void mcmgr_test_start_core3()
 }
 
 // Test ELE_GetFwStatus() function check if FW ELE is loaded
-#if (defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
+#if (defined(MIMXRT1186_cm33_SERIES) || defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
 void mcmgr_test_get_ele_stat()
 {
     uint32_t fwstatus = 0xFFFFFFFFu;
@@ -353,19 +353,19 @@ int main(int argc, char **argv)
     RUN_EXAMPLE(mcmgr_test_start_core2, MAKE_UNITY_NUM(k_unity_mcmgr, 6));
     RUN_EXAMPLE(mcmgr_test_start_core3, MAKE_UNITY_NUM(k_unity_mcmgr, 7));
 
-#if (defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
+#if (defined(MIMXRT1186_cm33_SERIES) || defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
     RUN_EXAMPLE(mcmgr_test_get_ele_stat, MAKE_UNITY_NUM(k_unity_mcmgr, 8));
-#endif /* (defined(defined(MIMXRT1187_cm33_SERIES) ||  defined(MIMXRT1189_cm33_SERIES)) */
+#endif /* (defined(defined(MIMXRT1186_cm33_SERIES) || defined(MIMXRT1187_cm33_SERIES) ||  defined(MIMXRT1189_cm33_SERIES)) */
 
-#if !(defined(MIMXRT1176_cm7_SERIES) || defined(MIMXRT1166_cm7_SERIES) || defined(MIMXRT1187_cm33_SERIES) || \
+#if !(defined(MIMXRT1176_cm7_SERIES) || defined(MIMXRT1166_cm7_SERIES) || defined(MIMXRT1186_cm33_SERIES) || defined(MIMXRT1187_cm33_SERIES) || \
     defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES) || defined(MCXL255_cm33_SERIES))
     RUN_EXAMPLE(mcmgr_test_stop_core1, MAKE_UNITY_NUM(k_unity_mcmgr, 9));
     RUN_EXAMPLE(mcmgr_test_stop_core2, MAKE_UNITY_NUM(k_unity_mcmgr, 10));
-#endif /* !(defined(MIMXRT1176_cm7_SERIES) || defined(MIMXRT1166_cm7_SERIES) || defined(MIMXRT1187_cm33_SERIES) || \
+#endif /* !(defined(MIMXRT1176_cm7_SERIES) || defined(MIMXRT1166_cm7_SERIES) || defined(MIMXRT1186_cm33_SERIES) || defined(MIMXRT1187_cm33_SERIES) || \
           defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES) || defined(MCXL255_cm33_SERIES)) */
-#if !(defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES))
+#if !(defined(MIMXRT1186_cm33_SERIES) || defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES) || defined(MIMXRT798S_cm33_core0_SERIES))
     RUN_EXAMPLE(mcmgr_test_stop_core3, MAKE_UNITY_NUM(k_unity_mcmgr, 11));
-#endif /* !(defined(MIMXRT1187_cm33_SERIES) ||  defined(MIMXRT1189_cm33_SERIES) || \
+#endif /* !(defined(MIMXRT1186_cm33_SERIES) || defined(MIMXRT1187_cm33_SERIES) ||  defined(MIMXRT1189_cm33_SERIES) || \
           defined(MIMXRT798S_cm33_core0_SERIES)) */
 
     RUN_EXAMPLE(mcmgr_test_get_version, MAKE_UNITY_NUM(k_unity_mcmgr, 15));
