@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 NXP
+ * Copyright 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -14,18 +14,14 @@
 #if (defined(KW45B41Z83_cm33_SERIES) || defined(KW47B42ZB7_cm33_core0_SERIES) || defined(MCXW727C_cm33_core0_SERIES))
 #include "fsl_imu.h"
 #endif
+#include "FreeRTOS.h"
+#include "task.h"
 
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-// This macros are defined for testing mcmgr API functions
-
-// number of cores in the system, this value should return API function
-// MCMGR_GetCoreCount()
-#define CORE_COUNT 2
-
-// invalid number of core, used as invalid argument to API functions
-#define INVALID_CORE_NUMBER 100
+#define TEST_TASK_STACK_SIZE (600U)
+#define TEST_DEFERRED_RX_TASK_STACK_SIZE (250U)
 
 #define SH_MEM_TOTAL_SIZE (6144)
 #if defined(__ICCARM__) /* IAR Workbench */
@@ -47,13 +43,6 @@ char rpmsg_lite_base[SH_MEM_TOTAL_SIZE] __attribute__((section(".noinit.$rpmsg_s
 #define TEST_VALUE     0xAAAAAAAA
 #define TEST_VALUE_16B 0xBBBB
 
-#if (defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
-#define EXCEPTION_NUMBER (4)
-#else
-#define EXCEPTION_NUMBER (3)
-#endif
-#define HARDFAULT_TRIGGER_EVENT (5)
-
 // RAM address from which boot secondary core
 #define BOOT_ADDRESS (void *)(char *)CORE1_BOOT_ADDRESS
 
@@ -64,6 +53,8 @@ char rpmsg_lite_base[SH_MEM_TOTAL_SIZE] __attribute__((section(".noinit.$rpmsg_s
 /*******************************************************************************
  * Code
  ******************************************************************************/
+static TaskHandle_t test_task_handle = NULL;
+static TaskHandle_t test_deferred_rx_task_handle = NULL;
 void setUp(void)
 {
 }
@@ -72,28 +63,16 @@ void tearDown(void)
 {
 }
 
-/* This function is used for the Corn test automation framework
-   to breakpoint/stop the execution and to capture results
-   from the memory. It must be ensured that it will never be inlined
-   and optimized to allow proper address recognition and breakpoint
-   placement during the Corn execution. */
-__attribute__((noinline)) void CornBreakpointFunc(void)
-{
-    volatile int i = 0;
-    i++;
-}
-
-static volatile int exceptionEvent   = 0;
 static volatile int appEvent         = 0;
 static volatile int remoteCoreUpDone = 0;
-static int dummy                     = 0;
+static volatile int deferredCallEvent = 0;
 
-void MCMGR_RemoteExceptionEventHandler(mcmgr_core_t coreNum, uint16_t remoteData, void *context)
+void mcmgr_imu_deferred_call(uint32_t param)
 {
-    int *exceptionEvent = (int *)context;
-    *exceptionEvent     = 1;
-
-    TEST_ASSERT(remoteData == EXCEPTION_NUMBER);
+    /* Notify/wakeup the task_deferred_rx_task, pass the vector parameter as the target task notification value */
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    xTaskNotifyFromISR(test_deferred_rx_task_handle, (1UL << (param & 0xFFFFU)), eSetBits, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
 void MCMGR_RemoteApplicationEventHandler(mcmgr_core_t coreNum, uint16_t remoteData, void *context)
@@ -148,17 +127,12 @@ void mcmgr_test_start_register_trigger()
     // Did MCMGR_RegisterEvent function succeed?
     TEST_ASSERT(retVal == kStatus_MCMGR_Success);
 
-    /* Install remote exception event handler */
-    MCMGR_RegisterEvent(kMCMGR_RemoteExceptionEvent, MCMGR_RemoteExceptionEventHandler, (void *)&exceptionEvent);
-    // Did MCMGR_RegisterEvent function succeed?
-    TEST_ASSERT(retVal == kStatus_MCMGR_Success);
-
 #if defined(KW45B41Z83_cm33_SERIES)
-    retVal = MCMGR_StartCore(kMCMGR_Core1, BOOT_ADDRESS, 0xb0000000, kMCMGR_Start_Synchronous);
+    retVal = MCMGR_StartCore(kMCMGR_Core1, BOOT_ADDRESS, 0xb0000000, kMCMGR_Start_Asynchronous);
 #elif (defined(KW47B42ZB7_cm33_core0_SERIES) || defined(MCXW727C_cm33_core0_SERIES))
-    retVal = MCMGR_StartCore(kMCMGR_Core1, BOOT_ADDRESS, 0xb0008800, kMCMGR_Start_Synchronous);
+    retVal = MCMGR_StartCore(kMCMGR_Core1, BOOT_ADDRESS, 0xb0008800, kMCMGR_Start_Asynchronous);
 #else
-    retVal = MCMGR_StartCore(kMCMGR_Core1, BOOT_ADDRESS, TEST_ADDRESS, kMCMGR_Start_Synchronous);
+    retVal = MCMGR_StartCore(kMCMGR_Core1, BOOT_ADDRESS, TEST_ADDRESS, kMCMGR_Start_Asynchronous);
 #endif
     // NO DELAY HERE!
     while (!appEvent)
@@ -191,82 +165,40 @@ void mcmgr_test_start_register_trigger()
     // Did MCMGR_TriggerEvent function succeed?
     TEST_ASSERT(retVal == kStatus_MCMGR_Success);
 
-    /* Trigger kMCMGR_RemoteRPMsgEvent that has no registerred callback on the remote side */
-    retVal = MCMGR_TriggerEvent(kMCMGR_Core1, kMCMGR_RemoteRPMsgEvent, 0);
-    // Did MCMGR_TriggerEvent function succeed?
-    TEST_ASSERT(retVal == kStatus_MCMGR_Success);
-
-    /* Trigger kMCMGR_RemoteRPMsgEvent with eventType outside the <kMCMGR_RemoteCoreUpEvent - kMCMGR_EventTableLength> range */
-    retVal = MCMGR_TriggerEvent(kMCMGR_Core1, (mcmgr_event_type_t)(0), 123);
-    // Did MCMGR_TriggerEvent function succeed?
-    TEST_ASSERT(retVal == kStatus_MCMGR_Success);
 }
 
-void mcmgr_test_bad_args()
+/*!
+ * test_deferred_rx_task
+ *
+ * Deffered rx task used for rx data processing outside the interrupt context.
+ * During the inter-cpu isr only the necessary steps are done like clearing respective interrupt flags and notifying 
+ * the waiting deferred rx task. Once the isr finishes the deferred rx task is scheduled and it handles the data 
+ * processing. In case of IMU, clearing interrupt flags is not done in isr but in deferred task.
+ *
+ */
+static void test_deferred_rx_task(void * pvParameters)
 {
-    mcmgr_status_t retVal = kStatus_MCMGR_Error;
-    /* Bad event number */
-    retVal = MCMGR_TriggerEvent(kMCMGR_Core1, (mcmgr_event_type_t)(kMCMGR_EventTableLength + 1), 123);
-    // Did function succeed?
-    TEST_ASSERT(retVal == kStatus_MCMGR_Error);
-
-    /* Bad event number using MCMGR_TriggerEventForce() */
-    retVal = MCMGR_TriggerEventForce(kMCMGR_Core1, (mcmgr_event_type_t)(kMCMGR_EventTableLength + 1), 123);
-    // Did function succeed?
-    TEST_ASSERT(retVal == kStatus_MCMGR_Error);
-
-#if (defined(KW45B41Z83_cm33_SERIES) || defined(KW47B42ZB7_cm33_core0_SERIES) || defined(MCXW727C_cm33_core0_SERIES))
-    /* Force IMU_SendMsgsBlocking() to return IMU_ERR_TX_FIFO_LOCKED error and consequently the
-     * MCMGR_TriggerEventForce() error */
-    // IMU_LOCK_TX_FIFO(kIMU_LinkCpu1Cpu2);
-    const uint32_t dummy_msg = 0;
-    IMU_SendMsgsBlocking(kIMU_LinkCpu1Cpu2, &dummy_msg, 1,
-                         true); /* lockSendFifo param needs to be set to true to casue the TX lock */
-    retVal = MCMGR_TriggerEventForce(kMCMGR_Core1, kMCMGR_RemoteApplicationEvent, 123);
-    // Did function succeed?
-    TEST_ASSERT(retVal == kStatus_MCMGR_Error);
-    IMU_UNLOCK_TX_FIFO(kIMU_LinkCpu1Cpu2);
-#endif
-
-    /* Bad event number */
-    retVal = MCMGR_RegisterEvent((mcmgr_event_type_t)(kMCMGR_EventTableLength + 1), NULL, NULL);
-    // Did function succeed?
-    TEST_ASSERT(retVal == kStatus_MCMGR_Error);
-
-    /* NULL function - disable event */
-    retVal = MCMGR_RegisterEvent(kMCMGR_RemoteApplicationEvent, NULL, &dummy);
-    // Did function succeed?
-    TEST_ASSERT(retVal == kStatus_MCMGR_Success);
-
-    /* NULL data */
-    retVal = MCMGR_RegisterEvent(kMCMGR_RemoteApplicationEvent, MCMGR_RemoteApplicationEventHandler, NULL);
-    // Did MCMGR_RegisterEvent function succeed?
-    TEST_ASSERT(retVal == kStatus_MCMGR_Success);
-
-    retVal = MCMGR_GetCoreProperty(kMCMGR_Core_Num, kMCMGR_CoreStatus, NULL, NULL);
-    // Did function succeed?
-    TEST_ASSERT(retVal == kStatus_MCMGR_Error);
-
-    retVal = MCMGR_GetStartupData(kMCMGR_Core1, NULL);
-    // Did function succeed?
-    TEST_ASSERT(retVal == kStatus_MCMGR_Error);
+    uint32_t ulBits = 0UL;
+    while (1)
+    {
+        /* Wait for the notification from the isr */ 
+        if(pdPASS == xTaskNotifyWait( pdFALSE, 0xffffffffU, &ulBits, portMAX_DELAY ))
+        {
+            IMU_ClearPendingInterrupts(kIMU_LinkCpu1Cpu2, IMU_MSG_FIFO_CNTL_MSG_RDY_INT_CLR_MASK);
+            MCMGR_ProcessDeferredRxIsr();
+            NVIC_EnableIRQ((IRQn_Type)RF_IMU0_IRQn);
+        }
+    }
 }
 
 void run_tests(void *unused)
 {
-#ifdef __COVERAGESCANNER__
-    __coveragescanner_testname("mcmgr_sync_start_test");
-    __coveragescanner_install("mcmgr_sync_start_test.csexe");
-#endif /*__COVERAGESCANNER__*/
     RUN_EXAMPLE(mcmgr_test_init_success, MAKE_UNITY_NUM(k_unity_mcmgr, 0));
-    RUN_EXAMPLE(mcmgr_test_start_register_trigger, MAKE_UNITY_NUM(k_unity_mcmgr, 1));
-    RUN_EXAMPLE(mcmgr_test_bad_args, MAKE_UNITY_NUM(k_unity_mcmgr, 2));
+    RUN_EXAMPLE(mcmgr_test_start_register_trigger, MAKE_UNITY_NUM(k_unity_mcmgr, 5));
 }
 
-int main(void)
+static void test_task(void *param)
 {
-    BOARD_InitHardware();
-
 #ifdef CORE1_IMAGE_COPY_TO_RAM
     /* Calculate size of the image - not required on LPCExpresso. LPCExpresso copies image to RAM during startup
      * automatically */
@@ -287,24 +219,28 @@ int main(void)
     UnityBegin();
     run_tests(NULL);
     UnityEnd();
-#ifdef __COVERAGESCANNER__
-#if defined(SQUISHCOCO_RESULT_DATA_SAVE_TO_FILE)
-    /* Store the secondary core measurement data (saved temporarily in shared memory) into the file */
-    FILE *fptr;
-    fptr = fopen("mcmgr_sync_start_test_sec_core.csexe", "w");
-    fwrite((const void *)(TEST_ADDRESS + 0x10), sizeof(char), *(uint32_t *)TEST_ADDRESS, fptr);
-    fclose(fptr);
-#elif defined(SQUISHCOCO_RESULT_DATA_SAVE_TO_CONSOLE)
-    /* Printf the secondary core measurement data (saved temporarily in shared memory) into the console */
-    char *s_ptr = (char *)(TEST_ADDRESS + 0x10);
-    for (int32_t i = 0; i < (*(uint32_t *)TEST_ADDRESS); i++)
-        PRINTF("%c", s_ptr[i]);
-#endif
-#endif /*__COVERAGESCANNER__*/
-    /* Trigger the event on the secondary side to start code that causes hardfault */
-    MCMGR_TriggerEvent(kMCMGR_Core1, kMCMGR_RemoteApplicationEvent, HARDFAULT_TRIGGER_EVENT);
 
-    CornBreakpointFunc();
     while (1)
         ;
+}
+
+int main(void)
+{
+    BOARD_InitHardware();
+
+    if (xTaskCreate(test_task, "TEST_TASK", TEST_TASK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1U, &test_task_handle) != pdPASS)
+    {
+        for (;;)
+        {
+        }
+    }
+    if (xTaskCreate(test_deferred_rx_task, "TEST_DEFERRED_RX_TASK", TEST_DEFERRED_RX_TASK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2U, &test_deferred_rx_task_handle) != pdPASS)
+    {
+        for (;;)
+        {
+        }
+    }
+
+    vTaskStartScheduler();
+    return 0;
 }

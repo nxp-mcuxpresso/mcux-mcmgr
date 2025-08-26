@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../../../../../scripts/data_schema/example_description_schema.json
+#
+# Copyright 2025 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+test_deferred_callback:
+  use_sysbuild: true
+  section-type: 'application'
+  contents:
+    meta_path: middleware/multicore/mcmgr/tests/test_deferred_callback/primary
+    project-root-path: boards/${board}/middleware/multicore/mcmgr/tests/test_deferred_callback/${multicore_foldername}/
+    document:
+      name: test_deferred_callback_primary_core
+      category: multicore_tests
+      brief: test_deferred_callback test suite
+  boards:
+    mcxw72evk@cm33_core0: []
+    frdmmcxw72@cm33_core0: []
+    kw47evk@cm33_core0: []
+    kw47loc@cm33_core0: []

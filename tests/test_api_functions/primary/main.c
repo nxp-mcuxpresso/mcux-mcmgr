@@ -224,6 +224,15 @@ void mcmgr_test_start_core3()
     TEST_ASSERT(val == TEST_VALUE);
 }
 
+#if MCMGR_BUSY_POLL_COUNT
+// Test MCMGR_StartCore() function with synchronousr start polling timeout
+void mcmgr_test_start_core4()
+{
+    mcmgr_status_t retVal = MCMGR_StartCore(kMCMGR_Core1, BOOT_ADDRESS, 0, kMCMGR_Start_Synchronous);
+    TEST_ASSERT(retVal == kStatus_MCMGR_Error);
+}
+#endif
+
 // Test ELE_GetFwStatus() function check if FW ELE is loaded
 #if (defined(MIMXRT1186_cm33_SERIES) || defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
 void mcmgr_test_get_ele_stat()
@@ -317,6 +326,15 @@ void mcmgr_test_get_core_property1()
     };
 }
 
+#if !(defined(MCMGR_DEFERRED_CALLBACK_ALLOWED) && (MCMGR_DEFERRED_CALLBACK_ALLOWED == 1U))
+// Test of MCMGR_ProcessDeferredRxIsr() API function, test kStatus_MCMGR_NotImplemented
+// is returned when MCMGR_DEFERRED_CALLBACK_ALLOWED not set
+void mcmgr_test_proces_deferred_rx_isr()
+{
+    TEST_ASSERT(kStatus_MCMGR_NotImplemented == MCMGR_ProcessDeferredRxIsr());
+}
+#endif
+
 void setUp(void)
 {
 }
@@ -349,9 +367,12 @@ int main(int argc, char **argv)
 #endif /*__COVERAGESCANNER__*/
     RUN_EXAMPLE(mcmgr_test_init_success, MAKE_UNITY_NUM(k_unity_mcmgr, 0));
 
-    RUN_EXAMPLE(mcmgr_test_start_core1, MAKE_UNITY_NUM(k_unity_mcmgr, 5));
-    RUN_EXAMPLE(mcmgr_test_start_core2, MAKE_UNITY_NUM(k_unity_mcmgr, 6));
-    RUN_EXAMPLE(mcmgr_test_start_core3, MAKE_UNITY_NUM(k_unity_mcmgr, 7));
+    RUN_EXAMPLE(mcmgr_test_start_core1, MAKE_UNITY_NUM(k_unity_mcmgr, 1));
+    RUN_EXAMPLE(mcmgr_test_start_core2, MAKE_UNITY_NUM(k_unity_mcmgr, 2));
+    RUN_EXAMPLE(mcmgr_test_start_core3, MAKE_UNITY_NUM(k_unity_mcmgr, 3));
+#if MCMGR_BUSY_POLL_COUNT
+    RUN_EXAMPLE(mcmgr_test_start_core4, MAKE_UNITY_NUM(k_unity_mcmgr, 4));
+#endif
 
 #if (defined(MIMXRT1186_cm33_SERIES) || defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
     RUN_EXAMPLE(mcmgr_test_get_ele_stat, MAKE_UNITY_NUM(k_unity_mcmgr, 8));
@@ -372,6 +393,10 @@ int main(int argc, char **argv)
     RUN_EXAMPLE(mcmgr_test_get_core_count, MAKE_UNITY_NUM(k_unity_mcmgr, 19));
     RUN_EXAMPLE(mcmgr_test_get_current_core, MAKE_UNITY_NUM(k_unity_mcmgr, 20));
     RUN_EXAMPLE(mcmgr_test_get_core_property1, MAKE_UNITY_NUM(k_unity_mcmgr, 21));
+
+#if !(defined(MCMGR_DEFERRED_CALLBACK_ALLOWED) && (MCMGR_DEFERRED_CALLBACK_ALLOWED == 1U))
+    RUN_EXAMPLE(mcmgr_test_proces_deferred_rx_isr, MAKE_UNITY_NUM(k_unity_mcmgr, 22));
+#endif
 
     UnityEnd();
     CornBreakpointFunc();

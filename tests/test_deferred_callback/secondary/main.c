@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 NXP
+ * Copyright 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,14 +7,20 @@
 #include "unity.h"
 #include "fsl_device_registers.h"
 #include "fsl_common.h"
-//#include "board.h"
 #include "mcmgr.h"
 #include "app.h"
-#include "mcmgr_internal_core_api.h"
+#if (defined(KW45B41Z83_cm33_SERIES) || defined(KW47B42ZB7_cm33_core1_SERIES) || defined(MCXW727C_cm33_core1_SERIES))
+#include "fsl_imu.h"
+#endif
+#include "FreeRTOS.h"
+#include "task.h"
 
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
+#define TEST_TASK_STACK_SIZE (600U)
+#define TEST_DEFERRED_RX_TASK_STACK_SIZE (250U)
+
 #define TEST_VALUE 0xAAAAAAAA
 #define TEST_VALUE_16B 0xBBBB
 #define HARDFAULT_TRIGGER_EVENT (5)
@@ -26,7 +32,17 @@
 /*******************************************************************************
  * Code
  ******************************************************************************/
+static TaskHandle_t test_task_handle = NULL;
+static TaskHandle_t test_deferred_rx_task_handle = NULL;
 static volatile int appEvent = 0;
+
+void mcmgr_imu_deferred_call(uint32_t param)
+{
+    /* Notify/wakeup the task_deferred_rx_task, pass the vector parameter as the target task notification value */
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    xTaskNotifyFromISR(test_deferred_rx_task_handle, (1UL << (param & 0xFFFFU)), eSetBits, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
 void MCMGR_RemoteApplicationEventHandler(mcmgr_core_t coreNum, uint16_t remoteData, void *context)
 {
    int* appEvent = (int*)context;
@@ -84,48 +100,63 @@ void mcmgr_test_init_success_sec_core()
     TEST_ASSERT(status == kStatus_MCMGR_Success);
 }
 
-void mcmgr_test_bad_args_sec_core()
-{
-    mcmgr_status_t retVal = kStatus_MCMGR_Success;
-    uint32_t startupData;
-
-    /* Testing bad args, to be added into unity */
-    retVal = MCMGR_GetStartupData(kMCMGR_Core0, NULL);
-    TEST_ASSERT(retVal == kStatus_MCMGR_Error);
-
-    /* Simulate the case when startupData is not ready before the kMCMGR_RunningCoreState state */
-    mcmgr_core_state_t temp_mcmgr_core_state = s_mcmgrCoresContext[kMCMGR_Core1].state;
-    s_mcmgrCoresContext[kMCMGR_Core1].state = kMCMGR_StartupGettingLowCoreState;
-    TEST_ASSERT(kStatus_MCMGR_NotReady == MCMGR_GetStartupData(kMCMGR_Core1, &startupData));
-    s_mcmgrCoresContext[kMCMGR_Core1].state = temp_mcmgr_core_state;
-}
-
 void run_tests(void *unused)
 {
-#ifdef __COVERAGESCANNER__
-    __coveragescanner_testname("mcmgr_sync_start_test_sec_core");
-    __coveragescanner_install("mcmgr_sync_start_test_sec_core.csexe");
-#endif /*__COVERAGESCANNER__*/
     RUN_EXAMPLE(mcmgr_test_init_success_sec_core, MAKE_UNITY_NUM(k_unity_mcmgr, 0));
-    RUN_EXAMPLE(mcmgr_test_bad_args_sec_core, MAKE_UNITY_NUM(k_unity_mcmgr, 1));
 }
 
-int main(void)
+/*!
+ * test_deferred_rx_task
+ *
+ * Deffered rx task used for rx data processing outside the interrupt context.
+ * During the inter-cpu isr only the necessary steps are done like clearing respective interrupt flags and notifying 
+ * the waiting deferred rx task. Once the isr finishes the deferred rx task is scheduled and it handles the data 
+ * processing. In case of IMU, clearing interrupt flags is not done in isr but in deferred task.
+ *
+ */
+static void test_deferred_rx_task(void * pvParameters)
 {
-    int i = 0;
+    uint32_t ulBits = 0UL;
+    while (1)
+    {
+        /* Wait for the notification from the isr */ 
+        if(pdPASS == xTaskNotifyWait( pdFALSE, 0xffffffffU, &ulBits, portMAX_DELAY ))
+        {
+            IMU_ClearPendingInterrupts(kIMU_LinkCpu2Cpu1, IMU_MSG_FIFO_CNTL_MSG_RDY_INT_CLR_MASK);
+            MCMGR_ProcessDeferredRxIsr();
+            NVIC_EnableIRQ((IRQn_Type)CPU2_MSG_RDY_INT_IRQn);
+        }
+    }
+}
 
-    BOARD_InitHardware();
+static void test_task(void *param)
+{
 
     UnityBegin();
     run_tests(NULL);
     UnityEnd();
 
-    // wait until the primary core notifies hardfault can be triggered
-    while(HARDFAULT_TRIGGER_EVENT != appEvent);
-
-    // Now, trigger an exception here! Try to write to flash.
-    *((uint32_t*)0xFFFFFFFF) = i;
-
     while (1)
         ;
+}
+
+int main(void)
+{
+    BOARD_InitHardware();
+
+    if (xTaskCreate(test_task, "TEST_TASK", TEST_TASK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1U, &test_task_handle) != pdPASS)
+    {
+        for (;;)
+        {
+        }
+    }
+    if (xTaskCreate(test_deferred_rx_task, "TEST_DEFERRED_RX_TASK", TEST_DEFERRED_RX_TASK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2U, &test_deferred_rx_task_handle) != pdPASS)
+    {
+        for (;;)
+        {
+        }
+    }
+
+    vTaskStartScheduler();
+    return 0;
 }

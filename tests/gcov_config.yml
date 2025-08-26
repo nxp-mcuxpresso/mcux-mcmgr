@@ -1,0 +1,48 @@
+#
+# Copyright 2024-2025 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+output_dir: "gcov_output_mcmgr"
+
+# Build configuration
+build:
+  # Target board
+  board: kw47loc
+
+  # Build configuration (debug, release, etc.)
+  build_config: debug
+
+  # Target core
+  core: cm33_core0
+
+  # Build directory template (uses Python's format string)
+  # {counter} will be replaced with iteration number
+  build_dir_template: b_{counter}
+
+  # Template for test path
+  # {test} will be replaced with the test name
+  test_path_template: middleware/multicore/mcmgr/tests/{test}/primary
+  test_paths: "middleware/multicore/mcmgr/tests/"
+
+  # Path to GCOV configuration files
+  primary_gcov_conf: middleware/multicore/mcmgr/tests/prj-gcov-primary.conf
+  secondary_gcov_conf: middleware/multicore/mcmgr/tests/prj-gcov-secondary.conf
+
+# Coverage configuration
+coverage:
+  # Pattern for filtering files in coverage reports
+  lcov_filter_pattern: "*/middleware/multicore/mcmgr/src/*"
+  gcovr_filter_pattern: ".*mcmgr/src/.*"
+
+  # Tool to use for generating coverage reports (gcovr, lcov, or both)
+  report_tool: gcovr
+
+  # Directory for storing coverage data
+  data_dir: coverage_data
+
+# List of tests to run
+tests:
+  - test_api_functions
+  - test_deferred_callback
+  - test_sync_start
