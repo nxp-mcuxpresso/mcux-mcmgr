@@ -8,6 +8,8 @@ Overall details can be reviewed here: [MCUXpresso SDK Online Documentation](http
 
 Visit [Multicore Manager - Documentation](https://mcuxpresso.nxp.com/mcuxsdk/latest/html/middleware/multicore/mcmgr/README.html) to review details on the contents in this sub-repo.
 
+For Further API documentation, please look at [doxygen documentation](https://nxp-mcuxpresso.github.io/mcux-mcmgr/)
+
 ## Setup
 Instructions on how to install the MCUXpresso SDK provided from GitHub via west manifest [Getting Started with SDK - Detailed Installation Instructions](https://mcuxpresso.nxp.com/mcuxsdk/latest/html/gsd/installation.html#installation)
 
@@ -28,8 +30,6 @@ The Multicore Manager provides the following major functions:
 - Maintains information about all cores in system.
 - Secondary/auxiliary core(s) startup and shutdown.
 - Remote core monitoring and event handling.
-
-For Further API documentation, please look at doxygen documentation at: https://nxp-mcuxpresso.github.io/mcux-mcmgr/
 
 ## Usage of the MCMGR software component
 
