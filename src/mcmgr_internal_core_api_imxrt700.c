@@ -278,7 +278,6 @@ mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
         MU_EnableInterrupts(MU4_MUB, (uint32_t)kMU_ResetAssertInterruptEnable);
 #endif
         /* HiFi4 to CPU1 communication case */
-        INPUTMUX_Init(INPUTMUX0);
         INPUTMUX_AttachSignal(INPUTMUX0, 2U, kINPUTMUX_Mu2AToDspInterrupt);
 
         /* DSP interrupt only can be enable after XOS is started. */
@@ -300,7 +299,7 @@ mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
     {
         /* HiFi1 to CPU0 communication case */
         INPUTMUX_Init(INPUTMUX1);
-        INPUTMUX_AttachSignal(INPUTMUX1, 1U, kINPUTMUX_Mu0BToDspInterrupt);
+        INPUTMUX_AttachSignal(INPUTMUX1, 2U, kINPUTMUX_Mu0BToDspInterrupt);
 
         /* DSP interrupt only can be enable after XOS is started. */
         xos_register_interrupt_handler(DSP_INT0_SEL2_IRQn, MU0_B_IRQHandler, ((void *)0));
@@ -313,7 +312,6 @@ mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
 #endif
 
         /* HiFi1 to CPU1 communication case */
-        INPUTMUX_Init(INPUTMUX1);
         INPUTMUX_AttachSignal(INPUTMUX1, 1U, kINPUTMUX_Mu3BToDspInterrupt);
 
         /* DSP interrupt only can be enable after XOS is started. */
