@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="nxp_logo_small.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Multicore Manager (MCMGR) User&#39;s Guide<span id="projectnumber">&#160;Rev. v5.0.0</span>
+   <div id="projectname">Multicore Manager (MCMGR) User&#39;s Guide<span id="projectnumber">&#160;Rev. v5.0.1</span>
    </div>
    <div id="projectbrief">NXP Semiconductors</div>
   </td>
@@ -91,13 +91,845 @@ $(document).ready(function(){initNavTree('group__mcmgr.html',''); initResizable(
 </div>
 
 <div class="header">
+  <div class="summary">
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">MCMGR API</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>This section describes the Multicore Manager component API.  
-</p>
+<a href="#details">More...</a></p>
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
 <p>This section describes the Multicore Manager component API. </p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ga5abd2254543ed537e35c9d5c5721d216"><td class="memItemLeft" align="right" valign="top"><a id="ga5abd2254543ed537e35c9d5c5721d216" name="ga5abd2254543ed537e35c9d5c5721d216"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>MCMGR_HANDLE_EXCEPTIONS</b>&#160;&#160;&#160;(0)</td></tr>
+<tr class="memdesc:ga5abd2254543ed537e35c9d5c5721d216"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set to 1 to enable exception handling. <br /></td></tr>
+<tr class="separator:ga5abd2254543ed537e35c9d5c5721d216"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga678b367777e008f342967e6b091c3614"><td class="memItemLeft" align="right" valign="top"><a id="ga678b367777e008f342967e6b091c3614" name="ga678b367777e008f342967e6b091c3614"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>MCMGR_DEFERRED_CALLBACK_ALLOWED</b>&#160;&#160;&#160;(0)</td></tr>
+<tr class="memdesc:ga678b367777e008f342967e6b091c3614"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set to 1 to enable deferred call in isr. <br /></td></tr>
+<tr class="separator:ga678b367777e008f342967e6b091c3614"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac2b608eee94975f61b2e60c295b62666"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#gac2b608eee94975f61b2e60c295b62666">MCMGR_BUSY_POLL_COUNT</a>&#160;&#160;&#160;0U</td></tr>
+<tr class="memdesc:gac2b608eee94975f61b2e60c295b62666"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum polling iterations for MCMGR waiting loops.  <br /></td></tr>
+<tr class="separator:gac2b608eee94975f61b2e60c295b62666"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:gaa1e87a61add56d66c147b99f554f63ec"><td class="memItemLeft" align="right" valign="top"><a id="gaa1e87a61add56d66c147b99f554f63ec" name="gaa1e87a61add56d66c147b99f554f63ec"></a>
+typedef enum <a class="el" href="group__mcmgr.html#gaafc86a36cbeb3a8587cf1d03dfe095c8">_mcmgr_status</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mcmgr_status_t</b></td></tr>
+<tr class="memdesc:gaa1e87a61add56d66c147b99f554f63ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration that defines MCMGR function return status codes. <br /></td></tr>
+<tr class="separator:gaa1e87a61add56d66c147b99f554f63ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7198108f5e3c9eb6739662dd170a2791"><td class="memItemLeft" align="right" valign="top"><a id="ga7198108f5e3c9eb6739662dd170a2791" name="ga7198108f5e3c9eb6739662dd170a2791"></a>
+typedef enum <a class="el" href="group__mcmgr.html#gadc2ec0f3fda2d57dd3870335914b407f">_mcmgr_core_property</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mcmgr_core_property_t</b></td></tr>
+<tr class="memdesc:ga7198108f5e3c9eb6739662dd170a2791"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration that defines property of core. <br /></td></tr>
+<tr class="separator:ga7198108f5e3c9eb6739662dd170a2791"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0b191736437ecaaa970aef458184f672"><td class="memItemLeft" align="right" valign="top"><a id="ga0b191736437ecaaa970aef458184f672" name="ga0b191736437ecaaa970aef458184f672"></a>
+typedef enum <a class="el" href="group__mcmgr.html#ga7b053e7eeda6daac208a4038a2303955">_mcmgr_core_status</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mcmgr_core_status_t</b></td></tr>
+<tr class="memdesc:ga0b191736437ecaaa970aef458184f672"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration that defines the property value of core status. <br /></td></tr>
+<tr class="separator:ga0b191736437ecaaa970aef458184f672"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga16dce5ff4fc9aa51a6e0188f90a51691"><td class="memItemLeft" align="right" valign="top"><a id="ga16dce5ff4fc9aa51a6e0188f90a51691" name="ga16dce5ff4fc9aa51a6e0188f90a51691"></a>
+typedef enum <a class="el" href="group__mcmgr.html#gaad6bc70b5f869884191902e305d51a0a">_mcmgr_core_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mcmgr_core_type_t</b></td></tr>
+<tr class="memdesc:ga16dce5ff4fc9aa51a6e0188f90a51691"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration that defines property value of core type. <br /></td></tr>
+<tr class="separator:ga16dce5ff4fc9aa51a6e0188f90a51691"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9e35ece98d0c83b1131a147dd69a4d8d"><td class="memItemLeft" align="right" valign="top"><a id="ga9e35ece98d0c83b1131a147dd69a4d8d" name="ga9e35ece98d0c83b1131a147dd69a4d8d"></a>
+typedef enum <a class="el" href="group__mcmgr.html#ga04ccbddec3c91482490e57e53afbeb6f">_mcmgr_core</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mcmgr_core_t</b></td></tr>
+<tr class="memdesc:ga9e35ece98d0c83b1131a147dd69a4d8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration that defines core. <br /></td></tr>
+<tr class="separator:ga9e35ece98d0c83b1131a147dd69a4d8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga214ff3137404f7aa33601fc75fd32d52"><td class="memItemLeft" align="right" valign="top"><a id="ga214ff3137404f7aa33601fc75fd32d52" name="ga214ff3137404f7aa33601fc75fd32d52"></a>
+typedef enum <a class="el" href="group__mcmgr.html#ga2b471b0504b78138baba1e17a05a9b9c">_mcmgr_start_mode</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mcmgr_start_mode_t</b></td></tr>
+<tr class="memdesc:ga214ff3137404f7aa33601fc75fd32d52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration that defines start type. <br /></td></tr>
+<tr class="separator:ga214ff3137404f7aa33601fc75fd32d52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1307b1de876154b7b9c986cbaffd067a"><td class="memItemLeft" align="right" valign="top"><a id="ga1307b1de876154b7b9c986cbaffd067a" name="ga1307b1de876154b7b9c986cbaffd067a"></a>
+typedef enum <a class="el" href="group__mcmgr.html#ga0a45660b38a87ca65052a15d721a4949">_mcmgr_event_type_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mcmgr_event_type_t</b></td></tr>
+<tr class="memdesc:ga1307b1de876154b7b9c986cbaffd067a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type definition of event types. <br /></td></tr>
+<tr class="separator:ga1307b1de876154b7b9c986cbaffd067a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac00ef8a7c830805be44071a637396bd5"><td class="memItemLeft" align="right" valign="top"><a id="gac00ef8a7c830805be44071a637396bd5" name="gac00ef8a7c830805be44071a637396bd5"></a>
+typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><b>mcmgr_event_callback_t</b>) (<a class="el" href="group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d">mcmgr_core_t</a> coreNum, uint16_t data, void *context)</td></tr>
+<tr class="memdesc:gac00ef8a7c830805be44071a637396bd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type definition of event callback function pointer. <br /></td></tr>
+<tr class="separator:gac00ef8a7c830805be44071a637396bd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:gaafc86a36cbeb3a8587cf1d03dfe095c8"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#gaafc86a36cbeb3a8587cf1d03dfe095c8">_mcmgr_status</a> { <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#ggaafc86a36cbeb3a8587cf1d03dfe095c8abf7fc043f96c3aae550751f7275c7acb">kStatus_MCMGR_Success</a>
+, <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#ggaafc86a36cbeb3a8587cf1d03dfe095c8aab13cf2a47a0af104ac31d9c476acc6d">kStatus_MCMGR_Error</a>
+, <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#ggaafc86a36cbeb3a8587cf1d03dfe095c8adbbe6f5f23775831c0ca4ecb2e8eb05f">kStatus_MCMGR_NotImplemented</a>
+, <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#ggaafc86a36cbeb3a8587cf1d03dfe095c8ad1055c322ba3c2832722b0c726a4165f">kStatus_MCMGR_NotReady</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:gaafc86a36cbeb3a8587cf1d03dfe095c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration that defines MCMGR function return status codes.  <a href="group__mcmgr.html#gaafc86a36cbeb3a8587cf1d03dfe095c8">More...</a><br /></td></tr>
+<tr class="separator:gaafc86a36cbeb3a8587cf1d03dfe095c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadc2ec0f3fda2d57dd3870335914b407f"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#gadc2ec0f3fda2d57dd3870335914b407f">_mcmgr_core_property</a> { <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#ggadc2ec0f3fda2d57dd3870335914b407fa7c15bce35752601ded72181ec1370555">kMCMGR_CoreStatus</a>
+, <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#ggadc2ec0f3fda2d57dd3870335914b407fa878c01cabb8b391e0912d050a3a7c5de">kMCMGR_CoreType</a>
+, <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#ggadc2ec0f3fda2d57dd3870335914b407fa80a0a82df35088f86f6966fc285a3726">kMCMGR_CorePowerMode</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:gadc2ec0f3fda2d57dd3870335914b407f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration that defines property of core.  <a href="group__mcmgr.html#gadc2ec0f3fda2d57dd3870335914b407f">More...</a><br /></td></tr>
+<tr class="separator:gadc2ec0f3fda2d57dd3870335914b407f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7b053e7eeda6daac208a4038a2303955"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#ga7b053e7eeda6daac208a4038a2303955">_mcmgr_core_status</a> { <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#gga7b053e7eeda6daac208a4038a2303955a5ed482ec07b1619bf7c756a88227f8ca">kMCMGR_InReset</a>
+, <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#gga7b053e7eeda6daac208a4038a2303955a608cc3ceee195f29ccfb236989c68fb4">kMCMGR_NotInReset</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:ga7b053e7eeda6daac208a4038a2303955"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration that defines the property value of core status.  <a href="group__mcmgr.html#ga7b053e7eeda6daac208a4038a2303955">More...</a><br /></td></tr>
+<tr class="separator:ga7b053e7eeda6daac208a4038a2303955"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaad6bc70b5f869884191902e305d51a0a"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#gaad6bc70b5f869884191902e305d51a0a">_mcmgr_core_type</a> { <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#ggaad6bc70b5f869884191902e305d51a0aad0d7f52fc5ed832a259e3fba00d936a6">kMCMGR_CoreTypeCortexM0</a>
+, <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#ggaad6bc70b5f869884191902e305d51a0aa9e0502d8798e4e70bbe70888a2573f86">kMCMGR_CoreTypeCortexM0Plus</a>
+, <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#ggaad6bc70b5f869884191902e305d51a0aaac1299d1dd439558115c6a5f49da6256">kMCMGR_CoreTypeCortexM4</a>
+, <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#ggaad6bc70b5f869884191902e305d51a0aa9d0db113fdc4348d3e833dfc0e0a8c38">kMCMGR_CoreTypeCortexM33</a>
+, <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#ggaad6bc70b5f869884191902e305d51a0aae5015a4bd158184a81f1a413cf1001ba">kMCMGR_CoreTypeCortexM7</a>
+, <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#ggaad6bc70b5f869884191902e305d51a0aae85bf49f95cd80cbb1b293b5662366fc">kMCMGR_CoreTypeCortexM3</a>
+, <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#ggaad6bc70b5f869884191902e305d51a0aa361e2a3ca65a507d707d0aa1ac638e3f">kMCMGR_CoreTypeDSPHifi1</a>
+, <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#ggaad6bc70b5f869884191902e305d51a0aa153f029b35dc633f245e25814c65833f">kMCMGR_CoreTypeDSPHifi4</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:gaad6bc70b5f869884191902e305d51a0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration that defines property value of core type.  <a href="group__mcmgr.html#gaad6bc70b5f869884191902e305d51a0a">More...</a><br /></td></tr>
+<tr class="separator:gaad6bc70b5f869884191902e305d51a0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga04ccbddec3c91482490e57e53afbeb6f"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#ga04ccbddec3c91482490e57e53afbeb6f">_mcmgr_core</a> { <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#gga04ccbddec3c91482490e57e53afbeb6fa3254afb69346be6f9167ffcf771de620">kMCMGR_Core0</a>
+, <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#gga04ccbddec3c91482490e57e53afbeb6fae5ff151633b4ee4b9dc9e0825675ecc1">kMCMGR_Core1</a>
+, <br />
+&#160;&#160;<b>kMCMGR_Core2</b>
+, <br />
+&#160;&#160;<b>kMCMGR_Core3</b>
+, <br />
+&#160;&#160;<b>kMCMGR_Core_Num</b>
+<br />
+ }</td></tr>
+<tr class="memdesc:ga04ccbddec3c91482490e57e53afbeb6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration that defines core.  <a href="group__mcmgr.html#ga04ccbddec3c91482490e57e53afbeb6f">More...</a><br /></td></tr>
+<tr class="separator:ga04ccbddec3c91482490e57e53afbeb6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2b471b0504b78138baba1e17a05a9b9c"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#ga2b471b0504b78138baba1e17a05a9b9c">_mcmgr_start_mode</a> { <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#gga2b471b0504b78138baba1e17a05a9b9ca1d97daf76353ad10e9ccdf91c42c759f">kMCMGR_Start_Synchronous</a>
+, <br />
+&#160;&#160;<a class="el" href="group__mcmgr.html#gga2b471b0504b78138baba1e17a05a9b9cafcd6079bbf46d10890fb281ca69ae228">kMCMGR_Start_Asynchronous</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:ga2b471b0504b78138baba1e17a05a9b9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration that defines start type.  <a href="group__mcmgr.html#ga2b471b0504b78138baba1e17a05a9b9c">More...</a><br /></td></tr>
+<tr class="separator:ga2b471b0504b78138baba1e17a05a9b9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0a45660b38a87ca65052a15d721a4949"><td class="memItemLeft" align="right" valign="top"><a id="ga0a45660b38a87ca65052a15d721a4949" name="ga0a45660b38a87ca65052a15d721a4949"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#ga0a45660b38a87ca65052a15d721a4949">_mcmgr_event_type_t</a> { <br />
+&#160;&#160;<b>kMCMGR_RemoteCoreUpEvent</b> = 1
+, <br />
+&#160;&#160;<b>kMCMGR_RemoteCoreDownEvent</b>
+, <br />
+&#160;&#160;<b>kMCMGR_RemoteExceptionEvent</b>
+, <br />
+&#160;&#160;<b>kMCMGR_StartupDataEvent</b>
+, <br />
+&#160;&#160;<b>kMCMGR_FeedStartupDataEvent</b>
+, <br />
+&#160;&#160;<b>kMCMGR_RemoteRPMsgEvent</b>
+, <br />
+&#160;&#160;<b>kMCMGR_RemoteApplicationEvent</b>
+, <br />
+&#160;&#160;<b>kMCMGR_FreeRtosMessageBuffersEvent</b>
+, <br />
+&#160;&#160;<b>kMCMGR_EventTableLength</b>
+<br />
+ }</td></tr>
+<tr class="memdesc:ga0a45660b38a87ca65052a15d721a4949"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type definition of event types. <br /></td></tr>
+<tr class="separator:ga0a45660b38a87ca65052a15d721a4949"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabbf6e7e7978f537eaa72ea8e95bd0f1f"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#gabbf6e7e7978f537eaa72ea8e95bd0f1f">mcmgr_version_enum</a> { <b>kMCMGR_Version</b> = 0x00050001
+ }</td></tr>
+<tr class="memdesc:gabbf6e7e7978f537eaa72ea8e95bd0f1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Version of MCMGR.  <a href="group__mcmgr.html#gabbf6e7e7978f537eaa72ea8e95bd0f1f">More...</a><br /></td></tr>
+<tr class="separator:gabbf6e7e7978f537eaa72ea8e95bd0f1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga113834314ba8d727f8d601463ee71e88"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#ga113834314ba8d727f8d601463ee71e88">MCMGR_EarlyInit</a> (void)</td></tr>
+<tr class="memdesc:ga113834314ba8d727f8d601463ee71e88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the multicore manager, early init.  <br /></td></tr>
+<tr class="separator:ga113834314ba8d727f8d601463ee71e88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab18e570ea8c466214b3725785d45aa35"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#gab18e570ea8c466214b3725785d45aa35">MCMGR_Init</a> (void)</td></tr>
+<tr class="memdesc:gab18e570ea8c466214b3725785d45aa35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the multicore manager.  <br /></td></tr>
+<tr class="separator:gab18e570ea8c466214b3725785d45aa35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac7850a1875bec8499300b1915a79a596"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#gac7850a1875bec8499300b1915a79a596">MCMGR_StartCore</a> (<a class="el" href="group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d">mcmgr_core_t</a> coreNum, void *bootAddress, uint32_t startupData, <a class="el" href="group__mcmgr.html#ga214ff3137404f7aa33601fc75fd32d52">mcmgr_start_mode_t</a> mode)</td></tr>
+<tr class="memdesc:gac7850a1875bec8499300b1915a79a596"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start a selected core.  <br /></td></tr>
+<tr class="separator:gac7850a1875bec8499300b1915a79a596"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1435aa68ed02c6105fce00b7997a3b3f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#ga1435aa68ed02c6105fce00b7997a3b3f">MCMGR_GetStartupData</a> (<a class="el" href="group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d">mcmgr_core_t</a> coreNum, uint32_t *startupData)</td></tr>
+<tr class="memdesc:ga1435aa68ed02c6105fce00b7997a3b3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get startup data for the slave core.  <br /></td></tr>
+<tr class="separator:ga1435aa68ed02c6105fce00b7997a3b3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab11c27fda1a646433b0d8cef19de6ee4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#gab11c27fda1a646433b0d8cef19de6ee4">MCMGR_StopCore</a> (<a class="el" href="group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d">mcmgr_core_t</a> coreNum)</td></tr>
+<tr class="memdesc:gab11c27fda1a646433b0d8cef19de6ee4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop a selected core.  <br /></td></tr>
+<tr class="separator:gab11c27fda1a646433b0d8cef19de6ee4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7b84c8f0aeb60f4a30cdc04eb188994f"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#ga7b84c8f0aeb60f4a30cdc04eb188994f">MCMGR_GetVersion</a> (void)</td></tr>
+<tr class="memdesc:ga7b84c8f0aeb60f4a30cdc04eb188994f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get version of MCMGR.  <br /></td></tr>
+<tr class="separator:ga7b84c8f0aeb60f4a30cdc04eb188994f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaae6f3eb8620f755a6a42b38952b59a20"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#gaae6f3eb8620f755a6a42b38952b59a20">MCMGR_GetCoreProperty</a> (<a class="el" href="group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d">mcmgr_core_t</a> coreNum, <a class="el" href="group__mcmgr.html#ga7198108f5e3c9eb6739662dd170a2791">mcmgr_core_property_t</a> property, void *value, uint32_t *length)</td></tr>
+<tr class="memdesc:gaae6f3eb8620f755a6a42b38952b59a20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get property of the CPU core.  <br /></td></tr>
+<tr class="separator:gaae6f3eb8620f755a6a42b38952b59a20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3c4b9d86b64af938a9f9c316028a03b9"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#ga3c4b9d86b64af938a9f9c316028a03b9">MCMGR_GetCoreCount</a> (void)</td></tr>
+<tr class="memdesc:ga3c4b9d86b64af938a9f9c316028a03b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the count of cores in a multicore system.  <br /></td></tr>
+<tr class="separator:ga3c4b9d86b64af938a9f9c316028a03b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf09a19de979b8d1cff3c53a4b9f1e233"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d">mcmgr_core_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#gaf09a19de979b8d1cff3c53a4b9f1e233">MCMGR_GetCurrentCore</a> (void)</td></tr>
+<tr class="memdesc:gaf09a19de979b8d1cff3c53a4b9f1e233"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current CPU core.  <br /></td></tr>
+<tr class="separator:gaf09a19de979b8d1cff3c53a4b9f1e233"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga08a4a13691e04c934998926adb277ae2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#ga08a4a13691e04c934998926adb277ae2">MCMGR_RegisterEvent</a> (<a class="el" href="group__mcmgr.html#ga1307b1de876154b7b9c986cbaffd067a">mcmgr_event_type_t</a> type, <a class="el" href="group__mcmgr.html#gac00ef8a7c830805be44071a637396bd5">mcmgr_event_callback_t</a> callback, void *callbackData)</td></tr>
+<tr class="memdesc:ga08a4a13691e04c934998926adb277ae2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register event handler.  <br /></td></tr>
+<tr class="separator:ga08a4a13691e04c934998926adb277ae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabbdd762f564f67940ac4f91fd1dfc14d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#gabbdd762f564f67940ac4f91fd1dfc14d">MCMGR_TriggerEvent</a> (<a class="el" href="group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d">mcmgr_core_t</a> coreNum, <a class="el" href="group__mcmgr.html#ga1307b1de876154b7b9c986cbaffd067a">mcmgr_event_type_t</a> type, uint16_t eventData)</td></tr>
+<tr class="memdesc:gabbdd762f564f67940ac4f91fd1dfc14d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trigger event handler.  <br /></td></tr>
+<tr class="separator:gabbdd762f564f67940ac4f91fd1dfc14d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6e397db4f34069e7762c04488ab905d2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#ga6e397db4f34069e7762c04488ab905d2">MCMGR_TriggerEventForce</a> (<a class="el" href="group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d">mcmgr_core_t</a> coreNum, <a class="el" href="group__mcmgr.html#ga1307b1de876154b7b9c986cbaffd067a">mcmgr_event_type_t</a> type, uint16_t eventData)</td></tr>
+<tr class="memdesc:ga6e397db4f34069e7762c04488ab905d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trigger event handler, force version.  <br /></td></tr>
+<tr class="separator:ga6e397db4f34069e7762c04488ab905d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga88627300a9ff918dc792fe29ef0da0c4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#ga88627300a9ff918dc792fe29ef0da0c4">MCMGR_ProcessDeferredRxIsr</a> (void)</td></tr>
+<tr class="memdesc:ga88627300a9ff918dc792fe29ef0da0c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process RX data in deffered rx task.  <br /></td></tr>
+<tr class="separator:ga88627300a9ff918dc792fe29ef0da0c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="gac2b608eee94975f61b2e60c295b62666" name="gac2b608eee94975f61b2e60c295b62666"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac2b608eee94975f61b2e60c295b62666">&#9670;&#160;</a></span>MCMGR_BUSY_POLL_COUNT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MCMGR_BUSY_POLL_COUNT&#160;&#160;&#160;0U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Maximum polling iterations for MCMGR waiting loops. </p>
+<p>This parameter defines the maximum number of iterations for any polling loop in the MCMGR code before timing out and returning an error.</p>
+<p>It applies to all waiting loops in MCMGR, such as waiting for a core to start, waiting for a response from another core, or waiting for a resource to become available.</p>
+<p>This is a count of loop iterations, not a time-based value.</p>
+<p>If defined as 0, polling loops will continue indefinitely until their exit condition is met, which could potentially cause the system to hang if a core becomes unresponsive. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="ga04ccbddec3c91482490e57e53afbeb6f" name="ga04ccbddec3c91482490e57e53afbeb6f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga04ccbddec3c91482490e57e53afbeb6f">&#9670;&#160;</a></span>_mcmgr_core</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group__mcmgr.html#ga04ccbddec3c91482490e57e53afbeb6f">_mcmgr_core</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enumeration that defines core. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga04ccbddec3c91482490e57e53afbeb6fa3254afb69346be6f9167ffcf771de620" name="gga04ccbddec3c91482490e57e53afbeb6fa3254afb69346be6f9167ffcf771de620"></a>kMCMGR_Core0&#160;</td><td class="fielddoc"><p>Enum value for Core 0. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga04ccbddec3c91482490e57e53afbeb6fae5ff151633b4ee4b9dc9e0825675ecc1" name="gga04ccbddec3c91482490e57e53afbeb6fae5ff151633b4ee4b9dc9e0825675ecc1"></a>kMCMGR_Core1&#160;</td><td class="fielddoc"><p>Enum value for Core 1. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="gadc2ec0f3fda2d57dd3870335914b407f" name="gadc2ec0f3fda2d57dd3870335914b407f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadc2ec0f3fda2d57dd3870335914b407f">&#9670;&#160;</a></span>_mcmgr_core_property</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group__mcmgr.html#gadc2ec0f3fda2d57dd3870335914b407f">_mcmgr_core_property</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enumeration that defines property of core. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggadc2ec0f3fda2d57dd3870335914b407fa7c15bce35752601ded72181ec1370555" name="ggadc2ec0f3fda2d57dd3870335914b407fa7c15bce35752601ded72181ec1370555"></a>kMCMGR_CoreStatus&#160;</td><td class="fielddoc"><p>Status of core read from hardware core status flag. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggadc2ec0f3fda2d57dd3870335914b407fa878c01cabb8b391e0912d050a3a7c5de" name="ggadc2ec0f3fda2d57dd3870335914b407fa878c01cabb8b391e0912d050a3a7c5de"></a>kMCMGR_CoreType&#160;</td><td class="fielddoc"><p>Type of Core. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggadc2ec0f3fda2d57dd3870335914b407fa80a0a82df35088f86f6966fc285a3726" name="ggadc2ec0f3fda2d57dd3870335914b407fa80a0a82df35088f86f6966fc285a3726"></a>kMCMGR_CorePowerMode&#160;</td><td class="fielddoc"><p>Power Mode of Core - implementation is hardware-specific. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="ga7b053e7eeda6daac208a4038a2303955" name="ga7b053e7eeda6daac208a4038a2303955"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7b053e7eeda6daac208a4038a2303955">&#9670;&#160;</a></span>_mcmgr_core_status</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group__mcmgr.html#ga7b053e7eeda6daac208a4038a2303955">_mcmgr_core_status</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enumeration that defines the property value of core status. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga7b053e7eeda6daac208a4038a2303955a5ed482ec07b1619bf7c756a88227f8ca" name="gga7b053e7eeda6daac208a4038a2303955a5ed482ec07b1619bf7c756a88227f8ca"></a>kMCMGR_InReset&#160;</td><td class="fielddoc"><p>Core is held in reset. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga7b053e7eeda6daac208a4038a2303955a608cc3ceee195f29ccfb236989c68fb4" name="gga7b053e7eeda6daac208a4038a2303955a608cc3ceee195f29ccfb236989c68fb4"></a>kMCMGR_NotInReset&#160;</td><td class="fielddoc"><p>Core is not in reset. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="gaad6bc70b5f869884191902e305d51a0a" name="gaad6bc70b5f869884191902e305d51a0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaad6bc70b5f869884191902e305d51a0a">&#9670;&#160;</a></span>_mcmgr_core_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group__mcmgr.html#gaad6bc70b5f869884191902e305d51a0a">_mcmgr_core_type</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enumeration that defines property value of core type. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggaad6bc70b5f869884191902e305d51a0aad0d7f52fc5ed832a259e3fba00d936a6" name="ggaad6bc70b5f869884191902e305d51a0aad0d7f52fc5ed832a259e3fba00d936a6"></a>kMCMGR_CoreTypeCortexM0&#160;</td><td class="fielddoc"><p>Cortex M0. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaad6bc70b5f869884191902e305d51a0aa9e0502d8798e4e70bbe70888a2573f86" name="ggaad6bc70b5f869884191902e305d51a0aa9e0502d8798e4e70bbe70888a2573f86"></a>kMCMGR_CoreTypeCortexM0Plus&#160;</td><td class="fielddoc"><p>Cortex M0+. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaad6bc70b5f869884191902e305d51a0aaac1299d1dd439558115c6a5f49da6256" name="ggaad6bc70b5f869884191902e305d51a0aaac1299d1dd439558115c6a5f49da6256"></a>kMCMGR_CoreTypeCortexM4&#160;</td><td class="fielddoc"><p>Cortex M4. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaad6bc70b5f869884191902e305d51a0aa9d0db113fdc4348d3e833dfc0e0a8c38" name="ggaad6bc70b5f869884191902e305d51a0aa9d0db113fdc4348d3e833dfc0e0a8c38"></a>kMCMGR_CoreTypeCortexM33&#160;</td><td class="fielddoc"><p>Cortex M33. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaad6bc70b5f869884191902e305d51a0aae5015a4bd158184a81f1a413cf1001ba" name="ggaad6bc70b5f869884191902e305d51a0aae5015a4bd158184a81f1a413cf1001ba"></a>kMCMGR_CoreTypeCortexM7&#160;</td><td class="fielddoc"><p>Cortex M7. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaad6bc70b5f869884191902e305d51a0aae85bf49f95cd80cbb1b293b5662366fc" name="ggaad6bc70b5f869884191902e305d51a0aae85bf49f95cd80cbb1b293b5662366fc"></a>kMCMGR_CoreTypeCortexM3&#160;</td><td class="fielddoc"><p>Cortex M3. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaad6bc70b5f869884191902e305d51a0aa361e2a3ca65a507d707d0aa1ac638e3f" name="ggaad6bc70b5f869884191902e305d51a0aa361e2a3ca65a507d707d0aa1ac638e3f"></a>kMCMGR_CoreTypeDSPHifi1&#160;</td><td class="fielddoc"><p>Cortex M3. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaad6bc70b5f869884191902e305d51a0aa153f029b35dc633f245e25814c65833f" name="ggaad6bc70b5f869884191902e305d51a0aa153f029b35dc633f245e25814c65833f"></a>kMCMGR_CoreTypeDSPHifi4&#160;</td><td class="fielddoc"><p>Cortex M3. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="ga2b471b0504b78138baba1e17a05a9b9c" name="ga2b471b0504b78138baba1e17a05a9b9c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2b471b0504b78138baba1e17a05a9b9c">&#9670;&#160;</a></span>_mcmgr_start_mode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group__mcmgr.html#ga2b471b0504b78138baba1e17a05a9b9c">_mcmgr_start_mode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enumeration that defines start type. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga2b471b0504b78138baba1e17a05a9b9ca1d97daf76353ad10e9ccdf91c42c759f" name="gga2b471b0504b78138baba1e17a05a9b9ca1d97daf76353ad10e9ccdf91c42c759f"></a>kMCMGR_Start_Synchronous&#160;</td><td class="fielddoc"><p>Enum value for starting synchronously. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga2b471b0504b78138baba1e17a05a9b9cafcd6079bbf46d10890fb281ca69ae228" name="gga2b471b0504b78138baba1e17a05a9b9cafcd6079bbf46d10890fb281ca69ae228"></a>kMCMGR_Start_Asynchronous&#160;</td><td class="fielddoc"><p>Enum value for starting asynchronously. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="gaafc86a36cbeb3a8587cf1d03dfe095c8" name="gaafc86a36cbeb3a8587cf1d03dfe095c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaafc86a36cbeb3a8587cf1d03dfe095c8">&#9670;&#160;</a></span>_mcmgr_status</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group__mcmgr.html#gaafc86a36cbeb3a8587cf1d03dfe095c8">_mcmgr_status</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enumeration that defines MCMGR function return status codes. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggaafc86a36cbeb3a8587cf1d03dfe095c8abf7fc043f96c3aae550751f7275c7acb" name="ggaafc86a36cbeb3a8587cf1d03dfe095c8abf7fc043f96c3aae550751f7275c7acb"></a>kStatus_MCMGR_Success&#160;</td><td class="fielddoc"><p>Operation was successful. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaafc86a36cbeb3a8587cf1d03dfe095c8aab13cf2a47a0af104ac31d9c476acc6d" name="ggaafc86a36cbeb3a8587cf1d03dfe095c8aab13cf2a47a0af104ac31d9c476acc6d"></a>kStatus_MCMGR_Error&#160;</td><td class="fielddoc"><p>Operation was not successful. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaafc86a36cbeb3a8587cf1d03dfe095c8adbbe6f5f23775831c0ca4ecb2e8eb05f" name="ggaafc86a36cbeb3a8587cf1d03dfe095c8adbbe6f5f23775831c0ca4ecb2e8eb05f"></a>kStatus_MCMGR_NotImplemented&#160;</td><td class="fielddoc"><p>Function is not implemented. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaafc86a36cbeb3a8587cf1d03dfe095c8ad1055c322ba3c2832722b0c726a4165f" name="ggaafc86a36cbeb3a8587cf1d03dfe095c8ad1055c322ba3c2832722b0c726a4165f"></a>kStatus_MCMGR_NotReady&#160;</td><td class="fielddoc"><p>Operation result not ready. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="gabbf6e7e7978f537eaa72ea8e95bd0f1f" name="gabbf6e7e7978f537eaa72ea8e95bd0f1f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabbf6e7e7978f537eaa72ea8e95bd0f1f">&#9670;&#160;</a></span>mcmgr_version_enum</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group__mcmgr.html#gabbf6e7e7978f537eaa72ea8e95bd0f1f">mcmgr_version_enum</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Version of MCMGR. </p>
+<p>Version 1.0.0, for version 1.2.3 it will be 0x00010203 </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ga113834314ba8d727f8d601463ee71e88" name="ga113834314ba8d727f8d601463ee71e88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga113834314ba8d727f8d601463ee71e88">&#9670;&#160;</a></span>MCMGR_EarlyInit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a> MCMGR_EarlyInit </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize the multicore manager, early init. </p>
+<p>After calling this function, <a class="el" href="group__mcmgr.html#gabbdd762f564f67940ac4f91fd1dfc14d" title="Trigger event handler.">MCMGR_TriggerEvent()</a> and/or <a class="el" href="group__mcmgr.html#gab18e570ea8c466214b3725785d45aa35" title="Initialize the multicore manager.">MCMGR_Init()</a> can be called.</p>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+
+</div>
+</div>
+<a id="ga3c4b9d86b64af938a9f9c316028a03b9" name="ga3c4b9d86b64af938a9f9c316028a03b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3c4b9d86b64af938a9f9c316028a03b9">&#9670;&#160;</a></span>MCMGR_GetCoreCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t MCMGR_GetCoreCount </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the count of cores in a multicore system. </p>
+<p>This function returns the count of cores in a multicore system.</p>
+<dl class="section return"><dt>Returns</dt><dd>the count of cores in a system. </dd></dl>
+
+</div>
+</div>
+<a id="gaae6f3eb8620f755a6a42b38952b59a20" name="gaae6f3eb8620f755a6a42b38952b59a20"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaae6f3eb8620f755a6a42b38952b59a20">&#9670;&#160;</a></span>MCMGR_GetCoreProperty()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a> MCMGR_GetCoreProperty </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d">mcmgr_core_t</a>&#160;</td>
+          <td class="paramname"><em>coreNum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__mcmgr.html#ga7198108f5e3c9eb6739662dd170a2791">mcmgr_core_property_t</a>&#160;</td>
+          <td class="paramname"><em>property</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *&#160;</td>
+          <td class="paramname"><em>length</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get property of the CPU core. </p>
+<p>This function provides the property of the CPU core.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">coreNum</td><td>Enum of core. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">property</td><td>Requested property type. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">value</td><td>Parameter for value of property. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">length</td><td>Parameter for size of property value in bytes.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+
+</div>
+</div>
+<a id="gaf09a19de979b8d1cff3c53a4b9f1e233" name="gaf09a19de979b8d1cff3c53a4b9f1e233"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf09a19de979b8d1cff3c53a4b9f1e233">&#9670;&#160;</a></span>MCMGR_GetCurrentCore()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d">mcmgr_core_t</a> MCMGR_GetCurrentCore </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get current CPU core. </p>
+<p>This function returns enum of current core.</p>
+<dl class="section return"><dt>Returns</dt><dd>Enum of current core. </dd></dl>
+
+</div>
+</div>
+<a id="ga1435aa68ed02c6105fce00b7997a3b3f" name="ga1435aa68ed02c6105fce00b7997a3b3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1435aa68ed02c6105fce00b7997a3b3f">&#9670;&#160;</a></span>MCMGR_GetStartupData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a> MCMGR_GetStartupData </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d">mcmgr_core_t</a>&#160;</td>
+          <td class="paramname"><em>coreNum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *&#160;</td>
+          <td class="paramname"><em>startupData</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get startup data for the slave core. </p>
+<p>This function read startup data provided by the master core. Use only on the slave core during the startup.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">coreNum</td><td>Enum of the core from which to get statup data. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">startupData</td><td>Data to read by this function.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+
+</div>
+</div>
+<a id="ga7b84c8f0aeb60f4a30cdc04eb188994f" name="ga7b84c8f0aeb60f4a30cdc04eb188994f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7b84c8f0aeb60f4a30cdc04eb188994f">&#9670;&#160;</a></span>MCMGR_GetVersion()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t MCMGR_GetVersion </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get version of MCMGR. </p>
+<p>This function returns a number of MCMGR version.</p>
+<dl class="section return"><dt>Returns</dt><dd>a number of MCMGR version. </dd></dl>
+
+</div>
+</div>
+<a id="gab18e570ea8c466214b3725785d45aa35" name="gab18e570ea8c466214b3725785d45aa35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab18e570ea8c466214b3725785d45aa35">&#9670;&#160;</a></span>MCMGR_Init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a> MCMGR_Init </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize the multicore manager. </p>
+<p>After calling this function, all API can be used.</p>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+
+</div>
+</div>
+<a id="ga88627300a9ff918dc792fe29ef0da0c4" name="ga88627300a9ff918dc792fe29ef0da0c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga88627300a9ff918dc792fe29ef0da0c4">&#9670;&#160;</a></span>MCMGR_ProcessDeferredRxIsr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a> MCMGR_ProcessDeferredRxIsr </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Process RX data in deffered rx task. </p>
+<p>This function used to be called from the application specific deffered rx task to trigger rx data processing outside the interrupt context. The purpose is to make the interrupt service routine as short as possible, performing only really necessary steps in the interrupt context and defer the processing outside the interrupt context.</p>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_NotImplemented when not supported. </dd></dl>
+
+</div>
+</div>
+<a id="ga08a4a13691e04c934998926adb277ae2" name="ga08a4a13691e04c934998926adb277ae2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga08a4a13691e04c934998926adb277ae2">&#9670;&#160;</a></span>MCMGR_RegisterEvent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a> MCMGR_RegisterEvent </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__mcmgr.html#ga1307b1de876154b7b9c986cbaffd067a">mcmgr_event_type_t</a>&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__mcmgr.html#gac00ef8a7c830805be44071a637396bd5">mcmgr_event_callback_t</a>&#160;</td>
+          <td class="paramname"><em>callback</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>callbackData</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Register event handler. </p>
+<p>This function registers an event handler. for remote processor events handling.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>Type of the event. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">callback</td><td>User callback. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">callbackData</td><td>Data/context for user callback.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+
+</div>
+</div>
+<a id="gac7850a1875bec8499300b1915a79a596" name="gac7850a1875bec8499300b1915a79a596"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac7850a1875bec8499300b1915a79a596">&#9670;&#160;</a></span>MCMGR_StartCore()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a> MCMGR_StartCore </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d">mcmgr_core_t</a>&#160;</td>
+          <td class="paramname"><em>coreNum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>bootAddress</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>startupData</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__mcmgr.html#ga214ff3137404f7aa33601fc75fd32d52">mcmgr_start_mode_t</a>&#160;</td>
+          <td class="paramname"><em>mode</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start a selected core. </p>
+<p>This function causes a selected core to initialize and start the code execution. If the secondary core application boots from RAM, then there is a need to call the function, which copies this app. Image to RAM prior this function.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">coreNum</td><td>Enum of the core to be started. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">bootAddress</td><td>Boot address of the core to be started application. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">startupData</td><td>Data which can be get by the other core on startup. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mode</td><td>Start mode, use kMCMGR_Start_Synchronous for synchronous mode (wait until the core is started), kMCMGR_Start_Asynchronous for asynchronous mode (do not wait).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+
+</div>
+</div>
+<a id="gab11c27fda1a646433b0d8cef19de6ee4" name="gab11c27fda1a646433b0d8cef19de6ee4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab11c27fda1a646433b0d8cef19de6ee4">&#9670;&#160;</a></span>MCMGR_StopCore()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a> MCMGR_StopCore </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d">mcmgr_core_t</a>&#160;</td>
+          <td class="paramname"><em>coreNum</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Stop a selected core. </p>
+<p>This function causes a selected core to halt code execution.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">coreNum</td><td>Enum of core to be stopped.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+
+</div>
+</div>
+<a id="gabbdd762f564f67940ac4f91fd1dfc14d" name="gabbdd762f564f67940ac4f91fd1dfc14d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabbdd762f564f67940ac4f91fd1dfc14d">&#9670;&#160;</a></span>MCMGR_TriggerEvent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a> MCMGR_TriggerEvent </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d">mcmgr_core_t</a>&#160;</td>
+          <td class="paramname"><em>coreNum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__mcmgr.html#ga1307b1de876154b7b9c986cbaffd067a">mcmgr_event_type_t</a>&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>eventData</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trigger event handler. </p>
+<p>This function triggers an event handler on the remote core.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">coreNum</td><td>Enum of core to be triggered. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>Type of the event. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">eventData</td><td>Data to send to remote core.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+
+</div>
+</div>
+<a id="ga6e397db4f34069e7762c04488ab905d2" name="ga6e397db4f34069e7762c04488ab905d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6e397db4f34069e7762c04488ab905d2">&#9670;&#160;</a></span>MCMGR_TriggerEventForce()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec">mcmgr_status_t</a> MCMGR_TriggerEventForce </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d">mcmgr_core_t</a>&#160;</td>
+          <td class="paramname"><em>coreNum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__mcmgr.html#ga1307b1de876154b7b9c986cbaffd067a">mcmgr_event_type_t</a>&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>eventData</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trigger event handler, force version. </p>
+<p>This function triggers an event handler on the remote core, force version that does not check the consumption of previously sent data.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">coreNum</td><td>Enum of core to be triggered. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>Type of the event. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">eventData</td><td>Data to send to remote core.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.8.5-->
