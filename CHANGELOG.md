@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added gcov options and configs to support mcmgr code coverage
+- Addws new test_weak_mu_isr testcase for devices with MU peripheral
 
 ## [v5.0.1]
 
