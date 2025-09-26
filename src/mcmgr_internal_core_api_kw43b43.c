@@ -8,7 +8,6 @@
 #include "mcmgr_internal_core_api.h"
 #include "fsl_device_registers.h"
 #include "fsl_mu.h"
-#include "board.h"
 
 
 /* At start make decision for what core mcmgr is build for at the compile time */
@@ -115,38 +114,9 @@ mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
 
 mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress)
 {
-    __attribute__((unused)) volatile uint32_t result1, result2;
-
-    if (coreNum != kMCMGR_Core1)
-    {
-        return kStatus_MCMGR_Error;
-    }
-
-#if defined(KW43B43ZC7_SERIES)
-    GlikeyWriteEnable(GLIKEY, 0U);
-#endif
-    /* the FPGA ROM code makes the NBU boot from RAM and run a while(1) loop
-     * so we need to put it in reset before changing the boot address to make
-     * sure it will boot from the address we want it to */
-    SECCON->CPU1_RESET_CTRL = SECCON_CPU1_RESET_CTRL_CPU1_RESET(SECCON_UNLOCK_PATTERN) |
-                              SECCON_CPU1_RESET_CTRL_CPU1_VECTOR_LOCK(SECCON_UNLOCK_PATTERN) |
-                              SECCON_CPU1_RESET_CTRL_CPU1_RESET_CTRL_LOCK(SECCON_UNLOCK_PATTERN);
-
-    SECCON->CPU1_VECTOR = (uint32_t)(char *)bootAddress;
-    SYSCON->AUTHENTICATE = SYSCON_AUTH_PATTERN;
-    SYSCON->CPU1_WAIT = 0U;
-#if defined(KW43B43ZC7_SERIES)
-    GlikeyWriteEnable(GLIKEY, 0U);
-#endif
-
-    /* release CPU1 reset */
-    SECCON->CPU1_RESET_CTRL = 0U;
-    /* pd_infra MRCC clk teal1 */
-    SECCON->CPU1_DEBUG_EN_DP = SECCON_CPU1_DEBUG_EN_DP_CPU1_NIDEN(1) | SECCON_CPU1_DEBUG_EN_DP_CPU1_DBGEN(1);
-
-    MRCC_0->MRCC_UTEAL_1_CLKSEL = MRCC_MRCC_UTEAL_1_CLKSEL_CC(1) | MRCC_MRCC_UTEAL_1_CLKSEL_RSTB(1) | MRCC_MRCC_UTEAL_1_CLKSEL_PR(1);
-
-    RFMC->RF2P4GHZ_CTRL &= ~RFMC_RF2P4GHZ_CTRL_CPU_RST_MASK;
+    /* NBU is started by the boot rom - nothing to do here */
+    (void)coreNum;
+    (void)bootAddress;
 
     return kStatus_MCMGR_Success;
 }
