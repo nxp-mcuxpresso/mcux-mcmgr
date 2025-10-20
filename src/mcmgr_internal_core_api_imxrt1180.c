@@ -159,9 +159,15 @@ mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress
 
     // PRINTF("Get Status %x %x\r\n", result1, result2); /*Should be 0xE1D20206, 0xD6*/
 
+    /* Disable M7 clock before clearing CPU_WAIT bit */
+    CLOCK_DisableClock(kCLOCK_M7);
+
     /* Deassert Wait */
     BLK_CTRL_S_AONMIX->M7_CFG =
         (BLK_CTRL_S_AONMIX->M7_CFG & (~BLK_CTRL_S_AONMIX_M7_CFG_WAIT_MASK)) | BLK_CTRL_S_AONMIX_M7_CFG_WAIT(0);
+
+    /* Re-enable M7 clock again */
+    CLOCK_EnableClock(kCLOCK_M7);
 
     return kStatus_MCMGR_Success;
 }
