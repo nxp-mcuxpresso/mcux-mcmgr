@@ -7,17 +7,21 @@
 #include "mcmgr.h"
 #include "mcmgr_internal_core_api.h"
 #include "fsl_device_registers.h"
+
 #if defined(SDK_OS_FREE_RTOS)
 #include "FreeRTOS.h"
 #endif
 
-#if defined(configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY)
-#ifndef IMU_ISR_PRIORITY
-#define IMU_ISR_PRIORITY (configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY)
-#endif
-#else
 #ifndef IMU_ISR_PRIORITY
 #define IMU_ISR_PRIORITY (4U)
+#endif
+
+/* The highest interrupt priority that can be used by any interrupt service
+ * routine that makes calls to interrupt safe FreeRTOS API functions 
+ * (higher priorities are lower numeric values) */ 
+#if defined(configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY)
+#if IMU_ISR_PRIORITY < configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY
+#error "IMU_ISR_PRIORITY value must be greater than or equal to configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY"
 #endif
 #endif
 

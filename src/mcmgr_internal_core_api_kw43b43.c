@@ -8,7 +8,22 @@
 #include "mcmgr_internal_core_api.h"
 #include "fsl_device_registers.h"
 #include "fsl_mu.h"
+#if defined(SDK_OS_FREE_RTOS)
+#include "FreeRTOS.h"
+#endif
 
+#ifndef MU_ISR_PRIORITY
+#define MU_ISR_PRIORITY (4U)
+#endif
+
+/* The highest interrupt priority that can be used by any interrupt service
+ * routine that makes calls to interrupt safe FreeRTOS API functions 
+ * (higher priorities are lower numeric values) */ 
+#if defined(configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY)
+#if MU_ISR_PRIORITY < configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY
+#error "MU_ISR_PRIORITY value must be greater than or equal to configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY"
+#endif
+#endif
 
 /* At start make decision for what core mcmgr is build for at the compile time */
 #if (defined(FSL_FEATURE_MU_SIDE_A))
@@ -92,7 +107,7 @@ mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
     MU_EnableInterrupts(MU0_MUA, (uint32_t)kMU_ResetAssertInterruptEnable);
 #endif
 
-    NVIC_SetPriority(MU0_IRQn, 2);
+    NVIC_SetPriority(MU0_IRQn, MU_ISR_PRIORITY);
 
     NVIC_EnableIRQ(MU0_IRQn);
 
@@ -103,7 +118,7 @@ mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
     MU_EnableInterrupts(MU0_MUB, (uint32_t)kMU_ResetAssertInterruptEnable);
 #endif
 
-    NVIC_SetPriority(MU0_IRQn, 2);
+    NVIC_SetPriority(MU0_IRQn, MU_ISR_PRIORITY);
 
     NVIC_EnableIRQ(MU0_IRQn);
 
