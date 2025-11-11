@@ -20,12 +20,12 @@
 #error "Building for not supported platform!"
 #endif
 
-#define IMU_RX_ISR_Handler(x)    IMU_RX_ISR(x)
-#define IMU_RX_ISR(number)       MU_RxFullFlagISR
+#define IMU_RX_ISR_Handler(x)     IMU_RX_ISR(x)
+#define IMU_RX_ISR(number)        MU_RxFullFlagISR
 #define mcmgr_imu_channel_handler IMU_RX_ISR_Handler(MCMGR_IMU_CHANNEL)
 
-__attribute__((weak)) void mcmgr_imu_remote_active_req(void){};
-__attribute__((weak)) void mcmgr_imu_remote_active_rel(void){};
+__attribute__((weak)) void mcmgr_imu_remote_active_req(void) {};
+__attribute__((weak)) void mcmgr_imu_remote_active_rel(void) {};
 
 volatile mcmgr_core_context_t s_mcmgrCoresContext[MCMGR_CORECOUNT] = {
     {.state = kMCMGR_ResetCoreState, .startupData = 0}, {.state = kMCMGR_ResetCoreState, .startupData = 0}};
@@ -95,12 +95,15 @@ mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress
              * Not able to emulate this situation in testing.
              */
             status = kStatus_MCMGR_Error; /* GCOVR_EXCL_LINE */
-            break; /* GCOVR_EXCL_LINE */
+            break;                        /* GCOVR_EXCL_LINE */
+        }
+        else
+        {
+            /* Release NBU CPU from reset */
+            RFMC->RF2P4GHZ_CTRL &= ~(RFMC_RF2P4GHZ_CTRL_CPU_RST_MASK);
+            CIU2->CIU2_CPU_CPU2_CTRL = 0x1;
         }
 
-        /* Release NBU CPU from reset */
-        RFMC->RF2P4GHZ_CTRL &= ~(RFMC_RF2P4GHZ_CTRL_CPU_RST_MASK);
-        CIU2->CIU2_CPU_CPU2_CTRL = 0x1;
     } while (false);
 
     return status;
@@ -213,10 +216,10 @@ void mcmgr_imu_channel_handler(mcmgr_core_t coreNum)
             eventData = (uint16_t)(data & 0x0000FFFFu);
 
             /*
-            * $Branch Coverage Justification$
-            * (eventType >= kMCMGR_EventTableLength) case not covered, MCMGR_TriggerEvent() does not allow
-            * to trigger event with type >= kMCMGR_EventTableLength.
-            */
+             * $Branch Coverage Justification$
+             * (eventType >= kMCMGR_EventTableLength) case not covered, MCMGR_TriggerEvent() does not allow
+             * to trigger event with type >= kMCMGR_EventTableLength.
+             */
             if (((mcmgr_event_type_t)eventType >= kMCMGR_RemoteCoreUpEvent) &&
                 ((mcmgr_event_type_t)eventType < kMCMGR_EventTableLength)) /* GCOVR_EXCL_BR_LINE */
             {

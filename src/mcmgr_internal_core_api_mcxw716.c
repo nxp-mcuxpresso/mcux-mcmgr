@@ -97,10 +97,13 @@ mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress
             status = kStatus_MCMGR_Error; /* GCOVR_EXCL_LINE */
             break; /* GCOVR_EXCL_LINE */
         }
+        else
+        {
+            /* Release NBU CPU from reset */
+            RFMC->RF2P4GHZ_CTRL &= ~(RFMC_RF2P4GHZ_CTRL_CPU_RST_MASK);
+            CIU2->CIU2_CPU_CPU2_CTRL = 0x1;
+        }
 
-        /* Release NBU CPU from reset */
-        RFMC->RF2P4GHZ_CTRL &= ~(RFMC_RF2P4GHZ_CTRL_CPU_RST_MASK);
-        CIU2->CIU2_CPU_CPU2_CTRL = 0x1;
     } while (false);
 
     return status;
