@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 NXP
+ * Copyright 2024-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -40,7 +40,7 @@ mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
 mcmgr_core_t mcmgr_get_current_core_internal(void)
 {
 #if defined(IMU_CPU_INDEX) && (IMU_CPU_INDEX == 1U)
-    return (mcmgr_core_t)MSCM->CPXNUM;
+    return kMCMGR_Core0;
 #elif defined(IMU_CPU_INDEX) && (IMU_CPU_INDEX == 2U)
     return kMCMGR_Core1;
 #endif
