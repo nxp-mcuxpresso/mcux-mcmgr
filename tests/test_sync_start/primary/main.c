@@ -268,7 +268,7 @@ int main(void)
     BOARD_InitHardware();
 
 #ifdef CORE1_IMAGE_COPY_TO_RAM
-    /* Calculate size of the image - not required on LPCExpresso. LPCExpresso copies image to RAM during startup
+    /* Calculate size of the image - not required on MCUXpressoIDE. MCUXpressoIDE copies image to RAM during startup
      * automatically */
     uint32_t core1_image_size;
     core1_image_size = get_core1_image_size();

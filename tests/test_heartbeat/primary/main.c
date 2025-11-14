@@ -8,21 +8,12 @@
 #include "assert.h"
 #include "app.h"
 #include "mcmgr.h"
-#include "fsl_debug_console.h"
 #include <stdio.h>
 #include <stdlib.h>
-#if (defined(KW45B41Z83_cm33_SERIES) || defined(KW47B42ZB7_cm33_core0_SERIES) || defined(MCXW727C_cm33_core0_SERIES))
-#include "fsl_imu.h"
-#endif
-#include "FreeRTOS.h"
-#include "task.h"
 
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-#define TEST_TASK_STACK_SIZE (600U)
-#define TEST_DEFERRED_RX_TASK_STACK_SIZE (250U)
-
 #define SH_MEM_TOTAL_SIZE (6144)
 #if defined(__ICCARM__) /* IAR Workbench */
 #pragma location = "rpmsg_sh_mem_section"
@@ -34,17 +25,22 @@ char rpmsg_lite_base[SH_MEM_TOTAL_SIZE] __attribute__((section(".noinit.$rpmsg_s
 #endif
 
 // address of RAM, which is used to tests for read/write from both cores
-#if defined(KW45B41Z83_cm33_SERIES)
-#define TEST_ADDRESS (((uint32_t)0x489C0000))
-#else
-#define TEST_ADDRESS ((uint32_t)rpmsg_lite_base)
-#endif
-
+#define TEST_ADDRESS   ((uint32_t)rpmsg_lite_base)
 #define TEST_VALUE     0xAAAAAAAA
 #define TEST_VALUE_16B 0xBBBB
 
 // RAM address from which boot secondary core
 #define BOOT_ADDRESS (void *)(char *)CORE1_BOOT_ADDRESS
+
+#define TEST_HEARTBEAT_EVENT_DATA        (0xBEAE)
+#define TEST_HEARTBEAT_TIMEOUT_MS        (5000)  /* 5 seconds timeout */
+#define TEST_HEARTBEAT_EXPECTED_INTERVAL (1000)  /* Expected every 1 second */
+#define TEST_DURATION_MS                 (30000) /* Run for 30 seconds */
+
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+static volatile uint32_t g_systickCounter = 0;
 
 /*******************************************************************************
  * Prototypes
@@ -53,8 +49,37 @@ char rpmsg_lite_base[SH_MEM_TOTAL_SIZE] __attribute__((section(".noinit.$rpmsg_s
 /*******************************************************************************
  * Code
  ******************************************************************************/
-static TaskHandle_t test_task_handle = NULL;
-static TaskHandle_t test_deferred_rx_task_handle = NULL;
+
+/*!
+ * @brief SysTick interrupt handler
+ */
+void SysTick_Handler(void)
+{
+    g_systickCounter++;
+}
+
+/*!
+ * @brief Initialize SysTick timer for 1ms tick
+ */
+static void InitSysTick(void)
+{
+    /* Configure SysTick to generate interrupt every 1ms */
+    if (SysTick_Config(SystemCoreClock / 1000U))
+    {
+        /* Error: SysTick configuration failed */
+        while (1)
+            ;
+    }
+}
+
+/*!
+ * @brief Get current time in milliseconds using SysTick
+ */
+static uint32_t GetCurrentTimeMs(void)
+{
+    return g_systickCounter;
+}
+
 void setUp(void)
 {
 }
@@ -63,43 +88,66 @@ void tearDown(void)
 {
 }
 
-static volatile int appEvent         = 0;
-static volatile int remoteCoreUpDone = 0;
-static volatile int deferredCallEvent = 0;
+static volatile int appEvent                 = 0;
+static volatile bool g_heartbeatReceived     = false;
+static volatile uint32_t g_heartbeatCount    = 0;
+static volatile uint32_t g_lastHeartbeatTime = 0;
+static volatile bool g_secondaryCoreAlive    = false;
 
-void mcmgr_imu_deferred_call(uint32_t param)
-{
-    /* Notify/wakeup the task_deferred_rx_task, pass the vector parameter as the target task notification value */
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    xTaskNotifyFromISR(test_deferred_rx_task_handle, (1UL << (param & 0xFFFFU)), eSetBits, &xHigherPriorityTaskWoken);
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-}
-
+/*!
+ * @brief Heartbeat event handler
+ */
 void MCMGR_RemoteApplicationEventHandler(mcmgr_core_t coreNum, uint16_t remoteData, void *context)
 {
-    int *appEvent = (int *)context;
-    *appEvent     = 1;
+    if (remoteData == TEST_HEARTBEAT_EVENT_DATA)
+    {
+        g_heartbeatReceived = true;
+        g_heartbeatCount++;
+        g_lastHeartbeatTime  = GetCurrentTimeMs();
+        g_secondaryCoreAlive = true;
+    }
+    else
+    {
+        int *appEvent = (int *)context;
+        *appEvent     = 1;
 
-    TEST_ASSERT(remoteData == TEST_VALUE_16B);
+        TEST_ASSERT(remoteData == TEST_VALUE_16B);
+    }
 }
 
-void MCMGR_RemoteCoreUpEventHandler(mcmgr_core_t coreNum, uint16_t remoteData, void *context)
+/*!
+ * @brief Secondary core exception handler
+ */
+void SecondaryExceptionHandler(mcmgr_core_t coreNum, uint16_t eventData, void *context)
 {
-    int *remoteCoreUpDone = (int *)context;
-    *remoteCoreUpDone     = 1;
+    (void)context;
+    (void)eventData;
+
+    PRINTF("Secondary core %d exception detected!\n", coreNum);
+    g_secondaryCoreAlive = false;
+}
+
+/*!
+ * @brief Check if heartbeat timeout occurred
+ */
+static bool CheckHeartbeatTimeout(void)
+{
+    uint32_t currentTime            = GetCurrentTimeMs();
+    uint32_t timeSinceLastHeartbeat = currentTime - g_lastHeartbeatTime;
+
+    return (g_secondaryCoreAlive && timeSinceLastHeartbeat > TEST_HEARTBEAT_TIMEOUT_MS);
 }
 
 // Test of MCMGR_Init() API function
 void mcmgr_test_init_success()
 {
+    /* Initialize SysTick timer */
+    InitSysTick();
+
     /* Initialize MCMGR - low level multicore management library.
        Call this function as close to the reset entry as possible,
        (into the startup sequence) to allow CoreUp event trigerring. */
     mcmgr_status_t retVal = kStatus_MCMGR_Error;
-#if (defined(KW45B41Z83_cm33_SERIES) || defined(KW47B42ZB7_cm33_core0_SERIES) || defined(MCXW727C_cm33_core0_SERIES))
-    retVal = MCMGR_EarlyInit();
-    TEST_ASSERT(retVal == kStatus_MCMGR_Success);
-#endif
 
     retVal = MCMGR_Init();
     TEST_ASSERT(retVal == kStatus_MCMGR_Success);
@@ -117,29 +165,16 @@ void mcmgr_test_start_register_trigger()
     invalidate_cache_for_core1_image_memory(TEST_ADDRESS, 4);
 #endif /* APP_INVALIDATE_CACHE_FOR_SECONDARY_CORE_IMAGE_MEMORY */
 
-    /* Install remote reset event handler */
-    retVal = MCMGR_RegisterEvent(kMCMGR_RemoteCoreUpEvent, MCMGR_RemoteCoreUpEventHandler, (void *)&remoteCoreUpDone);
-    // Did MCMGR_RegisterEvent function succeed?
-    TEST_ASSERT(retVal == kStatus_MCMGR_Success);
-
     /* Install remote application event */
     retVal = MCMGR_RegisterEvent(kMCMGR_RemoteApplicationEvent, MCMGR_RemoteApplicationEventHandler, (void *)&appEvent);
     // Did MCMGR_RegisterEvent function succeed?
     TEST_ASSERT(retVal == kStatus_MCMGR_Success);
 
-#if defined(KW45B41Z83_cm33_SERIES)
-    retVal = MCMGR_StartCore(kMCMGR_Core1, BOOT_ADDRESS, 0xb0000000, kMCMGR_Start_Asynchronous);
-#elif (defined(KW47B42ZB7_cm33_core0_SERIES) || defined(MCXW727C_cm33_core0_SERIES))
-    retVal = MCMGR_StartCore(kMCMGR_Core1, BOOT_ADDRESS, 0xb0008800, kMCMGR_Start_Asynchronous);
-#else
-    retVal = MCMGR_StartCore(kMCMGR_Core1, BOOT_ADDRESS, TEST_ADDRESS, kMCMGR_Start_Asynchronous);
-#endif
+    retVal = MCMGR_StartCore(kMCMGR_Core1, BOOT_ADDRESS, TEST_ADDRESS, kMCMGR_Start_Synchronous);
+
     // NO DELAY HERE!
     while (!appEvent)
         ;
-    // remoteCoreUp event must be received at the time application event is received...
-    TEST_ASSERT(remoteCoreUpDone == 1);
-
 #if (defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
     // wait here a little to avoid armgcc release target fail when reading the value from the shared mem.
     volatile int i;
@@ -159,46 +194,63 @@ void mcmgr_test_start_register_trigger()
 
     // compare with value TEST_VALUE, which should write secondary code after start
     TEST_ASSERT(val == TEST_VALUE);
-
-    /* Trigger back an event */
-    retVal = MCMGR_TriggerEvent(kMCMGR_Core1, kMCMGR_RemoteApplicationEvent, TEST_VALUE_16B);
-    // Did MCMGR_TriggerEvent function succeed?
-    TEST_ASSERT(retVal == kStatus_MCMGR_Success);
-
 }
 
 /*!
- * test_deferred_rx_task
- *
- * Deffered rx task used for rx data processing outside the interrupt context.
- * During the inter-cpu isr only the necessary steps are done like clearing respective interrupt flags and notifying 
- * the waiting deferred rx task. Once the isr finishes the deferred rx task is scheduled and it handles the data 
- * processing. In case of IMU, clearing interrupt flags is not done in isr but in deferred task.
- *
+ * @brief Heartbeat test function
  */
-static void test_deferred_rx_task(void * pvParameters)
+void mcmgr_test_heartbeat()
 {
-    uint32_t ulBits = 0UL;
-    while (1)
-    {
-        /* Wait for the notification from the isr */ 
-        if(pdPASS == xTaskNotifyWait( pdFALSE, 0xffffffffU, &ulBits, portMAX_DELAY ))
-        {
-            IMU_ClearPendingInterrupts(kIMU_LinkCpu1Cpu2, IMU_MSG_FIFO_CNTL_MSG_RDY_INT_CLR_MASK);
-            MCMGR_ProcessDeferredRxIsr();
-            NVIC_EnableIRQ((IRQn_Type)RF_IMU0_IRQn);
-        }
-    }
-}
+    uint32_t testStartTime;
+    uint32_t currentTime;
+    bool testPassed = true;
 
+    testStartTime       = GetCurrentTimeMs();
+    g_lastHeartbeatTime = testStartTime;
+
+    /* Register RemoteExceptionEvent handler in addition to the RemoteApplicationEvent to catch exceptions on the
+     * secondary core */
+    TEST_ASSERT(kStatus_MCMGR_Success ==
+                MCMGR_RegisterEvent(kMCMGR_RemoteExceptionEvent, SecondaryExceptionHandler, NULL));
+
+    /* Monitor heartbeat for 30 seconds */
+    while ((GetCurrentTimeMs() - testStartTime) < TEST_DURATION_MS)
+    {
+        currentTime = GetCurrentTimeMs();
+
+        /* Check for heartbeat timeout */
+        if (CheckHeartbeatTimeout())
+        {
+            /* Heartbeat timeout detected! Secondary core may be unresponsive. */
+            testPassed = false;
+            break;
+        }
+
+        /* Print status every 5 seconds */
+        /* if ((currentTime - testStartTime) % TEST_HEARTBEAT_TIMEOUT_MS == 0)
+        {
+            PRINTF("Status: Received %lu heartbeats, Secondary core alive: %s\n",
+                   g_heartbeatCount, g_secondaryCoreAlive ? "YES" : "NO");
+        }*/
+
+        /* Small delay to prevent busy waiting */
+        SDK_DelayAtLeastUs(10000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+    }
+
+    TEST_ASSERT(testPassed == true);
+    TEST_ASSERT(g_heartbeatCount >= (TEST_DURATION_MS / TEST_HEARTBEAT_EXPECTED_INTERVAL) - 1);
+}
 void run_tests(void *unused)
 {
     RUN_EXAMPLE(mcmgr_test_init_success, MAKE_UNITY_NUM(k_unity_mcmgr, 0));
-    RUN_EXAMPLE(mcmgr_test_start_register_trigger, MAKE_UNITY_NUM(k_unity_mcmgr, 5));
+    RUN_EXAMPLE(mcmgr_test_start_register_trigger, MAKE_UNITY_NUM(k_unity_mcmgr, 1));
+    RUN_EXAMPLE(mcmgr_test_heartbeat, MAKE_UNITY_NUM(k_unity_mcmgr, 2));
 }
 
-static void test_task(void *param)
+int main(void)
 {
+    BOARD_InitHardware();
+
 #ifdef CORE1_IMAGE_COPY_TO_RAM
     /* Calculate size of the image - not required on MCUXpressoIDE. MCUXpressoIDE copies image to RAM during startup
      * automatically */
@@ -222,25 +274,4 @@ static void test_task(void *param)
 
     while (1)
         ;
-}
-
-int main(void)
-{
-    BOARD_InitHardware();
-
-    if (xTaskCreate(test_task, "TEST_TASK", TEST_TASK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1U, &test_task_handle) != pdPASS)
-    {
-        for (;;)
-        {
-        }
-    }
-    if (xTaskCreate(test_deferred_rx_task, "TEST_DEFERRED_RX_TASK", TEST_DEFERRED_RX_TASK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2U, &test_deferred_rx_task_handle) != pdPASS)
-    {
-        for (;;)
-        {
-        }
-    }
-
-    vTaskStartScheduler();
-    return 0;
 }
