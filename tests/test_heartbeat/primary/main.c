@@ -202,7 +202,7 @@ void mcmgr_test_start_register_trigger()
 void mcmgr_test_heartbeat()
 {
     uint32_t testStartTime;
-    uint32_t currentTime;
+    //uint32_t currentTime;
     bool testPassed = true;
 
     testStartTime       = GetCurrentTimeMs();
@@ -216,7 +216,7 @@ void mcmgr_test_heartbeat()
     /* Monitor heartbeat for 30 seconds */
     while ((GetCurrentTimeMs() - testStartTime) < TEST_DURATION_MS)
     {
-        currentTime = GetCurrentTimeMs();
+        //currentTime = GetCurrentTimeMs();
 
         /* Check for heartbeat timeout */
         if (CheckHeartbeatTimeout())
