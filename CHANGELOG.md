@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added mcxl14x parts support
+
 ### Fixed
 
 - Fix MISRA C-2012 Rule 20.8 violations.
