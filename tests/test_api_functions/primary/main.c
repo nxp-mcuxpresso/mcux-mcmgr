@@ -224,7 +224,7 @@ void mcmgr_test_start_core3()
     TEST_ASSERT(val == TEST_VALUE);
 }
 
-#if MCMGR_BUSY_POLL_COUNT
+#if defined(MCMGR_BUSY_POLL_COUNT) && (MCMGR_BUSY_POLL_COUNT > 0)
 // Test MCMGR_StartCore() function with synchronousr start polling timeout
 void mcmgr_test_start_core4()
 {
@@ -370,7 +370,7 @@ int main(int argc, char **argv)
     RUN_EXAMPLE(mcmgr_test_start_core1, MAKE_UNITY_NUM(k_unity_mcmgr, 1));
     RUN_EXAMPLE(mcmgr_test_start_core2, MAKE_UNITY_NUM(k_unity_mcmgr, 2));
     RUN_EXAMPLE(mcmgr_test_start_core3, MAKE_UNITY_NUM(k_unity_mcmgr, 3));
-#if MCMGR_BUSY_POLL_COUNT
+#if defined(MCMGR_BUSY_POLL_COUNT) && (MCMGR_BUSY_POLL_COUNT > 0)
     RUN_EXAMPLE(mcmgr_test_start_core4, MAKE_UNITY_NUM(k_unity_mcmgr, 4));
 #endif
 

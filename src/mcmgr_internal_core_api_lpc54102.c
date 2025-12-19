@@ -157,12 +157,12 @@ mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, uint32_t remot
        i.e. until previously sent data is processed. */
     if (false == forcedWrite)
     {
-#if MCMGR_BUSY_POLL_COUNT
+#if defined(MCMGR_BUSY_POLL_COUNT) && (MCMGR_BUSY_POLL_COUNT > 0)
         uint32_t poll_count = MCMGR_BUSY_POLL_COUNT;
 #endif
         while (0U != MAILBOX_GetValue(MAILBOX, cpu_id))
         {
-#if MCMGR_BUSY_POLL_COUNT
+#if defined(MCMGR_BUSY_POLL_COUNT) && (MCMGR_BUSY_POLL_COUNT > 0)
             if ((--poll_count) == 0u)
             {
                 return kStatus_MCMGR_Error;

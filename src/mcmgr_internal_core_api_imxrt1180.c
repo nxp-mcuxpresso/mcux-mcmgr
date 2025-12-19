@@ -110,13 +110,13 @@ mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress
      * RT1180 Specific CM7 Kick Off operation
      */
     /* Trigger S401 */
-#if MCMGR_BUSY_POLL_COUNT
+#if defined(MCMGR_BUSY_POLL_COUNT) && (MCMGR_BUSY_POLL_COUNT > 0)
     uint32_t poll_count = MCMGR_BUSY_POLL_COUNT;
 #endif
 
     while ((MU_RT_S3MUA->TSR & MU_TSR_TE0_MASK) == 0)
     {
-#if MCMGR_BUSY_POLL_COUNT
+#if defined(MCMGR_BUSY_POLL_COUNT) && (MCMGR_BUSY_POLL_COUNT > 0)
         if ((--poll_count) == 0u)
         {
             return kStatus_MCMGR_Error;
@@ -126,12 +126,12 @@ mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress
 
     MU_RT_S3MUA->TR[0] = 0x17d20106;
 
-#if MCMGR_BUSY_POLL_COUNT
+#if defined(MCMGR_BUSY_POLL_COUNT) && (MCMGR_BUSY_POLL_COUNT > 0)
     poll_count = MCMGR_BUSY_POLL_COUNT;
 #endif
     while ((MU_RT_S3MUA->RSR & MU_RSR_RF0_MASK) == 0)
     {
-#if MCMGR_BUSY_POLL_COUNT
+#if defined(MCMGR_BUSY_POLL_COUNT) && (MCMGR_BUSY_POLL_COUNT > 0)
         if ((--poll_count) == 0u)
         {
             return kStatus_MCMGR_Error;
@@ -139,13 +139,13 @@ mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress
 #endif
     } /*Wait RR Full*/
 
-#if MCMGR_BUSY_POLL_COUNT
+#if defined(MCMGR_BUSY_POLL_COUNT) && (MCMGR_BUSY_POLL_COUNT > 0)
     poll_count = MCMGR_BUSY_POLL_COUNT;
 #endif
 
     while ((MU_RT_S3MUA->RSR & MU_RSR_RF1_MASK) == 0)
     {
-#if MCMGR_BUSY_POLL_COUNT
+#if defined(MCMGR_BUSY_POLL_COUNT) && (MCMGR_BUSY_POLL_COUNT > 0)
         if ((--poll_count) == 0u)
         {
             return kStatus_MCMGR_Error;

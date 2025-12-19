@@ -223,13 +223,13 @@ mcmgr_status_t MCMGR_StartCore(mcmgr_core_t coreNum, void *bootAddress, uint32_t
         {
             if (mode == kMCMGR_Start_Synchronous)
             {
-#if MCMGR_BUSY_POLL_COUNT
+#if defined(MCMGR_BUSY_POLL_COUNT) && (MCMGR_BUSY_POLL_COUNT > 0)
                 uint32_t poll_count = MCMGR_BUSY_POLL_COUNT;
 #endif
                 /* Wait until the second core reads and confirms the startup data */
                 while (s_mcmgrCoresContext[coreNum].state != kMCMGR_RunningCoreState)
                 {
-#if MCMGR_BUSY_POLL_COUNT
+#if defined(MCMGR_BUSY_POLL_COUNT) && (MCMGR_BUSY_POLL_COUNT > 0)
                     if ((--poll_count) == 0u)
                     {
                         return kStatus_MCMGR_Error;
