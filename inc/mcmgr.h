@@ -95,6 +95,11 @@ typedef enum _mcmgr_start_mode
 
 } mcmgr_start_mode_t;
 
+/*! @brief Set number of Application Events. */
+#ifndef MCMGR_REMOTE_APP_EVENT_COUNT
+#define MCMGR_REMOTE_APP_EVENT_COUNT 1
+#endif
+
 /*! @brief Type definition of event types. */
 typedef enum _mcmgr_event_type_t
 {
@@ -106,6 +111,18 @@ typedef enum _mcmgr_event_type_t
     kMCMGR_RemoteRPMsgEvent,
     kMCMGR_RemoteApplicationEvent,
     kMCMGR_FreeRtosMessageBuffersEvent,
+#if (MCMGR_REMOTE_APP_EVENT_COUNT > 1U)
+    kMCMGR_RemoteApplicationEvent1,
+#endif
+#if (MCMGR_REMOTE_APP_EVENT_COUNT > 2U)
+    kMCMGR_RemoteApplicationEvent2,
+#endif
+#if (MCMGR_REMOTE_APP_EVENT_COUNT > 3U)
+    kMCMGR_RemoteApplicationEvent3,
+#endif
+#if (MCMGR_REMOTE_APP_EVENT_COUNT > 4U)
+    kMCMGR_RemoteApplicationEvent4,
+#endif
     kMCMGR_EventTableLength
 } mcmgr_event_type_t;
 

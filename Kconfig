@@ -30,4 +30,15 @@ rsource "./Kconfig.platform"
           is met, which could potentially cause the system to hang if a core becomes
           unresponsive.
 
+    config MCMGR_REMOTE_APP_EVENT_COUNT
+        int "MCMGR_REMOTE_APP_EVENT_COUNT"
+        default 1
+        range 1 5
+        help
+            No prefix in generated macro
+            Specify number of MCMGR Application Events.
+            This will expand number of application events available for MCMGR users.
+            kMCMGR_RemoteApplicationEvent, kMCMGR_RemoteApplicationEvent1 .. kMCMGR_RemoteApplicationEvent4.
+            Maximum value is 5.
+
 endif
