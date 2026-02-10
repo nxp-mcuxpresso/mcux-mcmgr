@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2014-2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2025 NXP
+ * Copyright 2016-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -266,7 +266,7 @@ mcmgr_core_t mcmgr_get_current_core_internal(void)
 {
     /* MSCM peripheral clock needs to be enabled before */
     CLOCK_EnableClock(kCLOCK_Mscm);
-    return (mcmgr_core_t)MSCM->CPXNUM;
+    return (mcmgr_core_t)MSCM->CPxNUM;
 }
 
 mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, uint32_t remoteData, bool forcedWrite)

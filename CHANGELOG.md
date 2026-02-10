@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added mcxl14x parts support
 - Added mcxw70 parts support
 - Add new config `MCMGR_REMOTE_APP_EVENT_COUNT` for configurable remote application event count. This will expand number of application events available for MCMGR users. kMCMGR_RemoteApplicationEvent, kMCMGR_RemoteApplicationEvent1 .. kMCMGR_RemoteApplicationEvent4.
+- Align Kinetis parts porting to changed register map
 
 ### Fixed
 
