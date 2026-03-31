@@ -3,6 +3,7 @@ var group__mcmgr =
     [ "MCMGR_BUSY_POLL_COUNT", "group__mcmgr.html#gac2b608eee94975f61b2e60c295b62666", null ],
     [ "MCMGR_DEFERRED_CALLBACK_ALLOWED", "group__mcmgr.html#ga678b367777e008f342967e6b091c3614", null ],
     [ "MCMGR_HANDLE_EXCEPTIONS", "group__mcmgr.html#ga5abd2254543ed537e35c9d5c5721d216", null ],
+    [ "MCMGR_REMOTE_APP_EVENT_COUNT", "group__mcmgr.html#gabad35b7507e79f637da03469da0e56a6", null ],
     [ "mcmgr_core_property_t", "group__mcmgr.html#ga7198108f5e3c9eb6739662dd170a2791", null ],
     [ "mcmgr_core_status_t", "group__mcmgr.html#ga0b191736437ecaaa970aef458184f672", null ],
     [ "mcmgr_core_t", "group__mcmgr.html#ga9e35ece98d0c83b1131a147dd69a4d8d", null ],

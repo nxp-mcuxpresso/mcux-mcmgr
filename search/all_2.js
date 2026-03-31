@@ -19,11 +19,12 @@ var searchData=
   ['mcmgr_5finit_16',['MCMGR_Init',['../group__mcmgr.html#gab18e570ea8c466214b3725785d45aa35',1,'mcmgr.h']]],
   ['mcmgr_5fprocessdeferredrxisr_17',['MCMGR_ProcessDeferredRxIsr',['../group__mcmgr.html#ga88627300a9ff918dc792fe29ef0da0c4',1,'mcmgr.h']]],
   ['mcmgr_5fregisterevent_18',['MCMGR_RegisterEvent',['../group__mcmgr.html#ga08a4a13691e04c934998926adb277ae2',1,'mcmgr.h']]],
-  ['mcmgr_5fstart_5fmode_5ft_19',['mcmgr_start_mode_t',['../group__mcmgr.html#ga214ff3137404f7aa33601fc75fd32d52',1,'mcmgr.h']]],
-  ['mcmgr_5fstartcore_20',['MCMGR_StartCore',['../group__mcmgr.html#gac7850a1875bec8499300b1915a79a596',1,'mcmgr.h']]],
-  ['mcmgr_5fstatus_5ft_21',['mcmgr_status_t',['../group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec',1,'mcmgr.h']]],
-  ['mcmgr_5fstopcore_22',['MCMGR_StopCore',['../group__mcmgr.html#gab11c27fda1a646433b0d8cef19de6ee4',1,'mcmgr.h']]],
-  ['mcmgr_5ftriggerevent_23',['MCMGR_TriggerEvent',['../group__mcmgr.html#gabbdd762f564f67940ac4f91fd1dfc14d',1,'mcmgr.h']]],
-  ['mcmgr_5ftriggereventforce_24',['MCMGR_TriggerEventForce',['../group__mcmgr.html#ga6e397db4f34069e7762c04488ab905d2',1,'mcmgr.h']]],
-  ['mcmgr_5fversion_5fenum_25',['mcmgr_version_enum',['../group__mcmgr.html#gabbf6e7e7978f537eaa72ea8e95bd0f1f',1,'mcmgr.h']]]
+  ['mcmgr_5fremote_5fapp_5fevent_5fcount_19',['MCMGR_REMOTE_APP_EVENT_COUNT',['../group__mcmgr.html#gabad35b7507e79f637da03469da0e56a6',1,'mcmgr.h']]],
+  ['mcmgr_5fstart_5fmode_5ft_20',['mcmgr_start_mode_t',['../group__mcmgr.html#ga214ff3137404f7aa33601fc75fd32d52',1,'mcmgr.h']]],
+  ['mcmgr_5fstartcore_21',['MCMGR_StartCore',['../group__mcmgr.html#gac7850a1875bec8499300b1915a79a596',1,'mcmgr.h']]],
+  ['mcmgr_5fstatus_5ft_22',['mcmgr_status_t',['../group__mcmgr.html#gaa1e87a61add56d66c147b99f554f63ec',1,'mcmgr.h']]],
+  ['mcmgr_5fstopcore_23',['MCMGR_StopCore',['../group__mcmgr.html#gab11c27fda1a646433b0d8cef19de6ee4',1,'mcmgr.h']]],
+  ['mcmgr_5ftriggerevent_24',['MCMGR_TriggerEvent',['../group__mcmgr.html#gabbdd762f564f67940ac4f91fd1dfc14d',1,'mcmgr.h']]],
+  ['mcmgr_5ftriggereventforce_25',['MCMGR_TriggerEventForce',['../group__mcmgr.html#ga6e397db4f34069e7762c04488ab905d2',1,'mcmgr.h']]],
+  ['mcmgr_5fversion_5fenum_26',['mcmgr_version_enum',['../group__mcmgr.html#gabbf6e7e7978f537eaa72ea8e95bd0f1f',1,'mcmgr.h']]]
 ];
