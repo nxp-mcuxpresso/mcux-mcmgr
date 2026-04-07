@@ -79,7 +79,7 @@ static void init_mu(MU_Type *base)
     MU_ClearStatusFlags(base, flags);
 }
 
-mcmgr_status_t mcmgr_early_init_internal(mcmgr_core_t coreNum)
+static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
 {
     /* This function is intended to be called as close to the reset entry as possible,
        (within the startup sequence in SystemInitHook) to allow CoreUp event triggering.
@@ -179,8 +179,14 @@ mcmgr_status_t mcmgr_early_init_internal(mcmgr_core_t coreNum)
     return ret;
 }
 
-mcmgr_status_t mcmgr_late_init_internal(mcmgr_core_t coreNum)
+mcmgr_status_t mcmgr_platform_init_internal(mcmgr_core_t coreNum)
 {
+    mcmgr_status_t status = mcmgr_platform_init_internal_early(coreNum);
+    if (status != kStatus_MCMGR_Success)
+    {
+        return status;
+    }
+
 #if (defined(MCMGR_BUILD_FOR_CORE_0))
     if (coreNum == kMCMGR_Core0)
     {
