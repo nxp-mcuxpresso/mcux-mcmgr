@@ -105,14 +105,11 @@ const uint32_t code[] __attribute__((section(".core1_code")))
 // Test of MCMGR_Init() API function
 void mcmgr_test_init_success()
 {
-    /* Initialize MCMGR - low level multicore management library.
-       Call this function as close to the reset entry as possible,
-       (into the startup sequence) to allow CoreUp event trigerring. */
     mcmgr_status_t retVal = kStatus_MCMGR_Error;
-#if (defined(KW45B41Z83_cm33_SERIES) || defined(KW47B42ZB7_cm33_core0_SERIES) || defined(MCXW727C_cm33_core0_SERIES))
+
+    /* Backwards-compatible API: should be safe to call but not required. */
     retVal = MCMGR_EarlyInit();
     TEST_ASSERT(retVal == kStatus_MCMGR_Success);
-#endif
 
     retVal = MCMGR_Init();
     TEST_ASSERT(retVal == kStatus_MCMGR_Success);

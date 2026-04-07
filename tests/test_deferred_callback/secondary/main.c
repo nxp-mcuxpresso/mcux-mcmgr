@@ -62,13 +62,9 @@ void mcmgr_test_init_success_sec_core()
     uint32_t startupData;
     mcmgr_status_t status = kStatus_MCMGR_Error;
 
-    /* Initialize MCMGR - low level multicore management library.
-       Call this function as close to the reset entry as possible,
-       (into the startup sequence) to allow CoreUp event trigerring. */
-#if (defined(KW45B41Z83_cm33_SERIES) || defined(KW47B42ZB7_cm33_core1_SERIES) || defined(MCXW727C_cm33_core1_SERIES))
+    /* Backwards-compatible API: should be safe to call but not required. */
     status = MCMGR_EarlyInit();
     TEST_ASSERT(status == kStatus_MCMGR_Success);
-#endif
 
    /* Initialize MCMGR before calling its API */
     status = MCMGR_Init();
@@ -109,8 +105,8 @@ void run_tests(void *unused)
  * test_deferred_rx_task
  *
  * Deffered rx task used for rx data processing outside the interrupt context.
- * During the inter-cpu isr only the necessary steps are done like clearing respective interrupt flags and notifying 
- * the waiting deferred rx task. Once the isr finishes the deferred rx task is scheduled and it handles the data 
+ * During the inter-cpu isr only the necessary steps are done like clearing respective interrupt flags and notifying
+ * the waiting deferred rx task. Once the isr finishes the deferred rx task is scheduled and it handles the data
  * processing. In case of IMU, clearing interrupt flags is not done in isr but in deferred task.
  *
  */
@@ -119,7 +115,7 @@ static void test_deferred_rx_task(void * pvParameters)
     uint32_t ulBits = 0UL;
     while (1)
     {
-        /* Wait for the notification from the isr */ 
+        /* Wait for the notification from the isr */
         if(pdPASS == xTaskNotifyWait( pdFALSE, 0xffffffffU, &ulBits, portMAX_DELAY ))
         {
             IMU_ClearPendingInterrupts(kIMU_LinkCpu2Cpu1, IMU_MSG_FIFO_CNTL_MSG_RDY_INT_CLR_MASK);

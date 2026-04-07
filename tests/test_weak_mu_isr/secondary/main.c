@@ -57,13 +57,9 @@ void mcmgr_test_init_success_sec_core()
     uint32_t startupData;
     mcmgr_status_t status = kStatus_MCMGR_Error;
 
-    /* Initialize MCMGR - low level multicore management library.
-       Call this function as close to the reset entry as possible,
-       (into the startup sequence) to allow CoreUp event trigerring. */
-#if (defined(KW45B41Z83_cm33_SERIES) || defined(KW47B42ZB7_cm33_core1_SERIES) || defined(MCXW727C_cm33_core1_SERIES))
+    /* Backwards-compatible API: should be safe to call but not required. */
     status = MCMGR_EarlyInit();
     TEST_ASSERT(status == kStatus_MCMGR_Success);
-#endif
 
    /* Initialize MCMGR before calling its API */
     status = MCMGR_Init();
