@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 NXP
+ * Copyright 2016-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -101,6 +101,72 @@ const uint32_t code[] __attribute__((section(".core1_code")))
 
  };
 #endif
+
+/*******************************************************************************
+ * Tests: initialization guard (kStatus_MCMGR_NotReady before MCMGR_Init())
+ ******************************************************************************/
+
+// All guarded API functions must return kStatus_MCMGR_NotReady when called
+// before MCMGR_Init() has completed successfully.
+
+void mcmgr_test_not_ready_register_event()
+{
+    /* RegisterEvent must succeed even before MCMGR_Init() — it only writes
+       to the callback table and does not require hardware initialization. */
+    mcmgr_status_t retVal = MCMGR_RegisterEvent(kMCMGR_RemoteApplicationEvent, NULL, NULL);
+    TEST_ASSERT(retVal == kStatus_MCMGR_Success);
+}
+
+void mcmgr_test_not_ready_trigger_event()
+{
+    mcmgr_status_t retVal = MCMGR_TriggerEvent(kMCMGR_Core1, kMCMGR_RemoteApplicationEvent, 0U);
+    TEST_ASSERT(retVal == kStatus_MCMGR_NotReady);
+}
+
+void mcmgr_test_not_ready_trigger_event_force()
+{
+    mcmgr_status_t retVal = MCMGR_TriggerEventForce(kMCMGR_Core1, kMCMGR_RemoteApplicationEvent, 0U);
+    TEST_ASSERT(retVal == kStatus_MCMGR_NotReady);
+}
+
+void mcmgr_test_not_ready_start_core()
+{
+    mcmgr_status_t retVal = MCMGR_StartCore(kMCMGR_Core1, BOOT_ADDRESS, 0U, kMCMGR_Start_Asynchronous);
+    TEST_ASSERT(retVal == kStatus_MCMGR_NotReady);
+}
+
+void mcmgr_test_not_ready_get_startup_data()
+{
+    uint32_t data         = 0U;
+    mcmgr_status_t retVal = MCMGR_GetStartupData(kMCMGR_Core1, &data);
+    TEST_ASSERT(retVal == kStatus_MCMGR_NotReady);
+}
+
+void mcmgr_test_not_ready_stop_core()
+{
+    mcmgr_status_t retVal = MCMGR_StopCore(kMCMGR_Core1);
+    TEST_ASSERT(retVal == kStatus_MCMGR_NotReady);
+}
+
+void mcmgr_test_not_ready_get_core_property()
+{
+    uint32_t val          = 0U;
+    uint32_t len          = sizeof(val);
+    mcmgr_status_t retVal = MCMGR_GetCoreProperty(kMCMGR_Core0, kMCMGR_CoreStatus, &val, &len);
+    TEST_ASSERT(retVal == kStatus_MCMGR_NotReady);
+}
+
+void mcmgr_test_not_ready_process_deferred_rx_isr()
+{
+    mcmgr_status_t retVal = MCMGR_ProcessDeferredRxIsr();
+    /* Either NotReady (guard fired) or NotImplemented (guard passed, feature
+     * disabled) are both valid — but before init it must be NotReady. */
+    TEST_ASSERT(retVal == kStatus_MCMGR_NotReady);
+}
+
+/*******************************************************************************
+ * Tests: normal initialization and API
+ ******************************************************************************/
 
 // Test of MCMGR_Init() API function
 void mcmgr_test_init_success()
@@ -362,6 +428,18 @@ int main(int argc, char **argv)
     __coveragescanner_testname("mcmgr_test");
     __coveragescanner_install("mcmgr_test.csexe");
 #endif /*__COVERAGESCANNER__*/
+
+    /* --- Initialization guard tests (must run before MCMGR_Init()) --- */
+    RUN_EXAMPLE(mcmgr_test_not_ready_register_event,        MAKE_UNITY_NUM(k_unity_mcmgr, 23));
+    RUN_EXAMPLE(mcmgr_test_not_ready_trigger_event,         MAKE_UNITY_NUM(k_unity_mcmgr, 24));
+    RUN_EXAMPLE(mcmgr_test_not_ready_trigger_event_force,   MAKE_UNITY_NUM(k_unity_mcmgr, 25));
+    RUN_EXAMPLE(mcmgr_test_not_ready_start_core,            MAKE_UNITY_NUM(k_unity_mcmgr, 26));
+    RUN_EXAMPLE(mcmgr_test_not_ready_get_startup_data,      MAKE_UNITY_NUM(k_unity_mcmgr, 27));
+    RUN_EXAMPLE(mcmgr_test_not_ready_stop_core,             MAKE_UNITY_NUM(k_unity_mcmgr, 28));
+    RUN_EXAMPLE(mcmgr_test_not_ready_get_core_property,     MAKE_UNITY_NUM(k_unity_mcmgr, 29));
+    RUN_EXAMPLE(mcmgr_test_not_ready_process_deferred_rx_isr, MAKE_UNITY_NUM(k_unity_mcmgr, 30));
+
+    /* --- Normal init and API tests --- */
     RUN_EXAMPLE(mcmgr_test_init_success, MAKE_UNITY_NUM(k_unity_mcmgr, 0));
 
     RUN_EXAMPLE(mcmgr_test_start_core1, MAKE_UNITY_NUM(k_unity_mcmgr, 1));

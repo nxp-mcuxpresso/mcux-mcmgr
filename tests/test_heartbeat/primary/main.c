@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 NXP
+ * Copyright 2025-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -144,9 +144,7 @@ void mcmgr_test_init_success()
     /* Initialize SysTick timer */
     InitSysTick();
 
-    /* Initialize MCMGR - low level multicore management library.
-       Call this function as close to the reset entry as possible,
-       (into the startup sequence) to allow CoreUp event trigerring. */
+    /* Initialize MCMGR - low level multicore management library. */
     mcmgr_status_t retVal = kStatus_MCMGR_Error;
 
     retVal = MCMGR_Init();

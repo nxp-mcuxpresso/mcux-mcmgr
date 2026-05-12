@@ -31,12 +31,8 @@ const mcmgr_system_info_t g_mcmgrSystem = {
 
 static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
 {
-    /* This function is intended to be called as close to the reset entry as possible,
-       (within the startup sequence in SystemInitHook) to allow CoreUp event triggering.
-       Avoid using uninitialized data here. */
-
     uint32_t flags;
-    mcmgr_core_t target_core;
+    mcmgr_core_t target_core = kMCMGR_Core0;
     __attribute__((unused)) uint32_t data;
 
 /* MUA clk enable */
@@ -66,7 +62,7 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
 #endif
 
     /* Trigger core up event here, core is starting! */
-    return MCMGR_TriggerEvent(target_core, kMCMGR_RemoteCoreUpEvent, 0);
+    return mcmgr_trigger_event_internal(target_core, kMCMGR_RemoteCoreUpEvent, 0U, false);
 }
 
 mcmgr_status_t mcmgr_platform_init_internal(mcmgr_core_t coreNum)
@@ -224,10 +220,12 @@ mcmgr_core_t mcmgr_get_current_core_internal(void)
 #endif
 }
 
-mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, uint32_t remoteData, bool forcedWrite)
+mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, mcmgr_event_type_t type, uint16_t eventData, bool forcedWrite)
 {
     /* Can be unused for two core platform. ifdefs are selecting core to trigger. */
     (void)coreNum;
+
+    uint32_t remoteData = (((uint32_t)type) << 16U) | (uint32_t)eventData;
 
     /* When forcedWrite is false, execute the blocking call, i.e. wait until previously
        sent data is processed. Otherwise, run the non-blocking version of the MU send function. */
@@ -290,7 +288,7 @@ void mcmgr_mu_channel_handler(MU_Type *base, mcmgr_core_t coreNum)
 /* This overrides the weak DefaultISR implementation from startup file */
 void DefaultISR(void)
 {
-    mcmgr_core_t target_core;
+    mcmgr_core_t target_core = kMCMGR_Core0;
     uint32_t exceptionNumber = __get_IPSR();
 
     /* Select what core to trigger in case of exception */

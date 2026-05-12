@@ -33,18 +33,15 @@ const mcmgr_system_info_t g_mcmgrSystem = {
 
 static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
 {
-    /* This function is intended to be called as close to the reset entry as possible,
-       (within the startup sequence in SystemInitHook) to allow CoreUp event triggering.
-       Avoid using uninitialized data here. */
     if ((uint32_t)coreNum < g_mcmgrSystem.coreCount)
     {
         MAILBOX_Init(MAILBOX);
 
         /* Trigger core up event here, core is starting! */
 #if (defined(MCMGR_BUILD_FOR_CORE_0))
-        return MCMGR_TriggerEvent(kMCMGR_Core1, kMCMGR_RemoteCoreUpEvent, 0);
+        return mcmgr_trigger_event_internal(kMCMGR_Core1, kMCMGR_RemoteCoreUpEvent, 0U, false);
 #else
-        return MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0);
+        return mcmgr_trigger_event_internal(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0U, false);
 #endif
     }
     return kStatus_MCMGR_Error;
@@ -150,9 +147,11 @@ mcmgr_core_t mcmgr_get_current_core_internal(void)
 #endif
 }
 
-mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, uint32_t remoteData, bool forcedWrite)
+mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, mcmgr_event_type_t type, uint16_t eventData, bool forcedWrite)
 {
     (void)coreNum; /* Unused. */
+
+    uint32_t remoteData = (((uint32_t)type) << 16U) | (uint32_t)eventData;
 
 #if defined(MCMGR_BUILD_FOR_CORE_0)
     mailbox_cpu_id_t cpu_id = kMAILBOX_CM0Plus;
@@ -232,7 +231,7 @@ void MAILBOX_IRQHandler(void)
 /* This overrides the weak DefaultISR implementation from startup file */
 void DefaultISR(void)
 {
-    mcmgr_core_t target_core;
+    mcmgr_core_t target_core = kMCMGR_Core0;
     uint32_t exceptionNumber = __get_IPSR();
 
     /* Select what core to trigger in case of exception */

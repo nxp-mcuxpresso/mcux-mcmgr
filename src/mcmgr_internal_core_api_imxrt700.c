@@ -81,10 +81,6 @@ static void init_mu(MU_Type *base)
 
 static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
 {
-    /* This function is intended to be called as close to the reset entry as possible,
-       (within the startup sequence in SystemInitHook) to allow CoreUp event triggering.
-       Avoid using uninitialized data here. */
-
     mcmgr_status_t ret = kStatus_MCMGR_Success;
 
 #if (defined(MCMGR_BUILD_FOR_CORE_0))
@@ -94,19 +90,19 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
         init_mu(MU1_MUA);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_Core1, kMCMGR_RemoteCoreUpEvent, 0);
+        ret = mcmgr_trigger_event_internal(kMCMGR_Core1, kMCMGR_RemoteCoreUpEvent, 0U, false);
 
         /* CPU0 to HiFi4 communication case */
         init_mu(MU4_MUA);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_Core2, kMCMGR_RemoteCoreUpEvent, 0);
+        ret = mcmgr_trigger_event_internal(kMCMGR_Core2, kMCMGR_RemoteCoreUpEvent, 0U, false);
 
         /* CPU0 to HiFi1 communication case */
         init_mu(MU0_MUA);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_Core3, kMCMGR_RemoteCoreUpEvent, 0);
+        ret = mcmgr_trigger_event_internal(kMCMGR_Core3, kMCMGR_RemoteCoreUpEvent, 0U, false);
     }
     else
     {
@@ -119,19 +115,19 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
         init_mu(MU3_MUA);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_Core3, kMCMGR_RemoteCoreUpEvent, 0);
+        ret = mcmgr_trigger_event_internal(kMCMGR_Core3, kMCMGR_RemoteCoreUpEvent, 0U, false);
 
         /* CPU1 to CPU0 communication case */
         init_mu(MU1_MUB);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0);
+        ret = mcmgr_trigger_event_internal(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0U, false);
 
         /* CPU1 to Hifi4 communication case */
         init_mu(MU2_MUB);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_Core2, kMCMGR_RemoteCoreUpEvent, 0);
+        ret = mcmgr_trigger_event_internal(kMCMGR_Core2, kMCMGR_RemoteCoreUpEvent, 0U, false);
     }
     else
     {
@@ -144,13 +140,13 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
         init_mu(MU4_MUB);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0);
+        ret = mcmgr_trigger_event_internal(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0U, false);
 
         /* HiFi4 to CPU1 communication case */
         init_mu(MU2_MUA);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0);
+        ret = mcmgr_trigger_event_internal(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0U, false);
     }
     else
     {
@@ -163,13 +159,13 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
         init_mu(MU0_MUB);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0);
+        ret = mcmgr_trigger_event_internal(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0U, false);
 
         /* HiFi1 to CPU1 communication case */
         init_mu(MU3_MUB);
 
         /* Trigger core up event here, core is starting! */
-        ret = MCMGR_TriggerEvent(kMCMGR_Core1, kMCMGR_RemoteCoreUpEvent, 0);
+        ret = mcmgr_trigger_event_internal(kMCMGR_Core1, kMCMGR_RemoteCoreUpEvent, 0U, false);
     }
     else
     {
@@ -445,8 +441,9 @@ mcmgr_core_t mcmgr_get_current_core_internal(void)
 #endif
 }
 
-mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, uint32_t remoteData, bool forcedWrite)
+mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, mcmgr_event_type_t type, uint16_t eventData, bool forcedWrite)
 {
+    uint32_t remoteData = (((uint32_t)type) << 16U) | (uint32_t)eventData;
     MU_Type *mu = NULL;
 
     mcmgr_core_t currentCore = MCMGR_GetCurrentCore();
@@ -583,7 +580,7 @@ void mcmgr_mu_channel_handler(MU_Type *base, mcmgr_core_t coreNum)
 /* This overrides the weak DefaultISR implementation from startup file */
 void DefaultISR(void)
 {
-    mcmgr_core_t target_core;
+    mcmgr_core_t target_core = kMCMGR_Core0;
     /* Select what core to trigger in case of exception */
 #if (defined(MCMGR_BUILD_FOR_CORE_0))
     target_core = kMCMGR_Core1;
