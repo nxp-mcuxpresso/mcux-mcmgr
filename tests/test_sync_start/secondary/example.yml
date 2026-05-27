@@ -105,3 +105,4 @@ test_sync_start_secondary_core:
     kw47loc@cm33_core1: []
     kw47evk@cm33_core1: []
     frdmmcxl255@cm0plus: []
+    frdmimxrt700@cm33_core1: []

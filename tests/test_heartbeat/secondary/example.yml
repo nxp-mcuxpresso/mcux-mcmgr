@@ -96,3 +96,4 @@ test_heartbeat_secondary_core:
     - -mdk@hyperram_release
     frdmk32l3a6@cm0plus: []
     frdmmcxl255@cm0plus: []
+    frdmimxrt700@cm33_core1: []
