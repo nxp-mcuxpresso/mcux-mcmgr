@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 NXP
+ * Copyright 2025-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -45,24 +45,24 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
     /* This function is intended to be called as close to the reset entry as possible,
        (within the startup sequence in SystemInitHook) to allow CoreUp event triggering.
        Avoid using uninitialized data here. */
-       mcmgr_core_t target_core;
+    mcmgr_core_t target_core;
 
     switch (coreNum)
     {
-        case kMCMGR_Core0:
 /* MUA clk enable */
 #if defined(MCMGR_BUILD_FOR_CORE_0)
+        case kMCMGR_Core0:
             target_core = kMCMGR_Core1;
             MU_Init(MUA);
             MU_ResetBothSides(MUA);
-#endif
             break;
-        case kMCMGR_Core1:
+#endif
 #if defined(MCMGR_BUILD_FOR_CORE_1)
+        case kMCMGR_Core1:
             target_core = kMCMGR_Core0;
             MU_Init(MUB);
-#endif
             break;
+#endif
         default:
             return kStatus_MCMGR_Error;
     }
