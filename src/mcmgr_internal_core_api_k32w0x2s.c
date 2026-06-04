@@ -53,20 +53,20 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
 
     switch (coreNum)
     {
-        case kMCMGR_Core0:
 /* MUA clk enable */
 #if defined(MCMGR_BUILD_FOR_CORE_0)
+        case kMCMGR_Core0:
             target_core = kMCMGR_Core1;
             MU_Init(MUA);
             MU_ResetBothSides(MUA);
-#endif
             break;
-        case kMCMGR_Core1:
+#endif
 #if defined(MCMGR_BUILD_FOR_CORE_1)
+        case kMCMGR_Core1:
             target_core = kMCMGR_Core0;
             MU_Init(MUB);
-#endif
             break;
+#endif
         default:
             return kStatus_MCMGR_Error;
     }
@@ -340,7 +340,7 @@ void mcmgr_mu_channel_handler(MU_Type *base, mcmgr_core_t coreNum)
 /* This overrides the weak DefaultISR implementation from startup file */
 void DefaultISR(void)
 {
-    mcmgr_core_t target_core;
+    mcmgr_core_t target_core = kMCMGR_Core0;
     uint32_t exceptionNumber = __get_IPSR();
 
     /* Select what core to trigger in case of exception */

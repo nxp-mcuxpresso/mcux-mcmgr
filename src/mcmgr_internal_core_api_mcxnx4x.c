@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 NXP
+ * Copyright 2022-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -212,7 +212,7 @@ void MAILBOX_IRQHandler(void)
 /* This overrides the weak DefaultISR implementation from startup file */
 void DefaultISR(void)
 {
-    mcmgr_core_t target_core;
+    mcmgr_core_t target_core = kMCMGR_Core0;
     uint32_t exceptionNumber = __get_IPSR();
 
     /* Select what core to trigger in case of exception */

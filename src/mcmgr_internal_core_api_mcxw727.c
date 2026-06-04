@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2025 NXP
+ * Copyright 2020-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -257,7 +257,7 @@ mcmgr_status_t mcmgr_process_deferred_rx_isr_internal(void)
 /* This overrides the weak DefaultISR implementation from startup file */
 void DefaultISR(void)
 {
-    mcmgr_core_t target_core;
+    mcmgr_core_t target_core = kMCMGR_Core0;
     uint32_t exceptionNumber = __get_IPSR();
 
     /* Select what core to trigger in case of exception */

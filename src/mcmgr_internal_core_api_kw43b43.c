@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 NXP
+ * Copyright 2024-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -81,9 +81,8 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
     flags = MU_GetStatusFlags(MU0_MUA);
     MU_ClearStatusFlags(MU0_MUA, flags);
     /* Do not perform MU reset to avoid issues when debugging both CM33 and CM7 */
-#endif
 /* MUB clk enable */
-#if defined(MCMGR_BUILD_FOR_CORE_1)
+#elif defined(MCMGR_BUILD_FOR_CORE_1)
     target_core = kMCMGR_Core0;
     MU_Init(MU0_MUB);
     for (uint32_t idx = 0U; idx < MU_RR_COUNT; idx++)
@@ -92,6 +91,8 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
     }
     flags = MU_GetStatusFlags(MU0_MUB);
     MU_ClearStatusFlags(MU0_MUB, flags);
+#else
+    return kStatus_MCMGR_Error;
 #endif
 
     /* Trigger core up event here, core is starting! */
@@ -253,7 +254,7 @@ void mcmgr_mu_channel_handler(MU_Type *base, mcmgr_core_t coreNum)
 /* This overrides the weak DefaultISR implementation from startup file */
 void DefaultISR(void)
 {
-    mcmgr_core_t target_core;
+    mcmgr_core_t target_core = kMCMGR_Core0;
     uint32_t exceptionNumber = __get_IPSR();
 
     /* Select what core to trigger in case of exception */

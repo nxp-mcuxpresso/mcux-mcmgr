@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 NXP
+ * Copyright 2023-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -593,6 +593,8 @@ void DefaultISR(void)
     target_core = kMCMGR_Core0;
 #elif (defined(MCMGR_BUILD_FOR_CORE_3))
     target_core = kMCMGR_Core0;
+#else
+    return;
 #endif
 
     uint32_t exceptionNumber = __get_IPSR();

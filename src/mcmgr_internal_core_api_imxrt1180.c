@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2025 NXP
+ * Copyright 2022-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -51,9 +51,8 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
     flags = MU_GetStatusFlags(MU1_MUA);
     MU_ClearStatusFlags(MU1_MUA, flags);
     /* Do not perform MU reset to avoid issues when debugging both CM33 and CM7 */
-#endif
 /* MUB clk enable */
-#if defined(FSL_FEATURE_MU_SIDE_B)
+#elif defined(FSL_FEATURE_MU_SIDE_B)
     target_core = kMCMGR_Core0;
     MU_Init(MU1_MUB);
     for (uint32_t idx = 0U; idx < MU_RR_COUNT; idx++)
@@ -62,6 +61,8 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
     }
     flags = MU_GetStatusFlags(MU1_MUB);
     MU_ClearStatusFlags(MU1_MUB, flags);
+#else
+    return kStatus_MCMGR_Error;
 #endif
 
     /* Trigger core up event here, core is starting! */
@@ -297,6 +298,8 @@ void DefaultISR(void)
     target_core = kMCMGR_Core1;
 #elif defined(FSL_FEATURE_MU_SIDE_B)
     target_core = kMCMGR_Core0;
+#else
+    return;
 #endif
 
     (void)MCMGR_TriggerEvent(target_core, kMCMGR_RemoteExceptionEvent, (uint16_t)exceptionNumber);

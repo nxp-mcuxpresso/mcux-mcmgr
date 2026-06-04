@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2014-2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2025 NXP
+ * Copyright 2016-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -239,6 +239,8 @@ void DefaultISR(void)
     target_core = kMCMGR_Core1;
 #elif defined(FSL_FEATURE_MU_SIDE_B)
     target_core = kMCMGR_Core0;
+#else
+    return;
 #endif
 
     (void)MCMGR_TriggerEvent(target_core, kMCMGR_RemoteExceptionEvent, (uint16_t)exceptionNumber);
