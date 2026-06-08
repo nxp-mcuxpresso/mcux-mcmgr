@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added MCXE32B (dual Cortex-M7) porting layer.
 - Added initialization guard to public MCMGR API functions. All API functions that require a
   fully initialized MCMGR instance now return `kStatus_MCMGR_NotReady` if `MCMGR_Init()` has
   not been called successfully beforehand.
