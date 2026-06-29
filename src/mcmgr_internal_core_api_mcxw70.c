@@ -43,7 +43,7 @@
 #define mcmgr_mu_channel_flag    MU_RX_ISR_FLAG_Mask(MCMGR_MU_CHANNEL)
 
 /* SYSCON authorize write */
-#define SYSCON_AUTH_PATTERN 0xaaaaaaaa
+#define SYSCON_AUTH_PATTERN 0xAAAAAAAAUL
 
 /* SECCON unlock code */
 #define SECCON_UNLOCK_PATTERN 0xA
@@ -77,7 +77,7 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
     }
     flags = MU_GetStatusFlags(MU0_MUA);
     MU_ClearStatusFlags(MU0_MUA, flags);
-    /* Do not perform MU reset to avoid issues when debugging both CM33 and CM7 */
+    /* Do not perform MU reset to avoid issues when debugging both cores */
 /* MUB clk enable */
 #elif defined(MCMGR_BUILD_FOR_CORE_1)
     target_core = kMCMGR_Core0;
@@ -92,43 +92,40 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
     return kStatus_MCMGR_Error;
 #endif
 
+    /* Enable the MU RX interrupt and NVIC BEFORE triggering the (blocking) CoreUp
+       event below. On KW43 the CoreUp event uses the blocking MU_SendMsg, which spins
+       until the peer reads MU_RR. Both cores run MCMGR_Init() at roughly the same time
+       during multicore bring-up, so if RX interrupts were enabled only after this
+       blocking send (as before), each core would spin forever waiting on a peer that
+       cannot service the receive - an inter-core deadlock that manifests as a test
+       TIMEOUT. Enabling RX here lets the ISR drain the peer's CoreUp message while we
+       block, so both sends complete and neither core hangs. */
+#if defined(MCMGR_BUILD_FOR_CORE_0)
+    MU_EnableInterrupts(MU0_MUA, (uint32_t)mcmgr_mu_channel_flag);
+#if (defined(FSL_FEATURE_MU_HAS_RESET_ASSERT_INT) && FSL_FEATURE_MU_HAS_RESET_ASSERT_INT)
+    MU_EnableInterrupts(MU0_MUA, (uint32_t)kMU_ResetAssertInterruptEnable);
+#endif
+    NVIC_SetPriority(MU0_IRQn, MU_ISR_PRIORITY);
+    NVIC_EnableIRQ(MU0_IRQn);
+#elif defined(MCMGR_BUILD_FOR_CORE_1)
+    MU_EnableInterrupts(MU0_MUB, (uint32_t)mcmgr_mu_channel_flag);
+#if (defined(FSL_FEATURE_MU_HAS_RESET_ASSERT_INT) && FSL_FEATURE_MU_HAS_RESET_ASSERT_INT)
+    MU_EnableInterrupts(MU0_MUB, (uint32_t)kMU_ResetAssertInterruptEnable);
+#endif
+    NVIC_SetPriority(MU0_IRQn, MU_ISR_PRIORITY);
+    NVIC_EnableIRQ(MU0_IRQn);
+#endif
+
     /* Trigger core up event here, core is starting! */
     return mcmgr_trigger_event_internal(target_core, kMCMGR_RemoteCoreUpEvent, 0U, false);
 }
 
 mcmgr_status_t mcmgr_platform_init_internal(mcmgr_core_t coreNum)
 {
-    mcmgr_status_t status = mcmgr_platform_init_internal_early(coreNum);
-    if (status != kStatus_MCMGR_Success)
-    {
-        return status;
-    }
-
-#if defined(MCMGR_BUILD_FOR_CORE_0)
-    MU_EnableInterrupts(MU0_MUA, (uint32_t)mcmgr_mu_channel_flag);
-
-#if (defined(FSL_FEATURE_MU_HAS_RESET_ASSERT_INT) && FSL_FEATURE_MU_HAS_RESET_ASSERT_INT)
-    MU_EnableInterrupts(MU0_MUA, (uint32_t)kMU_ResetAssertInterruptEnable);
-#endif
-
-    NVIC_SetPriority(MU0_IRQn, MU_ISR_PRIORITY);
-
-    NVIC_EnableIRQ(MU0_IRQn);
-
-#elif defined(MCMGR_BUILD_FOR_CORE_1)
-    MU_EnableInterrupts(MU0_MUB, (uint32_t)mcmgr_mu_channel_flag);
-
-#if (defined(FSL_FEATURE_MU_HAS_RESET_ASSERT_INT) && FSL_FEATURE_MU_HAS_RESET_ASSERT_INT)
-    MU_EnableInterrupts(MU0_MUB, (uint32_t)kMU_ResetAssertInterruptEnable);
-#endif
-
-    NVIC_SetPriority(MU0_IRQn, MU_ISR_PRIORITY);
-
-    NVIC_EnableIRQ(MU0_IRQn);
-
-#endif
-
-    return kStatus_MCMGR_Success;
+    /* All MU init, RX interrupt/NVIC enable, and the CoreUp trigger are performed in
+       mcmgr_platform_init_internal_early(). The RX path is brought up before the blocking
+       CoreUp send to avoid an inter-core MU deadlock during simultaneous bring-up. */
+    return mcmgr_platform_init_internal_early(coreNum);
 }
 
 mcmgr_status_t mcmgr_start_core_internal(mcmgr_core_t coreNum, void *bootAddress)
@@ -198,9 +195,9 @@ mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, mcmgr_event_ty
     {
         /* This is a blocking call */
 #if defined(MCMGR_BUILD_FOR_CORE_0)
-        MU_SendMsg(MU0_MUA, MCMGR_MU_CHANNEL, remoteData);
+        (void)MU_SendMsg(MU0_MUA, MCMGR_MU_CHANNEL, remoteData);
 #elif defined(MCMGR_BUILD_FOR_CORE_1)
-        MU_SendMsg(MU0_MUB, MCMGR_MU_CHANNEL, remoteData);
+        (void)MU_SendMsg(MU0_MUB, MCMGR_MU_CHANNEL, remoteData);
 #endif
     }
     else

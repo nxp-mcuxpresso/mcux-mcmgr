@@ -43,7 +43,7 @@
 #define mcmgr_mu_channel_flag    MU_RX_ISR_FLAG_Mask(MCMGR_MU_CHANNEL)
 
 /* SYSCON authorize write */
-#define SYSCON_AUTH_PATTERN 0xaaaaaaaa
+#define SYSCON_AUTH_PATTERN 0xAAAAAAAAUL
 
 /* SECCON unlock code */
 #define SECCON_UNLOCK_PATTERN 0xA
@@ -77,7 +77,7 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
     }
     flags = MU_GetStatusFlags(MU0_MUA);
     MU_ClearStatusFlags(MU0_MUA, flags);
-    /* Do not perform MU reset to avoid issues when debugging both CM33 and CM7 */
+    /* Do not perform MU reset to avoid issues when debugging both cores */
 /* MUB clk enable */
 #elif defined(MCMGR_BUILD_FOR_CORE_1)
     target_core = kMCMGR_Core0;
@@ -195,9 +195,9 @@ mcmgr_status_t mcmgr_trigger_event_internal(mcmgr_core_t coreNum, mcmgr_event_ty
     {
         /* This is a blocking call */
 #if defined(MCMGR_BUILD_FOR_CORE_0)
-        MU_SendMsg(MU0_MUA, MCMGR_MU_CHANNEL, remoteData);
+        (void)MU_SendMsg(MU0_MUA, MCMGR_MU_CHANNEL, remoteData);
 #elif defined(MCMGR_BUILD_FOR_CORE_1)
-        MU_SendMsg(MU0_MUB, MCMGR_MU_CHANNEL, remoteData);
+        (void)MU_SendMsg(MU0_MUB, MCMGR_MU_CHANNEL, remoteData);
 #endif
     }
     else
