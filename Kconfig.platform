@@ -48,14 +48,6 @@ config MCUX_COMPONENT_middleware.multicore.mcmgr.k32l3a6
     help
         "Multicore Manger Porting Layer for FRDM-K32L3A6"
 
-config MCUX_COMPONENT_middleware.multicore.mcmgr.k32w1
-    bool
-    default y
-    select MCUX_COMPONENT_driver.imu
-    depends on MCUX_HW_DEVICE_K32W1480
-    help
-        "Multicore Manger Porting Layer for FRDM-K32W1"
-
 config MCUX_COMPONENT_middleware.multicore.mcmgr.kw45b41
     bool
     default y
