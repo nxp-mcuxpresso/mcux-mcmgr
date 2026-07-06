@@ -11,20 +11,25 @@
 
 mcmgr_event_t MCMGR_eventTable[kMCMGR_EventTableLength] = {0};
 
-/* Flag indicating that MCMGR_Init() has completed successfully. */
+/* Flag indicating that MCMGR_Init() has completed successfully.
+ * Set to true after a successful MCMGR_Init() call; never cleared.
+ * Currently unused as a runtime gate (MCMGR_CHECK_INIT is a no-op)
+ * but retained for future use and observability. */
 static volatile bool s_mcmgrInitialized = false;
 
 /*
- * Guard macro: returns kStatus_MCMGR_NotReady from the calling function
- * if MCMGR_Init() has not yet been called successfully.
+ * Guard macro: intentionally a no-op.
+ * The RPSDK-1183 init-guard was reverted (MCUX-88924) because returning
+ * kStatus_MCMGR_NotReady from MCMGR_TriggerEvent before MCMGR_Init()
+ * completes breaks the connectivity-framework ICS handshake on KW43:
+ * the rpmsg HAL adapter registers its READY event handler via
+ * MCMGR_RegisterEvent() and then calls MCMGR_Init(), so any in-flight
+ * MU ISR that fires during platform_init_internal() and needs to call
+ * back through MCMGR_TriggerEvent() would be silently dropped.
  */
-#define MCMGR_CHECK_INIT()                          \
-    do                                              \
-    {                                               \
-        if (false == s_mcmgrInitialized)            \
-        {                                           \
-            return kStatus_MCMGR_NotReady;          \
-        }                                           \
+#define MCMGR_CHECK_INIT() \
+    do                     \
+    {                      \
     } while (false)
 
 mcmgr_status_t MCMGR_RegisterEvent(mcmgr_event_type_t type, mcmgr_event_callback_t callback, void *callbackData)
@@ -156,14 +161,6 @@ mcmgr_status_t MCMGR_EarlyInit(void)
 
 mcmgr_status_t MCMGR_Init(void)
 {
-    /* Idempotency guard: MCMGR_Init() is safe to call multiple times.
-     * Return immediately if already initialised — re-running platform_init
-     * on a live system (e.g. re-starting MU) would corrupt ongoing IPC. */
-    if (true == s_mcmgrInitialized)
-    {
-        return kStatus_MCMGR_Success;
-    }
-
     mcmgr_core_t currentCore = MCMGR_GetCurrentCore();
     /*
      * $Branch Coverage Justification$

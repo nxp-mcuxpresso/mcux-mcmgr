@@ -10,10 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added MCXE32B (dual Cortex-M7) porting layer.
-- Added initialization guard to public MCMGR API functions. All API functions that require a
-  fully initialized MCMGR instance now return `kStatus_MCMGR_NotReady` if `MCMGR_Init()` has
-  not been called successfully beforehand.
 - Remove obsolete unused platform layers
+
+### Fixed
+
+- MCUX-88924: Fix KW43 ICS init-handshake hang (RPSDK-1183 regression): MCMGR_CHECK_INIT() dropped re-entrant MU ISR events during MCMGR_Init(); now a no-op.
 
 ## [v5.2.0]
 
