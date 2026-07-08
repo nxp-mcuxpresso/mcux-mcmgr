@@ -11,25 +11,24 @@
 
 mcmgr_event_t MCMGR_eventTable[kMCMGR_EventTableLength] = {0};
 
-/* Flag indicating that MCMGR_Init() has completed successfully.
- * Set to true after a successful MCMGR_Init() call; never cleared.
- * Currently unused as a runtime gate (MCMGR_CHECK_INIT is a no-op)
- * but retained for future use and observability. */
+/* Flag indicating that MCMGR_Init() has completed (or is in progress).
+ * Set to true inside MCMGR_Init() BEFORE mcmgr_platform_init_internal()
+ * enables the MU RX IRQ, so re-entrant ISR dispatches during init see
+ * the flag set.  Rolled back to false on platform-init failure. */
 static volatile bool s_mcmgrInitialized = false;
 
-/*
- * Guard macro: intentionally a no-op.
- * The RPSDK-1183 init-guard was reverted (MCUX-88924) because returning
- * kStatus_MCMGR_NotReady from MCMGR_TriggerEvent before MCMGR_Init()
- * completes breaks the connectivity-framework ICS handshake on KW43:
- * the rpmsg HAL adapter registers its READY event handler via
- * MCMGR_RegisterEvent() and then calls MCMGR_Init(), so any in-flight
- * MU ISR that fires during platform_init_internal() and needs to call
- * back through MCMGR_TriggerEvent() would be silently dropped.
- */
-#define MCMGR_CHECK_INIT() \
-    do                     \
-    {                      \
+/* Guard macro: return kStatus_MCMGR_NotReady when called before MCMGR_Init()
+ * completes.  The flag s_mcmgrInitialized is set to true inside MCMGR_Init()
+ * BEFORE mcmgr_platform_init_internal() is called so that any re-entrant MU ISR
+ * dispatch that occurs while the MU RX IRQ is being enabled (e.g. on KW43 where
+ * the NBU peer is already alive) sees the flag set and is not silently dropped. */
+#define MCMGR_CHECK_INIT()                 \
+    do                                     \
+    {                                      \
+        if (!s_mcmgrInitialized)           \
+        {                                  \
+            return kStatus_MCMGR_NotReady; \
+        }                                  \
     } while (false)
 
 mcmgr_status_t MCMGR_RegisterEvent(mcmgr_event_type_t type, mcmgr_event_callback_t callback, void *callbackData)
@@ -169,9 +168,10 @@ mcmgr_status_t MCMGR_Init(void)
      */
     if ((uint32_t)currentCore < g_mcmgrSystem.coreCount) /* GCOVR_EXCL_BR_LINE */
     {
-        /* Register critical and generic event handlers directly into the event table,
-         * bypassing the MCMGR_RegisterEvent() public API guard (s_mcmgrInitialized is
-         * not yet set at this point in Init). */
+        /* Register the internal startup-data event handlers directly into the event
+         * table before the IRQ is enabled.  MCMGR_RegisterEvent() is intentionally
+         * unguarded and could be used here too, but direct table writes are used to
+         * make the ordering dependency on s_mcmgrInitialized explicit. */
         MCMGR_eventTable[kMCMGR_StartupDataEvent].callback     = MCMGR_StartupDataEventHandler;
         MCMGR_eventTable[kMCMGR_StartupDataEvent].callbackData = (void *)&s_mcmgrCoresContext[currentCore];
 
@@ -180,11 +180,21 @@ mcmgr_status_t MCMGR_Init(void)
         MCMGR_eventTable[kMCMGR_FeedStartupDataEvent].callback     = MCMGR_FeedStartupDataEventHandler;
         MCMGR_eventTable[kMCMGR_FeedStartupDataEvent].callbackData = (void *)s_mcmgrCoresContext;
 
+        /* Set the initialized flag BEFORE mcmgr_platform_init_internal() enables the
+         * MU RX IRQ.  On platforms such as KW43 the peer core is already alive and
+         * fires a re-entrant MU ISR the instant the IRQ is unmasked.  Any guarded
+         * public API function reached from that ISR dispatch (e.g. MCMGR_TriggerEvent
+         * in the internal startup-data reply handlers) must see the flag set, otherwise
+         * MCMGR_CHECK_INIT() returns NotReady and silently drops the event.
+         * Roll the flag back if platform init fails so external callers still see
+         * NotReady until a successful MCMGR_Init(). */
+        s_mcmgrInitialized = true;
+
         mcmgr_status_t status = mcmgr_platform_init_internal(currentCore);
 
-        if (status == kStatus_MCMGR_Success)
+        if (status != kStatus_MCMGR_Success)
         {
-            s_mcmgrInitialized = true;
+            s_mcmgrInitialized = false;
         }
 
         return status;
