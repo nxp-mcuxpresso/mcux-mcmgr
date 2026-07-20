@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 NXP
+ * Copyright 2016-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -47,7 +47,8 @@ char rpmsg_lite_base[SH_MEM_TOTAL_SIZE] __attribute__((section(".noinit.$rpmsg_s
 #define TEST_VALUE     0xAAAAAAAA
 #define TEST_VALUE_16B 0xBBBB
 
-#if (defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES))
+#if (defined(MIMXRT1187_cm33_SERIES) || defined(MIMXRT1189_cm33_SERIES) || \
+     defined(MCXE32B_cm7_core0_SERIES))
 #define EXCEPTION_NUMBER (4)
 #else
 #define EXCEPTION_NUMBER (3)

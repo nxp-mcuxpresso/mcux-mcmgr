@@ -399,6 +399,27 @@ void mcmgr_mu_channel_handler(MU_Type *base, mcmgr_core_t coreNum)
     }
 }
 
+#if (defined(MCMGR_DEFERRED_CALLBACK_ALLOWED) && (MCMGR_DEFERRED_CALLBACK_ALLOWED == 1U))
+/*
+ * Deferred RX processing entry point. On MCXE32B the MU RX interrupt is handled
+ * directly in mu_isr() (the RX-full flag is cleared by reading the RX register
+ * inside mcmgr_mu_channel_handler), so the deferred task does not need to do any
+ * flag clearing or IRQ re-enable. This function is provided so that the public
+ * MCMGR_ProcessDeferredRxIsr() API links correctly and remains functionally valid
+ * if a deferred call path is taken: it re-runs the same MU channel handler that
+ * the ISR uses.
+ */
+mcmgr_status_t mcmgr_process_deferred_rx_isr_internal(void)
+{
+#if defined(MCMGR_BUILD_FOR_CORE_0)
+    mcmgr_mu_channel_handler(MU2_A, kMCMGR_Core1);
+#else
+    mcmgr_mu_channel_handler(MU2_B, kMCMGR_Core0);
+#endif
+    return kStatus_MCMGR_Success;
+}
+#endif /* MCMGR_DEFERRED_CALLBACK_ALLOWED */
+
 #if defined(MCMGR_HANDLE_EXCEPTIONS) && (MCMGR_HANDLE_EXCEPTIONS == 1)
 void DefaultISR(void)
 {

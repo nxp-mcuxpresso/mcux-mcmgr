@@ -39,6 +39,9 @@ char rpmsg_lite_base[SH_MEM_TOTAL_SIZE] __attribute__((section(".noinit.$rpmsg_s
 #define TEST_MU_BASE    MU1_MUA
 #elif (defined(KW43B43ZC7_SERIES))
 #define TEST_MU_BASE    MU0_MUA
+#elif defined(MCXE32B_cm7_core0_SERIES)
+/* MCXE32B: primary core (M7_0) uses the MU2_A side (matches mcmgr porting layer) */
+#define TEST_MU_BASE    MU2_A
 #else
 #define TEST_MU_BASE    MUA
 #endif

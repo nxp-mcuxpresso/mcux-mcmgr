@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../../../../../scripts/data_schema/example_description_schema.json
 #
-# Copyright 2025 NXP
+# Copyright 2025-2026 NXP
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
@@ -97,3 +97,4 @@ test_weak_mu_isr_secondary_core:
     frdmk32l3a6@cm0plus: []
     frdmmcxl255@cm0plus: []
     frdmimxrt700@cm33_core1: []
+    frdmmcxe32b@core1: []

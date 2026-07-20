@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 NXP
+ * Copyright 2025-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -26,6 +26,9 @@
 #define TEST_MU_BASE    MU1_MUB
 #elif (defined(KW43B43ZC7_NBU_SERIES))
 #define TEST_MU_BASE    MU0_MUB
+#elif defined(MCXE32B_cm7_core1_SERIES)
+/* MCXE32B: secondary core (M7_1) uses the MU2_B side (matches mcmgr porting layer) */
+#define TEST_MU_BASE    MU2_B
 #else
 #define TEST_MU_BASE    MUB
 #endif

@@ -48,6 +48,10 @@
 #elif (defined(MIMXRT798S_cm33_core0_SERIES))
 #define TEST_ADDRESS            (((uint32_t)0x20200000))
 #define CPU1_RAM_ATBITTER0_ADDR (0x40041044)
+#elif defined(MCXE32B_cm7_core0_SERIES)
+/* Secondary boots in-place from flash; TEST_ADDRESS must be in shared SRAM,
+ * not at CORE1_BOOT_ADDRESS (flash). Use the rpmsg_sh_mem shared region. */
+#define TEST_ADDRESS (((uint32_t)0x20400000))
 #else
 #define TEST_ADDRESS (((uint32_t)CORE1_BOOT_ADDRESS) + 0x100)
 #endif
@@ -66,7 +70,8 @@
 /*******************************************************************************
  * Code
  ******************************************************************************/
-#if (defined(KW45B41Z83_cm33_SERIES) || defined(KW47B42ZB7_cm33_core0_SERIES) || defined(MCXW727C_cm33_core0_SERIES) || defined(K32L3A60_cm4_SERIES))
+#if (defined(KW45B41Z83_cm33_SERIES) || defined(KW47B42ZB7_cm33_core0_SERIES) || defined(MCXW727C_cm33_core0_SERIES) || \
+     defined(K32L3A60_cm4_SERIES) || defined(MCXE32B_cm7_core0_SERIES))
 /* secondary core code runs always from flash, put the minimalistic image into the secondary core flash */
 #if defined(__ICCARM__) /* IAR Workbench */
 #pragma location = "__core1_image"
@@ -97,6 +102,19 @@ const uint32_t code[] __attribute__((section(".core1_code")))
         0xbf00bf00,           // Filler of NOPs to keep aligment
         TEST_ADDRESS,         // test address where second core writes
         TEST_VALUE            // value second core writes
+#elif defined(MCXE32B_cm7_core0_SERIES)
+        /* MCXE32B M7_1 boots in-place from flash at CORE1_BOOT_ADDRESS (0x005C0000).
+         * The code[] stub is placed in the .core1_code section (-> m_core1_image),
+         * programmed at 0x005C0000 alongside the primary image.
+         * PC must be absolute (0x005C0009); LDR offsets are relative to code[] base
+         * (same arithmetic as K32L3A60 since both use 7-word layout). */
+        (uint32_t)0x2042C000,                     // SP - top of core1 data region
+        (uint32_t)(CORE1_BOOT_ADDRESS + 0x9),     // PC = 0x005C0009 (thumb, entry at +8)
+        0x49034802,                               // LDR R0,[PC,#8]; LDR R1,[PC,#12]
+        0xe7fe6001,                               // STR R1,[R0]; B .
+        0xbf00bf00,                               // Filler of NOPs to keep alignment
+        TEST_ADDRESS,                             // test address in shared SRAM (0x20400000)
+        TEST_VALUE                                // value second core writes
 #endif
 
  };
@@ -212,7 +230,8 @@ void mcmgr_test_start_core3()
     invalidate_cache_for_core1_image_memory((uint32_t)TEST_ADDRESS, 4);
 #endif /* APP_INVALIDATE_CACHE_FOR_SECONDARY_CORE_IMAGE_MEMORY */
 
-#if !(defined(KW45B41Z83_cm33_SERIES) || defined(KW47B42ZB7_cm33_core0_SERIES) || defined(MCXW727C_cm33_core0_SERIES) || defined(K32L3A60_cm4_SERIES))
+#if !(defined(KW45B41Z83_cm33_SERIES) || defined(KW47B42ZB7_cm33_core0_SERIES) || defined(MCXW727C_cm33_core0_SERIES) || \
+      defined(K32L3A60_cm4_SERIES) || defined(MCXE32B_cm7_core0_SERIES))
     // code for secondary core
     // writes TEST_VALUE at TEST_ADDRESS, stops in infinite loop
     //    SP
