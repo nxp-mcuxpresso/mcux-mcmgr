@@ -82,6 +82,7 @@ static void init_mu(MU_Type *base)
 static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
 {
     mcmgr_status_t ret = kStatus_MCMGR_Success;
+    mcmgr_status_t tmp = kStatus_MCMGR_Success;
 
 #if (defined(MCMGR_BUILD_FOR_CORE_0))
     if (coreNum == kMCMGR_Core0)
@@ -96,13 +97,21 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
         init_mu(MU4_MUA);
 
         /* Trigger core up event here, core is starting! */
-        ret = mcmgr_trigger_event_internal(kMCMGR_Core2, kMCMGR_RemoteCoreUpEvent, 0U, false);
+        tmp = mcmgr_trigger_event_internal(kMCMGR_Core2, kMCMGR_RemoteCoreUpEvent, 0U, false);
+        if (kStatus_MCMGR_Success == ret)
+        {
+            ret = tmp;
+        }
 
         /* CPU0 to HiFi1 communication case */
         init_mu(MU0_MUA);
 
         /* Trigger core up event here, core is starting! */
-        ret = mcmgr_trigger_event_internal(kMCMGR_Core3, kMCMGR_RemoteCoreUpEvent, 0U, false);
+        tmp = mcmgr_trigger_event_internal(kMCMGR_Core3, kMCMGR_RemoteCoreUpEvent, 0U, false);
+        if (kStatus_MCMGR_Success == ret)
+        {
+            ret = tmp;
+        }
     }
     else
     {
@@ -121,13 +130,21 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
         init_mu(MU1_MUB);
 
         /* Trigger core up event here, core is starting! */
-        ret = mcmgr_trigger_event_internal(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0U, false);
+        tmp = mcmgr_trigger_event_internal(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0U, false);
+        if (kStatus_MCMGR_Success == ret)
+        {
+            ret = tmp;
+        }
 
         /* CPU1 to Hifi4 communication case */
         init_mu(MU2_MUB);
 
         /* Trigger core up event here, core is starting! */
-        ret = mcmgr_trigger_event_internal(kMCMGR_Core2, kMCMGR_RemoteCoreUpEvent, 0U, false);
+        tmp = mcmgr_trigger_event_internal(kMCMGR_Core2, kMCMGR_RemoteCoreUpEvent, 0U, false);
+        if (kStatus_MCMGR_Success == ret)
+        {
+            ret = tmp;
+        }
     }
     else
     {
@@ -146,7 +163,11 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
         init_mu(MU2_MUA);
 
         /* Trigger core up event here, core is starting! */
-        ret = mcmgr_trigger_event_internal(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0U, false);
+        tmp = mcmgr_trigger_event_internal(kMCMGR_Core0, kMCMGR_RemoteCoreUpEvent, 0U, false);
+        if (kStatus_MCMGR_Success == ret)
+        {
+            ret = tmp;
+        }
     }
     else
     {
@@ -165,7 +186,11 @@ static mcmgr_status_t mcmgr_platform_init_internal_early(mcmgr_core_t coreNum)
         init_mu(MU3_MUB);
 
         /* Trigger core up event here, core is starting! */
-        ret = mcmgr_trigger_event_internal(kMCMGR_Core1, kMCMGR_RemoteCoreUpEvent, 0U, false);
+        tmp = mcmgr_trigger_event_internal(kMCMGR_Core1, kMCMGR_RemoteCoreUpEvent, 0U, false);
+        if (kStatus_MCMGR_Success == ret)
+        {
+            ret = tmp;
+        }
     }
     else
     {
@@ -552,27 +577,20 @@ void mcmgr_mu_channel_handler(MU_Type *base, mcmgr_core_t coreNum)
     data = MU_ReceiveMsgNonBlocking(base, MCMGR_MU_CHANNEL);
 
     /* To be MISRA compliant, return value needs to be checked even it could not never be 0 */
-    if (0U == data)
+    if (0U != data)
     {
-        return;
-    }
+        eventType = (uint16_t)(data >> 16u);
+        eventData = (uint16_t)(data & 0x0000FFFFu);
 
-    eventType = (uint16_t)(data >> 16u);
-    eventData = (uint16_t)(data & 0x0000FFFFu);
-
-    /* Handle invalid event type */
-    if (((mcmgr_event_type_t)eventType < kMCMGR_RemoteCoreUpEvent) &&
-        ((mcmgr_event_type_t)eventType >= kMCMGR_EventTableLength))
-    {
-        return;
-    }
-
-    if (MCMGR_eventTable[(mcmgr_event_type_t)eventType].callback != ((void *)0))
-    {
-        MCMGR_eventTable[(mcmgr_event_type_t)eventType].callback(
-            coreNum,
-            eventData,
-            MCMGR_eventTable[(mcmgr_event_type_t)eventType].callbackData);
+        if (((mcmgr_event_type_t)eventType >= kMCMGR_RemoteCoreUpEvent) &&
+            ((mcmgr_event_type_t)eventType < kMCMGR_EventTableLength))
+        {
+            if (MCMGR_eventTable[(mcmgr_event_type_t)eventType].callback != ((void *)0))
+            {
+                MCMGR_eventTable[(mcmgr_event_type_t)eventType].callback(
+                    coreNum, eventData, MCMGR_eventTable[(mcmgr_event_type_t)eventType].callbackData);
+            }
+        }
     }
 }
 
