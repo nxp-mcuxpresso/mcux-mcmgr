@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="nxp_logo_small.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Multicore Manager (MCMGR) User&#39;s Guide<span id="projectnumber">&#160;Rev. v5.2.0</span>
+   <div id="projectname">Multicore Manager (MCMGR) User&#39;s Guide<span id="projectnumber">&#160;Rev. v5.3.0</span>
    </div>
    <div id="projectbrief">NXP Semiconductors</div>
   </td>
@@ -254,7 +254,7 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:ga0a45660b38a87ca65052a15d721a4949"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type definition of event types. <br /></td></tr>
 <tr class="separator:ga0a45660b38a87ca65052a15d721a4949"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gabbf6e7e7978f537eaa72ea8e95bd0f1f"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#gabbf6e7e7978f537eaa72ea8e95bd0f1f">mcmgr_version_enum</a> { <b>kMCMGR_Version</b> = 0x00050200
+<tr class="memitem:gabbf6e7e7978f537eaa72ea8e95bd0f1f"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mcmgr.html#gabbf6e7e7978f537eaa72ea8e95bd0f1f">mcmgr_version_enum</a> { <b>kMCMGR_Version</b> = 0x00050300
  }</td></tr>
 <tr class="memdesc:gabbf6e7e7978f537eaa72ea8e95bd0f1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Version of MCMGR.  <a href="group__mcmgr.html#gabbf6e7e7978f537eaa72ea8e95bd0f1f">More...</a><br /></td></tr>
 <tr class="separator:gabbf6e7e7978f537eaa72ea8e95bd0f1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -508,8 +508,8 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Initialize the multicore manager, early init. </p>
-<p>After calling this function, <a class="el" href="group__mcmgr.html#gabbdd762f564f67940ac4f91fd1dfc14d" title="Trigger event handler.">MCMGR_TriggerEvent()</a> and/or <a class="el" href="group__mcmgr.html#gab18e570ea8c466214b3725785d45aa35" title="Initialize the multicore manager.">MCMGR_Init()</a> can be called.</p>
-<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+<p>Compatibility stub — kept to avoid breaking existing call sites. The early-init logic is now performed inside <a class="el" href="group__mcmgr.html#gab18e570ea8c466214b3725785d45aa35" title="Initialize the multicore manager.">MCMGR_Init()</a>.</p>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success always. </dd></dl>
 
 </div>
 </div>
@@ -584,7 +584,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success, kStatus_MCMGR_Error on failure, or kStatus_MCMGR_NotReady if <a class="el" href="group__mcmgr.html#gab18e570ea8c466214b3725785d45aa35" title="Initialize the multicore manager.">MCMGR_Init()</a> has not been called successfully. </dd></dl>
 
 </div>
 </div>
@@ -645,7 +645,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success, kStatus_MCMGR_Error on failure, or kStatus_MCMGR_NotReady if <a class="el" href="group__mcmgr.html#gab18e570ea8c466214b3725785d45aa35" title="Initialize the multicore manager.">MCMGR_Init()</a> has not been called successfully. </dd></dl>
 
 </div>
 </div>
@@ -688,7 +688,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Initialize the multicore manager. </p>
-<p>After calling this function, all API can be used.</p>
+<p>Must be called before any other MCMGR API (except <a class="el" href="group__mcmgr.html#ga113834314ba8d727f8d601463ee71e88" title="Initialize the multicore manager, early init.">MCMGR_EarlyInit()</a>, <a class="el" href="group__mcmgr.html#ga7b84c8f0aeb60f4a30cdc04eb188994f" title="Get version of MCMGR.">MCMGR_GetVersion()</a>, <a class="el" href="group__mcmgr.html#ga3c4b9d86b64af938a9f9c316028a03b9" title="Return the count of cores in a multicore system.">MCMGR_GetCoreCount()</a>, and <a class="el" href="group__mcmgr.html#gaf09a19de979b8d1cff3c53a4b9f1e233" title="Get current CPU core.">MCMGR_GetCurrentCore()</a>). Sets the internal initialized flag on success; other API functions return kStatus_MCMGR_NotReady until this call succeeds.</p>
 <dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
 
 </div>
@@ -711,7 +711,7 @@ Functions</h2></td></tr>
 
 <p>Process RX data in deffered rx task. </p>
 <p>This function used to be called from the application specific deffered rx task to trigger rx data processing outside the interrupt context. The purpose is to make the interrupt service routine as short as possible, performing only really necessary steps in the interrupt context and defer the processing outside the interrupt context.</p>
-<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_NotImplemented when not supported. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success, kStatus_MCMGR_NotImplemented when not supported, or kStatus_MCMGR_NotReady if <a class="el" href="group__mcmgr.html#gab18e570ea8c466214b3725785d45aa35" title="Initialize the multicore manager.">MCMGR_Init()</a> has not been called successfully. </dd></dl>
 
 </div>
 </div>
@@ -757,7 +757,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success, kStatus_MCMGR_Error on failure, or kStatus_MCMGR_NotReady if <a class="el" href="group__mcmgr.html#gab18e570ea8c466214b3725785d45aa35" title="Initialize the multicore manager.">MCMGR_Init()</a> has not been called successfully. </dd></dl>
 
 </div>
 </div>
@@ -810,7 +810,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success, kStatus_MCMGR_Error on failure, or kStatus_MCMGR_NotReady if <a class="el" href="group__mcmgr.html#gab18e570ea8c466214b3725785d45aa35" title="Initialize the multicore manager.">MCMGR_Init()</a> has not been called successfully. </dd></dl>
 
 </div>
 </div>
@@ -838,7 +838,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success, kStatus_MCMGR_Error on failure, or kStatus_MCMGR_NotReady if <a class="el" href="group__mcmgr.html#gab18e570ea8c466214b3725785d45aa35" title="Initialize the multicore manager.">MCMGR_Init()</a> has not been called successfully. </dd></dl>
 
 </div>
 </div>
@@ -884,7 +884,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success, kStatus_MCMGR_Error on failure, or kStatus_MCMGR_NotReady if <a class="el" href="group__mcmgr.html#gab18e570ea8c466214b3725785d45aa35" title="Initialize the multicore manager.">MCMGR_Init()</a> has not been called successfully. </dd></dl>
 
 </div>
 </div>
@@ -930,7 +930,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success or kStatus_MCMGR_Error on failure. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>kStatus_MCMGR_Success on success, kStatus_MCMGR_Error on failure, or kStatus_MCMGR_NotReady if <a class="el" href="group__mcmgr.html#gab18e570ea8c466214b3725785d45aa35" title="Initialize the multicore manager.">MCMGR_Init()</a> has not been called successfully. </dd></dl>
 
 </div>
 </div>
